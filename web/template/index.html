@@ -5,37 +5,326 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1" />
-    <title>Hello Bulma!</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css" />
+    <title>Stunting Kota Cirebon</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="" />
-
-    <style>
-      #map {
-        height: 400px;
-        width: 100%;
-      }
-    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous" />
   </head>
   <body>
-    <section class="section">
-      <div class="container">
-        <h1 class="title">Hello World</h1>
-        <p class="subtitle">My first website with <strong>Bulma</strong>!</p>
+    <nav class="navbar navbar-expand-md bg-body-tertiary mb-4 px-4">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand"
+          href="#">
+          <img
+            src="/static/placeholder.png"
+            alt="Logo"
+            width="30"
+            height="24"
+            class="d-inline-block align-text-top" />
+          DKIS Cirebon
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse"
+          id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="#">
+                Beranda
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="#">
+                lorem
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="#">
+                ipsum
+              </a>
+            </li>
+          </ul>
+          <div class="ms-auto">
+            <a
+              href="#"
+              class="btn btn-outline-primary btn-sm">
+              Masuk
+            </a>
+          </div>
+        </div>
       </div>
-    </section>
+    </nav>
 
-    <div id="map"></div>
+    <article class="container">
+      <h1>Peta Persebaran Stunting</h1>
+      <div
+        id="map"
+        class="w-100 rounded shadow-sm my-4"
+        style="height: 500px"></div>
+
+      <section class="row">
+        <div class="col">
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+        </div>
+        <div class="col">
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+        </div>
+        <div class="col">
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit atque ipsa enim eum modi
+            deleniti, laboriosam nam ex officia debitis ea molestiae esse repellendus. Sit nesciunt
+            repellat reiciendis! Sed unde dolore qui natus odit possimus explicabo. Aliquam debitis
+            minus nobis, ipsa in aliquid nihil, hic, accusantium earum cum omnis id?
+          </p>
+        </div>
+      </section>
+    </article>
+
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-4">
+      <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+        <!-- Left -->
+        <div class="me-5 d-none d-lg-block">
+          <span>Kontak kami</span>
+        </div>
+        <!-- Left -->
+
+        <!-- Right -->
+        <div>
+          <a
+            href="#"
+            class="me-4 text-reset">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a
+            href="#"
+            class="me-4 text-reset">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a
+            href="#"
+            class="me-4 text-reset">
+            <i class="fab fa-google"></i>
+          </a>
+          <a
+            href="#"
+            class="me-4 text-reset">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a
+            href="#"
+            class="me-4 text-reset">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a
+            href="#"
+            class="me-4 text-reset">
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <!-- Right -->
+      </section>
+
+      <section>
+        <div class="container text-center text-md-start mt-5">
+          <div class="row mt-3">
+            <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+              <h6 class="text-uppercase fw-bold mb-4">
+                <i class="fas fa-gem me-3"></i>
+                <span>DKIS Cirebon</span>
+              </h6>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima aspernatur quisquam
+                aperiam facilis at illum ullam fugit debitis ipsam voluptas.
+              </p>
+            </div>
+
+            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+              <h6 class="text-uppercase fw-bold mb-4">lorem</h6>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  lorem
+                </a>
+              </p>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  ipsum
+                </a>
+              </p>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  dolor
+                </a>
+              </p>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  sit
+                </a>
+              </p>
+            </div>
+
+            <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+              <h6 class="text-uppercase fw-bold mb-4">lorem</h6>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  imsum
+                </a>
+              </p>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  dolor
+                </a>
+              </p>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  sit
+                </a>
+              </p>
+              <p>
+                <a
+                  href="#!"
+                  class="text-reset">
+                  amet
+                </a>
+              </p>
+            </div>
+
+            <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+              <h6 class="text-uppercase fw-bold mb-4">Alamat</h6>
+              <p>
+                <i class="fas fa-home me-3"></i>
+                <span>
+                  Jalan Dr. Sudarsono No. 40, Kel. Kesambi, Kec. Kesambi, Kota Cirebon, 45134
+                </span>
+              </p>
+              <p>
+                <i class="fas fa-home me-3"></i>
+                <span>
+                  Jalan Brigjend Dharsono No. 1, Kel. Sunyaragi, Kec. Kesambi, Kota Cirebon, 45135
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div
+        class="text-center p-4"
+        style="background-color: rgba(0, 0, 0, 0.05)">
+        <span>© 2025 Copyright </span>
+        <span class="text-reset fw-bold">Pemerintah Kota Cirebon</span>
+      </div>
+    </footer>
 
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"></script>
     <script src="static/leaflet.js"></script>
   </body>
 </html>

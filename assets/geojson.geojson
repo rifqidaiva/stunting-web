@@ -1,0 +1,1350 @@
+{
+  "type": "FeatureCollection",
+  "name": "banjir_sebaran",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "BIMA",
+        "Kelurahan": "Kejaksan",
+        "Kedalaman": "20-50 cm",
+        "Durasi": "2-5 jam",
+        "Dampak": "300-700 Rumah",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "15-35 Juta",
+        "Tahun": "2018, 2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "1 BIMA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.554133083972005, -6.71245215959859] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "KEBON KELAPA TENGAH",
+        "Kelurahan": "Kejaksan",
+        "Kedalaman": "20-40 cm",
+        "Durasi": "2-5 jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "-",
+        "Tahun": "2018",
+        "Sumber": "BPBD",
+        "Foto": "2 KEBON KELAPA TENGAH (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.554990311788998, -6.71308219539992] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "KAMPUNG SUKAJADI/KAMBOJA TEDENG",
+        "Kelurahan": "Sukapura",
+        "Kedalaman": "20-30 cm",
+        "Durasi": "10-13 jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "3 KAMPUNG SUKAJADI-KAMBOJA TEDENG (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.550034838003, -6.71191781352814] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 3",
+        "Kampung": "SUKASARI",
+        "Kelurahan": "Sukapura",
+        "Kedalaman": "2-50 cm",
+        "Durasi": "4-5 jam",
+        "Dampak": "30 Rumah",
+        "Penyebab": "Hujan, drainase, dan luapan sungai",
+        "Kerugian": "1,5 Juta",
+        "Tahun": "2019, 2020",
+        "Sumber": "BPBD",
+        "Foto": "4 SUKASARI (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.552389591285007, -6.70905000155185] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 4",
+        "Kampung": "PANCURAN BARAT",
+        "Kelurahan": "Sukapura",
+        "Kedalaman": "30-80 cm",
+        "Durasi": "-",
+        "Dampak": "40-75 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "2-3,75 Juta",
+        "Tahun": "2018, 2021, 2022",
+        "Sumber": "BPBD",
+        "Foto": "5 PANCURAN BARAT (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.553970380164998, -6.70996194825408] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "PANCURAN UTARA",
+        "Kelurahan": "Sukapura",
+        "Kedalaman": "20-50 cm",
+        "Durasi": "2-3 jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2018, 2019, 2021, 2022",
+        "Sumber": "BPBD",
+        "Foto": "6 PANCURAN UTARA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.553462392268997, -6.70896938188595] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "KARANG MEKAR",
+        "Kelurahan": "Sukapura",
+        "Kedalaman": "2-40 cm",
+        "Durasi": "30-40 menit",
+        "Dampak": "-",
+        "Penyebab": "Hujan, drainase, dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2019, 2021",
+        "Sumber": "BPBD",
+        "Foto": "7 KARANG MEKAR (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.553902528953003, -6.70697681902911] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 10",
+        "Kampung": "SAMADIKUN SELATAN",
+        "Kelurahan": "Kesenden",
+        "Kedalaman": "50 cm",
+        "Durasi": "-",
+        "Dampak": "300 Rumah",
+        "Penyebab": "Hujan, drainase, dan luapan sungai",
+        "Kerugian": "15 Juta",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "8 SAMADIKUN SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.5624082, -6.70306745499005] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 3",
+        "Kampung": "KEBONBARU SELATAN",
+        "Kelurahan": "Kebonbaru",
+        "Kedalaman": "30-40 cm",
+        "Durasi": "3-5 jam",
+        "Dampak": "10 Rumah",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "500 Ribu",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "9 KEBONBARU SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.566183667871002, -6.70605132884713] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 1",
+        "Kampung": "KEMAKMURAN",
+        "Kelurahan": "Pegambiran",
+        "Kedalaman": "1 meter",
+        "Durasi": "3-4 Jam",
+        "Dampak": "80-90 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "4-4,5 Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "10 KEMAKMURAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.576114318324997, -6.73157229825827] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "KARANG WANGUN",
+        "Kelurahan": "Pegambiran",
+        "Kedalaman": "30-70 cm",
+        "Durasi": "4-5 jam",
+        "Dampak": "70 Rumah",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "3,5  Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "11 KARANG WANGUN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.580207507319997, -6.73866836249472] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "KARANG MULYA",
+        "Kelurahan": "Pegambiran",
+        "Kedalaman": "30 cm",
+        "Durasi": "4-5 jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "12 KARANG MULYA (Copy)"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.579452399985996, -6.73925881794351] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 8",
+        "Kampung": "KARANG ANOM",
+        "Kelurahan": "Pegambiran",
+        "Kedalaman": "30-70 cm",
+        "Durasi": "2-5 jam",
+        "Dampak": "35-470 Rumah",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "1,75-23,5 Juta",
+        "Tahun": "2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "13 KARANG ANOM (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.581788525541995, -6.73973934042602] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 9",
+        "Kampung": "API-API",
+        "Kelurahan": "Pegambiran",
+        "Kedalaman": "70 cm",
+        "Durasi": "3-4 Jam",
+        "Dampak": "270 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "13,5 Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "14 API-API (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.584613205742997, -6.7457034363442] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 13",
+        "Kampung": "KERTASEMBOJA",
+        "Kelurahan": "Pegambiran",
+        "Kedalaman": "40 cm",
+        "Durasi": "4-5 jam",
+        "Dampak": "80 Rumah",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "4 Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "15 KERTASEMBOJA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.573751567871, -6.73983278573629] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 17",
+        "Kampung": "KRIYAN BARAT",
+        "Kelurahan": "Pegambiran",
+        "Kedalaman": "70 cm",
+        "Durasi": "3-4 Jam",
+        "Dampak": "810 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "50,5 Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "16 KRIYAN BARAT (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.567562739384996, -6.73187368123182] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 4",
+        "Kampung": "CANGKOL UTARA",
+        "Kelurahan": "Lemahwungkuk",
+        "Kedalaman": "40 cm",
+        "Durasi": "-",
+        "Dampak": "670 Rumah",
+        "Penyebab": "Hujan, drainase, dan luapan sungai",
+        "Kerugian": "33,5 Juta",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "17 CANGKOL UTARA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.574371825542002, -6.72105132982162] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "CANGKOL TENGAH",
+        "Kelurahan": "Lemahwungkuk",
+        "Kedalaman": "10-30 cm",
+        "Durasi": "1-3 jam",
+        "Dampak": "-",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "18 CANGKOL TENGAH (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.574711467870998, -6.72217308497365] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "CANGKOL SELATAN",
+        "Kelurahan": "Lemahwungkuk",
+        "Kedalaman": "10 cm",
+        "Durasi": "2-3 jam",
+        "Dampak": "-",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "19 CANGKOL SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.575744683433996, -6.72341336697392] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "MANDALANGAN",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "70-90 cm",
+        "Durasi": "3-4 jam",
+        "Dampak": "260 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "13 Juta",
+        "Tahun": "2018, 2020",
+        "Sumber": "BPBD",
+        "Foto": "20 MANDALANGAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.570041781365006, -6.72828668523741] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 3",
+        "Kampung": "BANJAR MELATI",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "10-70 cm",
+        "Durasi": "2-4 jam",
+        "Dampak": "160 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "8 Juta",
+        "Tahun": "2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "21 BANJAR MELATI (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.570871892247993, -6.72960636215887] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 4",
+        "Kampung": "SITI MULYA",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "10 cm",
+        "Durasi": "3-4 jam",
+        "Dampak": "-",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.573387110200002, -6.72518759513038] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "GAMBIRLAYA UTARA",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "90 cm",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "-",
+        "Kerugian": "-",
+        "Tahun": "2018",
+        "Sumber": "BPBD",
+        "Foto": "23 GAMBIRLAYA UTARA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.574449225541997, -6.72713597524747] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "GAMBIRLAYA SELATAN",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "50-70 cm",
+        "Durasi": "3-4 jam",
+        "Dampak": "150-200 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "7,5-10 Juta",
+        "Tahun": "2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "24 GAMBIRLAYA SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.575850367870999, -6.72970088529848] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "KESUNEAN UTARA",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "2-70 cm",
+        "Durasi": "1-5 jam",
+        "Dampak": "95-510 Rumah",
+        "Penyebab": "Air laut pasang dan drainase",
+        "Kerugian": "4,75-25,5 Juta",
+        "Tahun": "2018, 2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "25 KESUNEAN UTARA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.576322567871003, -6.72388473000593] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 8",
+        "Kampung": "KESUNEAN TENGAH",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "10-40 cm",
+        "Durasi": "2-5 jam",
+        "Dampak": "95-500 Rumah",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "4,75-25 Juta",
+        "Tahun": "2018, 2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "26 KESUNEAN TENGAH (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.577177425542004, -6.72635044014159] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 9",
+        "Kampung": "KESUNEAN SELATAN",
+        "Kelurahan": "Kesepuhan",
+        "Kedalaman": "10-70 cm",
+        "Durasi": "2-5 jam",
+        "Dampak": "95-480 Rumah",
+        "Penyebab": "Air laut pasang, hujan, dan luapan sungai",
+        "Kerugian": "4,75-24 Juta",
+        "Tahun": "2018, 2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "27 KESUNEAN SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.577822567870996, -6.72781198521693] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 1",
+        "Kampung": "PESISIR SELATAN",
+        "Kelurahan": "Panjunan",
+        "Kedalaman": "10-30 cm",
+        "Durasi": "2-4 jam",
+        "Dampak": "50-95 Rumah",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "2,5-4,75 Juta",
+        "Tahun": "2018, 2020",
+        "Sumber": "BPBD",
+        "Foto": "28 PESISIR SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.567051967870995, -6.70920283977811] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "PESISIR TENGAH",
+        "Kelurahan": "Panjunan",
+        "Kedalaman": "10 cm",
+        "Durasi": "1-2 jam",
+        "Dampak": "-",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.567491525541996, -6.70775992895801] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 10",
+        "Kampung": "PESISIR UTARA",
+        "Kelurahan": "Panjunan",
+        "Kedalaman": "10-45 cm",
+        "Durasi": "2-5 jam",
+        "Dampak": "50-650 Rumah",
+        "Penyebab": "Air laut pasang",
+        "Kerugian": "2,5-32,5 Juta",
+        "Tahun": "2018, 2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "30 PESISIR UTARA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.566444396706004, -6.70638472886877] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "PESANTREN",
+        "Kelurahan": "Kalijaga",
+        "Kedalaman": "1,5 meter",
+        "Durasi": "3-4 Jam",
+        "Dampak": "105 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "5,25 Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "31 PESANTREN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.551542225541994, -6.75235069511109] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 3",
+        "Kampung": "KALIJAGA",
+        "Kelurahan": "Kalijaga",
+        "Kedalaman": "50-160 cm",
+        "Durasi": "2-4 Jam",
+        "Dampak": "10-150 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "0,5-7,5 Juta",
+        "Tahun": "2017, 2018, 2020, 2021, 2022",
+        "Sumber": "BPBD",
+        "Foto": "32 KALIJAGA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.550038525542007, -6.74774583156117] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "KEDUNG MENJANGAN",
+        "Kelurahan": "Kalijaga",
+        "Kedalaman": "1,5 meter",
+        "Durasi": "3-4 Jam",
+        "Dampak": "10 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "0,5 Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "33 KEDUNG MENJANGAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.543283625542003, -6.75447674073981] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 10",
+        "Kampung": "SUKET DUWUR",
+        "Kelurahan": "Kalijaga",
+        "Kedalaman": "30 cm-1,5 meter",
+        "Durasi": "3-4 Jam",
+        "Dampak": "50 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "2,5 Juta",
+        "Tahun": "2018, 2020",
+        "Sumber": "BPBD",
+        "Foto": "34 SUKET DUWUR (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.550992455842007, -6.76693775164357] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 15",
+        "Kampung": "PERMATA HARJAMUKTI SELATAN",
+        "Kelurahan": "Kalijaga",
+        "Kedalaman": "1,5 meter",
+        "Durasi": "3-4 Jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": "35 PERMATA HARJAMUKTI SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.552993897421999, -6.75896201063572] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "KANGGRAKSAN SELATAN",
+        "Kelurahan": "Harjamukti",
+        "Kedalaman": "30-70 cm",
+        "Durasi": "3-4 Jam",
+        "Dampak": "10 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "0,5 Juta",
+        "Tahun": "2017, 2018 2, 2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "36 KANGGRAKSAN SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.547472470041001, -6.74095420870971] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "PENYUKEN",
+        "Kelurahan": "Harjamukti",
+        "Kedalaman": "50-60 cm",
+        "Durasi": "-",
+        "Dampak": "10-60 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "0,5-3 Juta",
+        "Tahun": "2018",
+        "Sumber": "BPBD",
+        "Foto": "37 PENYUKEN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.534361890861007, -6.74717758611751] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 1",
+        "Kampung": "KECAPI",
+        "Kelurahan": "Kecapi",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2018",
+        "Sumber": "BPBD",
+        "Foto": "38 KECAPI (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.554995434578004, -6.744454636375] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "LARANGAN  UTARA",
+        "Kelurahan": "Kecapi",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.562423302376004, -6.74281286407436] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 3",
+        "Kampung": "DUKUH SEMAR",
+        "Kelurahan": "Kecapi",
+        "Kedalaman": "30 cm-1,5 meter",
+        "Durasi": "-",
+        "Dampak": "10-100 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "0,5-5 Juta",
+        "Tahun": "2017, 2018",
+        "Sumber": "BPBD",
+        "Foto": "40 DUKUH SEMAR (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.558919981486, -6.73671811721263] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "SEMERU ASIH",
+        "Kelurahan": "Kecapi",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.562423534225999, -6.74554041783722] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "TAMPOMAS ASIH",
+        "Kelurahan": "Larangan",
+        "Kedalaman": "-",
+        "Durasi": "4-5 Jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.563586296707001, -6.74888659511357] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 3",
+        "Kampung": "KARANG ASIH",
+        "Kelurahan": "Larangan",
+        "Kedalaman": "-",
+        "Durasi": "4-5 Jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.564854302021004, -6.74937674824493] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 10",
+        "Kampung": "SAMUDRA ASIH",
+        "Kelurahan": "Larangan",
+        "Kedalaman": "-",
+        "Durasi": "4-5 Jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.567683705278, -6.75184810237839] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 17",
+        "Kampung": "SUKA MUKTI",
+        "Kelurahan": "Larangan",
+        "Kedalaman": "-",
+        "Durasi": "4-5 Jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.564616458857003, -6.73671221651415] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 18",
+        "Kampung": "TAMPOMAS MEKAR ASIH",
+        "Kelurahan": "Larangan",
+        "Kedalaman": "-",
+        "Durasi": "4-5 Jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.563654429413006, -6.74795158175982] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 19",
+        "Kampung": "LARANGAN TIMUR",
+        "Kelurahan": "Larangan",
+        "Kedalaman": "-",
+        "Durasi": "4-5 Jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.565306727226996, -6.74625711640187] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "KUTAGARA SELATAN",
+        "Kelurahan": "Jagasatru",
+        "Kedalaman": "15 cm",
+        "Durasi": "-",
+        "Dampak": "30 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "1,5 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.564283430120994, -6.72845042714426] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "PEGAJAHAN SELATAN",
+        "Kelurahan": "Jagasatru",
+        "Kedalaman": "15 cm",
+        "Durasi": "-",
+        "Dampak": "80 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "4 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.569465075704997, -6.72938654822255] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "CUCIMANAH TIMUR",
+        "Kelurahan": "Jagasatru",
+        "Kedalaman": "30 cm",
+        "Durasi": "-",
+        "Dampak": "90 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "4,5 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.567104957027993, -6.72912668340502] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 10",
+        "Kampung": "KARANG ANYAR JAGASATRU SELATAN",
+        "Kelurahan": "Jagasatru",
+        "Kedalaman": "80 cm",
+        "Durasi": "-",
+        "Dampak": "25 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "1,25 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.564797804657999, -6.73245252768004] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "KARANG MONCOL",
+        "Kelurahan": "Pekalipan",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.562324148070999, -6.72361041669604] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 4",
+        "Kampung": "PETRATEAN TIMUR",
+        "Kelurahan": "Pekalipan",
+        "Kedalaman": "20-30 cm",
+        "Durasi": "2-3 Jam",
+        "Dampak": "35 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "1,75 Juta",
+        "Tahun": "2019",
+        "Sumber": "BPBD",
+        "Foto": "53 PETRATEAN TIMUR (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.561277372009002, -6.71744866781162] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 10",
+        "Kampung": "KANOMAN UTARA",
+        "Kelurahan": "Pekalipan",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.566640095333, -6.72213470136377] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 12",
+        "Kampung": "BEDENG BARU",
+        "Kelurahan": "Pekalipan",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.559613153290002, -6.72379959444629] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "PURWASARI",
+        "Kelurahan": "Pulasaren",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "135 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "6,75 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.560838024605999, -6.72665817317279] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "PULOBARU UTARA",
+        "Kelurahan": "Pulasaren",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "135 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "6,75 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.562004046376998, -6.72523863594248] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "PULOBARU SELATAN",
+        "Kelurahan": "Pulasaren",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "135 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "6,75 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.562006725542005, -6.72523064011783] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 8",
+        "Kampung": "CANTILAN",
+        "Kelurahan": "Pulasaren",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "135 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "6,75 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.563082425542007, -6.72872018525614] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 4",
+        "Kampung": "LANGENSARI BARU",
+        "Kelurahan": "Pekiringan",
+        "Kedalaman": "30-40 cm",
+        "Durasi": "2 jam",
+        "Dampak": "580 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "29 Juta",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "60 LANGENSARI BARU (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.555194785200996, -6.72260271968729] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "SIDAMULYA",
+        "Kelurahan": "Pekiringan",
+        "Kedalaman": "40 cm",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.550074081755994, -6.72656032849822] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "SURADINAYA UTARA",
+        "Kelurahan": "Pekiringan",
+        "Kedalaman": "20 cm-2,8 meter",
+        "Durasi": "-",
+        "Dampak": "10-105 Rumah",
+        "Penyebab": "Hujan, drainase, dan luapan sungai",
+        "Kerugian": "0,5-5,25 Juta",
+        "Tahun": "2018, 2022",
+        "Sumber": "BPBD",
+        "Foto": "62 SURADINAYA UTARA (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.549255423147002, -6.71442235764035] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "GUNUNG SARI BEDENG",
+        "Kelurahan": "Pekiringan",
+        "Kedalaman": "40-60 cm",
+        "Durasi": "3 Jam",
+        "Dampak": "35-270 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "1,75-13,5 Juta",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "63 GUNUNG SARI BEDENG (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.554594025536005, -6.7161730847495] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 8",
+        "Kampung": "SURADINAYA SELATAN",
+        "Kelurahan": "Pekiringan",
+        "Kedalaman": "30-60 cm",
+        "Durasi": "3 Jam",
+        "Dampak": "300-530 Rumah",
+        "Penyebab": "Hujan, drainase, dan luapan sungai",
+        "Kerugian": "15-26,5 Juta",
+        "Tahun": "2017, 2022",
+        "Sumber": "BPBD",
+        "Foto": "64 SURADINAYA SELATAN (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.551429372331, -6.72064155289609] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 9",
+        "Kampung": "SURADINAYA BARAT",
+        "Kelurahan": "Pekiringan",
+        "Kedalaman": "40 cm-1 meter",
+        "Durasi": "-",
+        "Dampak": "85 Rumah",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "4,25 Juta",
+        "Tahun": "2017, 2018",
+        "Sumber": "BPBD",
+        "Foto": "65 SURADINAYA BARAT (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.547945536086999, -6.72023373708561] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 8",
+        "Kampung": "MARGASARI",
+        "Kelurahan": "Sunyaragi",
+        "Kedalaman": "40 cm",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "-",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.541918275395005, -6.73060662573879] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 10",
+        "Kampung": "YUDHASARI",
+        "Kelurahan": "Sunyaragi",
+        "Kedalaman": "40-60 cm",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "-",
+        "Tahun": "2017, 2019",
+        "Sumber": "BPBD",
+        "Foto": "67 YUDHASARI (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.539282828227996, -6.73148293046011] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "KARANG ANYAR",
+        "Kelurahan": "Kesambi",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "60 Rumah",
+        "Penyebab": "-",
+        "Kerugian": "3 Juta",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.560569499088999, -6.72804083429874] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 6",
+        "Kampung": "ASRAMA TNI AD",
+        "Kelurahan": "Kesambi",
+        "Kedalaman": "40 cm",
+        "Durasi": "3-4 Jam",
+        "Dampak": "40-675 Rumah",
+        "Penyebab": "Hujan dan drainase",
+        "Kerugian": "2-33,75 Juta",
+        "Tahun": "2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "69 ASRAMA TNI AD (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.556157426843995, -6.72468106485829] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 7",
+        "Kampung": "WARNASARI",
+        "Kelurahan": "Kesambi",
+        "Kedalaman": "10-20 cm",
+        "Durasi": "2 Jam",
+        "Dampak": "20 Rumah",
+        "Penyebab": "Hujan",
+        "Kerugian": "1 Juta",
+        "Tahun": "2020",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.558196599544999, -6.72461374786534] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 1",
+        "Kampung": "KAMPUNG DRAJAT",
+        "Kelurahan": "Drajat",
+        "Kedalaman": "30 cm-1,5 meter",
+        "Durasi": "2-4 Jam",
+        "Dampak": "10-150 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "0,5-7,5 Juta",
+        "Tahun": "2018, 2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "71 KAMPUNG DRAJAT (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.560532237925003, -6.73593968717035] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "KARANG MULYA",
+        "Kelurahan": "Drajat",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.562975378675006, -6.73174562136713] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 3",
+        "Kampung": "KARANG MAKMUR",
+        "Kelurahan": "Drajat",
+        "Kedalaman": "20 cm",
+        "Durasi": "2 jam",
+        "Dampak": "-",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "BPBD",
+        "Foto": "73 KARANG MAKMUR (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.560572371622001, -6.73340026084503] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 4",
+        "Kampung": "KESAMBI DALAM",
+        "Kelurahan": "Drajat",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.560815654429007, -6.73033078496321] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 5",
+        "Kampung": "HARAPAN MULYA",
+        "Kelurahan": "Drajat",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.560240929333006, -6.73195691797157] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 8",
+        "Kampung": "SIMAJA SELATAN",
+        "Kelurahan": "Drajat",
+        "Kedalaman": "-",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2022",
+        "Sumber": "Laporan Kelurahan",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.554556609580004, -6.73358957999662] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 9",
+        "Kampung": "JABANG BAYI",
+        "Kelurahan": "Drajat",
+        "Kedalaman": "20 cm-1,5 meter",
+        "Durasi": "2-4 Jam",
+        "Dampak": "135 Rumah",
+        "Penyebab": "Hujan dan luapan sungai",
+        "Kerugian": "6,75 Juta",
+        "Tahun": "2020, 2022",
+        "Sumber": "BPBD",
+        "Foto": "77 JABANG BAYI (Copy).jpg"
+      },
+      "geometry": { "type": "Point", "coordinates": [108.553521936549998, -6.73625251589991] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 2",
+        "Kampung": "SICALUNG",
+        "Kelurahan": "Karyamulya",
+        "Kedalaman": "20 cm",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.540906634302004, -6.73858858608982] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "RW": "RW 13",
+        "Kampung": "MEKAR SICALUNG",
+        "Kelurahan": "Karyamulya",
+        "Kedalaman": "50 cm",
+        "Durasi": "-",
+        "Dampak": "-",
+        "Penyebab": "Hujan",
+        "Kerugian": "-",
+        "Tahun": "2017",
+        "Sumber": "BPBD",
+        "Foto": null
+      },
+      "geometry": { "type": "Point", "coordinates": [108.540107219321996, -6.74079251923662] }
+    }
+  ]
+}
