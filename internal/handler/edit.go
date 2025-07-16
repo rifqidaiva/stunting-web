@@ -20,15 +20,24 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var filePath string = path.Join("web", "template", "edit.html")
+	var edit string = path.Join("web", "template", "edit.html")
+	var _head string = path.Join("web", "components", "_head.html")
+	var _navbar string = path.Join("web", "components", "_navbar.html")
+	var _footer string = path.Join("web", "components", "_footer.html")
 
-	template, err := template.ParseFiles(filePath)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	data := map[string]any{
+		"document": map[string]any{
+			"title": "Stunting Kota Cirebon",
+			"meta": map[string]any{
+				"description": "Sistem Informasi Stunting Kota Cirebon",
+				"keywords":    "stunting, kesehatan, anak, Cirebon",
+			},
+		},
 	}
 
-	err = template.Execute(w, nil)
+	template := template.Must(template.ParseFiles(edit, _head, _navbar, _footer))
+
+	err := template.ExecuteTemplate(w, "edit", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
