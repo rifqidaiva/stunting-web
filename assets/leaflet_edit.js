@@ -1,4 +1,7 @@
+import { printGeoJsonSelectedFeature, printGeoJsonTable } from "./modules/geojson.js"
+
 var map = L.map("map").setView([-6.726168577920489, 108.53918387877482], 14)
+let geoJson
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
@@ -8,9 +11,9 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 async function loadStunting() {
   try {
     const response = await fetch("static/geojson.geojson")
-    const data = await response.json()
+    geoJson = await response.json()
 
-    L.geoJSON(data, {
+    L.geoJSON(geoJson, {
       onEachFeature: function (feature, layer) {
         let props = feature.properties
         let tableRows = Object.entries(props)
@@ -18,8 +21,12 @@ async function loadStunting() {
           .join("")
         let popupContent = `<table class="table" border="1" cellpadding="4" cellspacing="0">${tableRows}</table>`
         layer.bindPopup(popupContent)
+        layer.on("click", function () {
+          printGeoJsonSelectedFeature(feature, "selected-feature")
+        })
       },
     }).addTo(map)
+    printGeoJsonTable(geoJson, "geojson-table")
   } catch (error) {
     console.error("Error loading geojson:", error)
   }
@@ -68,5 +75,31 @@ map.on("pm:create", function (e) {
       <tr><th>Longitude</th><td>${latLng.lng}</td></tr>
     </table>`
     marker.bindPopup(popupContent).openPopup()
+
+    // Add the new feature to the geoJson object
+    if (geoJson && geoJson.type === "FeatureCollection") {
+      const newFeature = {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [latLng.lng, latLng.lat],
+        },
+        properties: {
+          RW: "-",
+          Kampung: "-",
+          Kelurahan: "-",
+          Kedalaman: "-",
+          Durasi: "-",
+          Dampak: "-",
+          Penyebab: "-",
+          Kerugian: "-",
+          Tahun: "-",
+          Sumber: "-",
+          Foto: "-",
+        },
+      }
+      geoJson.features.push(newFeature)
+      printGeoJsonTable(geoJson, "geojson-table")
+    }
   }
 })

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/rifqidaiva/stunting-web/internal/api"
 	"github.com/rifqidaiva/stunting-web/internal/handler"
 )
 
@@ -14,6 +15,8 @@ func main() {
 
 	http.HandleFunc("/", handler.Index)
 	http.HandleFunc("/edit", handler.Edit)
+	http.HandleFunc("/geojson/get", api.GeoJsonGet)
+	http.HandleFunc("/geojson/update", api.GeoJsonUpdate)
 
 	fmt.Println("starting web server at http://localhost:8080/")
 	http.ListenAndServe("localhost:8080", nil)

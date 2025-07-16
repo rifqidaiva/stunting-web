@@ -21,8 +21,8 @@ func NewResponse(statusCode int, message string, data any) *Response {
 	}
 }
 
-// WriteJSON writes the Response as JSON to the http.ResponseWriter
-func (r *Response) WriteJSON(w http.ResponseWriter) error {
+// WriteJson writes the Response as JSON to the http.ResponseWriter
+func (r *Response) WriteJson(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(r.StatusCode)
 

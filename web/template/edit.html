@@ -25,15 +25,18 @@
       <section class="row">
         <div
           id="map"
-          class="w-100 col rounded shadow-sm my-4"
+          class="w-100 col-md rounded shadow-sm my-4"
           style="height: 500px"></div>
-        <div class="col">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque, delectus! Vero nostrum,
-          neque accusantium hic qui nam corporis necessitatibus maiores. Ipsum nostrum minima rem.
-          Recusandae delectus nisi eligendi hic nihil iste qui voluptates illo tempore fugiat
-          veritatis, cumque libero fugit ipsam, cum eveniet, quibusdam repellat molestiae
-          perspiciatis quasi enim voluptas?
+        <div class="col-md-4 my-4">
+          <div
+            id="selected-feature"
+            class="overflow-auto"></div>
         </div>
+      </section>
+      <section>
+        <div
+          id="geojson-table"
+          class="overflow-auto"></div>
       </section>
     </article>
 
@@ -48,7 +51,9 @@
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
       crossorigin="anonymous"></script>
-    <script src="static/leaflet_edit.js"></script>
+    <script
+      type="module"
+      src="static/leaflet_edit.js"></script>
   </body>
 </html>
 {{ end }}

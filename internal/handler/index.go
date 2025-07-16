@@ -13,7 +13,7 @@ import (
 func Index(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
-		err := response.WriteJSON(w)
+		err := response.WriteJson(w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
