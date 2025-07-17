@@ -8,8 +8,10 @@ import (
 	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
-// GeoJsonGet retrieves GeoJSON data by ID.
-// It responds with the GeoJSON data in JSON format.
+// GeoJsonGet handles the retrieval of GeoJSON data.
+// It expects a GET request with an optional ID query parameter.
+// If ID is provided, it retrieves the specific GeoJSON data.
+// If no ID is provided, it retrieves all GeoJSON data.
 func GeoJsonGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
@@ -20,13 +22,6 @@ func GeoJsonGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := r.URL.Query().Get("id")
-	if id == "" {
-		response := object.NewResponse(http.StatusBadRequest, "Missing id parameter", nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
 
 	db, err := object.ConnectDb()
 	if err != nil {
@@ -38,35 +33,52 @@ func GeoJsonGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	geojsonStr, err := getGeoJsonData(db, id)
+	if id != "" {
+		// Get by ID
+		geojsonStr, err := getGeoJsonData(db, id)
+		if err != nil {
+			status := http.StatusInternalServerError
+			msg := "Failed to retrieve GeoJSON data"
+			if err == sql.ErrNoRows {
+				status = http.StatusNotFound
+				msg = "GeoJSON not found"
+			}
+			response := object.NewResponse(status, msg, nil)
+			if err := response.WriteJson(w); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		var geojsonObj map[string]any
+		if err := json.Unmarshal([]byte(geojsonStr), &geojsonObj); err != nil {
+			response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
+			if err := response.WriteJson(w); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		response := object.NewResponse(http.StatusOK, "GeoJSON data retrieved successfully", geojsonObj)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Get all
+	geojsonList, err := getAllGeoJsonData(db)
 	if err != nil {
-		status := http.StatusInternalServerError
-		msg := "Failed to retrieve GeoJSON data"
-		if err == sql.ErrNoRows {
-			status = http.StatusNotFound
-			msg = "GeoJSON not found"
-		}
-		response := object.NewResponse(status, msg, nil)
+		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Parse the GeoJSON string into a map
-	var geojsonObj map[string]any
-	if err := json.Unmarshal([]byte(geojsonStr), &geojsonObj); err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to parse GeoJSON", nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	response := object.NewResponse(http.StatusOK, "GeoJSON data retrieved successfully", geojsonObj)
+	response := object.NewResponse(http.StatusOK, "All GeoJSON data retrieved successfully", geojsonList)
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
 }
 
@@ -78,4 +90,26 @@ func getGeoJsonData(db *sql.DB, id string) (string, error) {
 		return "", err
 	}
 	return geojson, nil
+}
+
+func getAllGeoJsonData(db *sql.DB) ([]map[string]any, error) {
+	rows, err := db.Query("SELECT geojson FROM stunting_geojson")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []map[string]any
+	for rows.Next() {
+		var geojsonStr string
+		if err := rows.Scan(&geojsonStr); err != nil {
+			return nil, err
+		}
+		var geojsonObj map[string]any
+		if err := json.Unmarshal([]byte(geojsonStr), &geojsonObj); err != nil {
+			return nil, err
+		}
+		result = append(result, geojsonObj)
+	}
+	return result, nil
 }

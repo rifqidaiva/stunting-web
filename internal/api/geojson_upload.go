@@ -11,7 +11,8 @@ import (
 )
 
 // GeoJsonUpload handles the upload of GeoJSON files.
-// It processes the uploaded file and stores it in the database.
+// It expects a POST request with a file upload containing GeoJSON data.
+// The uploaded file is processed and stored in the database.
 func GeoJsonUpload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)

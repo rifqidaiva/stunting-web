@@ -36,7 +36,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	template := template.Must(template.ParseFiles(index, _head, _navbar, _footer))
 
-	if err := template.ExecuteTemplate(w, "index", data); err != nil {
+	err := template.ExecuteTemplate(w, "index", data)
+	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

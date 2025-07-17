@@ -1,22 +1,15 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
-type updateRequest struct {
-	ID      string          `json:"id"`
-	GeoJSON json.RawMessage `json:"geojson"`
-}
-
-// GeoJsonUpdate handles the update of GeoJSON data.
-// It expects a PUT request with a JSON body containing the ID and GeoJSON data.
-// TODO: Implement proper validation for GeoJSON format.
-func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
+// GeoJsonDelete handles the deletion of GeoJSON data by ID.
+// It expects a DELETE request with the ID as a query parameter.
+func GeoJsonDelete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -24,17 +17,9 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req updateRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		response := object.NewResponse(http.StatusBadRequest, err.Error(), nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-	if req.ID == "" || len(req.GeoJSON) == 0 {
-		response := object.NewResponse(http.StatusBadRequest, "Missing id or geojson", nil)
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		response := object.NewResponse(http.StatusBadRequest, "Missing id parameter", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -51,7 +36,7 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("UPDATE stunting_geojson SET geojson = ? WHERE id = ?")
+	stmt, err := db.Prepare("DELETE FROM stunting_geojson WHERE id = ?")
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
@@ -61,7 +46,7 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(req.GeoJSON, req.ID)
+	res, err := stmt.Exec(id)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
@@ -78,6 +63,7 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
 	if rowsAffected == 0 {
 		response := object.NewResponse(http.StatusNotFound, "GeoJSON not found", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -86,8 +72,9 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := object.NewResponse(http.StatusOK, "GeoJSON updated successfully", nil)
+	response := object.NewResponse(http.StatusOK, "GeoJSON deleted successfully", nil)
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
