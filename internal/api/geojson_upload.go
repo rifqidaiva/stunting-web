@@ -14,51 +14,71 @@ import (
 // It processes the uploaded file and stores it in the database.
 func GeoJsonUpload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	// Parse the multipart form data
 	err := r.ParseMultipartForm(10 << 20) // Limit to 10 MB
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to parse form: %v", err), http.StatusBadRequest)
+		response := object.NewResponse(http.StatusBadRequest, err.Error(), nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	file, fileHeader, err := r.FormFile("geojson")
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to get file from form: %v", err), http.StatusBadRequest)
+		response := object.NewResponse(http.StatusBadRequest, err.Error(), nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 	defer file.Close()
 
 	if fileHeader.Filename == "" {
-		http.Error(w, "File name is missing", http.StatusBadRequest)
+		response := object.NewResponse(http.StatusBadRequest, "File name is missing", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	if fileHeader.Header.Get("Content-Type") != "application/json" &&
 		fileHeader.Header.Get("Content-Type") != "application/geo+json" {
-		http.Error(w, "Invalid file type. Only GeoJSON files are allowed.", http.StatusBadRequest)
+		response := object.NewResponse(http.StatusBadRequest, "Invalid file type. Only GeoJSON files are allowed.", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	const maxFileSize = 10 << 20 // 10 MB
 	if fileHeader.Size > maxFileSize {
-		http.Error(w, "File size exceeds 10 MB limit", http.StatusBadRequest)
+		response := object.NewResponse(http.StatusBadRequest, "File size exceeds 10 MB limit", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	// Process the GeoJSON file and store it in the database
 	err = processGeoJsonFile(file, fileHeader.Filename)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to process GeoJSON file: %v", err), http.StatusInternalServerError)
+		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	response := object.NewResponse(http.StatusOK, "GeoJSON file uploaded successfully", nil)
-	err = response.WriteJson(w)
-	if err != nil {
+	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

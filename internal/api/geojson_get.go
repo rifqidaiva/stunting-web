@@ -12,40 +12,60 @@ import (
 // It responds with the GeoJSON data in JSON format.
 func GeoJsonGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	id := r.URL.Query().Get("id")
 	if id == "" {
-		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+		response := object.NewResponse(http.StatusBadRequest, "Missing id parameter", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	db, err := object.ConnectDb()
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 	defer db.Close()
 
 	geojsonStr, err := getGeoJsonData(db, id)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		status := http.StatusInternalServerError
+		msg := "Failed to retrieve GeoJSON data"
+		if err == sql.ErrNoRows {
+			status = http.StatusNotFound
+			msg = "GeoJSON not found"
+		}
+		response := object.NewResponse(status, msg, nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	// Parse the GeoJSON string into a map
 	var geojsonObj map[string]any
 	if err := json.Unmarshal([]byte(geojsonStr), &geojsonObj); err != nil {
-		http.Error(w, "Failed to parse GeoJSON", http.StatusInternalServerError)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to parse GeoJSON", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
 	response := object.NewResponse(http.StatusOK, "GeoJSON data retrieved successfully", geojsonObj)
-	err = response.WriteJson(w)
-	if err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	if err := response.WriteJson(w); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

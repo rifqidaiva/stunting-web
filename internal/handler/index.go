@@ -4,13 +4,18 @@ import (
 	"html/template"
 	"net/http"
 	"path"
+
+	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
 // Index handles the root path and serves the index page.
 // Only allows GET requests; otherwise responds with 405 Method Not Allowed.
 func Index(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -31,9 +36,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	template := template.Must(template.ParseFiles(index, _head, _navbar, _footer))
 
-	err := template.ExecuteTemplate(w, "index", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := template.ExecuteTemplate(w, "index", data); err != nil {
+		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 }
