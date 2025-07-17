@@ -4,19 +4,13 @@ import (
 	"html/template"
 	"net/http"
 	"path"
-
-	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
 // Edit handles the edit page and serves the edit template.
 // Only allows GET requests; otherwise responds with 405 Method Not Allowed.
 func Edit(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
-		err := response.WriteJson(w)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
 

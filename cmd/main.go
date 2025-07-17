@@ -15,8 +15,9 @@ func main() {
 
 	http.HandleFunc("/", handler.Index)
 	http.HandleFunc("/edit", handler.Edit)
-	http.HandleFunc("/geojson/get", api.GeoJsonGet)
-	http.HandleFunc("/geojson/update", api.GeoJsonUpdate)
+	http.HandleFunc("/api/geojson/get", api.GeoJsonGet)
+	http.HandleFunc("/api/geojson/update", api.GeoJsonUpdate)
+	http.HandleFunc("/api/geojson/upload", api.GeoJsonUpload)
 
 	fmt.Println("starting web server at http://localhost:8080/")
 	http.ListenAndServe("localhost:8080", nil)

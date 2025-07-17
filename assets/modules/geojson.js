@@ -45,4 +45,21 @@ function printGeoJsonSelectedFeature(feature, containerId) {
   document.getElementById(containerId).innerHTML = tableContent
 }
 
-export { printGeoJsonTable, printGeoJsonSelectedFeature }
+async function loadCirebonBoundary(L, map) {
+  try {
+    const response = await fetch("static/cirebon_boundary.geojson")
+    const data = await response.json()
+
+    L.geoJSON(data, {
+      style: {
+        color: "red",
+        weight: 3,
+        fill: false,
+      },
+    }).addTo(map)
+  } catch (error) {
+    console.error("Error loading Cirebon boundary:", error)
+  }
+}
+
+export { printGeoJsonTable, printGeoJsonSelectedFeature, loadCirebonBoundary }
