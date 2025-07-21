@@ -14,7 +14,10 @@ func main() {
 			http.FileServer(http.Dir("assets"))))
 
 	http.HandleFunc("/", handler.Index)
-	http.HandleFunc("/edit", handler.Edit)
+	http.HandleFunc("/login", handler.Login)
+	http.HandleFunc("/report", handler.Report)
+	http.HandleFunc("/admin", handler.Admin)
+	
 	http.HandleFunc("/api/geojson/get", api.GeoJsonGet)
 	http.HandleFunc("/api/geojson/update", api.GeoJsonUpdate)
 	http.HandleFunc("/api/geojson/delete", api.GeoJsonDelete)

@@ -5,6 +5,8 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/rifqidaiva/stunting-web/internal/object"
@@ -97,18 +99,20 @@ func processGeoJsonFile(file multipart.File, filename string) error {
 		return fmt.Errorf("failed to read file: %v", err)
 	}
 
-	id := uuid.New().String() // Generate UUID in Go
-	fmt.Printf("Uploading GeoJSON file: '%s' with generated ID: %s\n", filename, id)
+	id := uuid.New().String()
+	base := filepath.Base(filename)
+	name := strings.TrimSuffix(base, filepath.Ext(base))
+	fmt.Printf("Processing GeoJSON file: %s (ID: %s)\n", name, id)
 
 	// Insert the whole GeoJSON as one row
-	stmt, err := db.Prepare("INSERT INTO stunting_geojson (id, name, geojson) VALUES (?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO stunting_geojson (id, status, geojson) VALUES (?, ?, ?)")
 	if err != nil {
 		return fmt.Errorf("failed to prepare statement: %v", err)
 	}
 	defer stmt.Close()
 
 	geojsonStr := string(data)
-	_, err = stmt.Exec(id, filename, geojsonStr)
+	_, err = stmt.Exec(id, name, geojsonStr)
 	if err != nil {
 		return fmt.Errorf("failed to insert geojson: %v", err)
 	}
