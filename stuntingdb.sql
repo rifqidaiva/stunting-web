@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2025 at 03:03 AM
+-- Generation Time: Jul 22, 2025 at 03:34 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -37,26 +37,17 @@ CREATE TABLE `history` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `stunting_geojson`
---
-
-CREATE TABLE `stunting_geojson` (
-  `id` char(36) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `geojson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `sufferer`
 --
 
 CREATE TABLE `sufferer` (
   `id` char(36) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `nik` varchar(24) NOT NULL,
-  `date_of_birth` date NOT NULL
+  `nik` varchar(100) NOT NULL,
+  `date_of_birth` date NOT NULL,
+  `coordinates` point NOT NULL,
+  `status` enum('Belum diproses','Diproses dan data tidak sesuai','Diproses dan data sesuai','Belum ditindaklanjuti','Sudah ditindaklanjuti','Sudah perbaikan gizi') NOT NULL,
+  `reported_by_id` char(36) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -69,7 +60,8 @@ CREATE TABLE `user` (
   `id` char(36) NOT NULL,
   `email` varchar(100) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `password_hash` varchar(100) NOT NULL
+  `password_hash` varchar(100) NOT NULL,
+  `role` varchar(36) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -77,10 +69,29 @@ CREATE TABLE `user` (
 --
 
 --
--- Indexes for table `stunting_geojson`
+-- Indexes for table `sufferer`
 --
-ALTER TABLE `stunting_geojson`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `sufferer`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nik` (`nik`),
+  ADD KEY `reported_by_id` (`reported_by_id`);
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `sufferer`
+--
+ALTER TABLE `sufferer`
+  ADD CONSTRAINT `sufferer_ibfk_1` FOREIGN KEY (`reported_by_id`) REFERENCES `user` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -26,6 +26,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]any{
 		"document": map[string]any{
+			"page": "admin",
 			"title": "Stunting Kota Cirebon",
 			"meta": map[string]any{
 				"description": "Edit Stunting Data - Stunting Kota Cirebon",

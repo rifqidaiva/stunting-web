@@ -17,11 +17,12 @@ func main() {
 	http.HandleFunc("/login", handler.Login)
 	http.HandleFunc("/report", handler.Report)
 	http.HandleFunc("/admin", handler.Admin)
-	
-	http.HandleFunc("/api/geojson/get", api.GeoJsonGet)
-	http.HandleFunc("/api/geojson/update", api.GeoJsonUpdate)
-	http.HandleFunc("/api/geojson/delete", api.GeoJsonDelete)
-	http.HandleFunc("/api/geojson/upload", api.GeoJsonUpload)
+
+	http.HandleFunc("/api/admin/insert", api.AdminInsert)
+	http.HandleFunc("/api/admin/get", api.AdminGet)
+	http.HandleFunc("/api/admin/get/geojson", api.AdminGetGeoJson)
+	http.HandleFunc("/api/admin/update", api.AdminUpdate)
+	http.HandleFunc("/api/admin/delete", api.AdminDelete)
 
 	fmt.Println("starting web server at http://localhost:8080/")
 	http.ListenAndServe("localhost:8080", nil)

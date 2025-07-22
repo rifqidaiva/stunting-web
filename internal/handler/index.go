@@ -26,6 +26,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]any{
 		"document": map[string]any{
+			"page": "index",
 			"title": "Stunting Kota Cirebon",
 			"meta": map[string]any{
 				"description": "Welcome to Stunting Kota Cirebon",
