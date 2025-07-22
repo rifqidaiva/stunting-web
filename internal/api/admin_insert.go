@@ -7,16 +7,12 @@ import (
 	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
-type updateRequest struct {
-	ID      string          `json:"id"`
-	GeoJSON json.RawMessage `json:"geojson"`
-}
-
-// GeoJsonUpdate handles the update of GeoJSON data.
-// It expects a PUT request with a JSON body containing the ID and GeoJSON data.
-// TODO: Implement proper validation for GeoJSON format.
-func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
+// AdminInsert handles the insertion of new sufferers into the database.
+//
+// MARK: TODO
+//   - Implement JWT authentication and authorization for admin routes.
+func AdminInsert(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -24,8 +20,8 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req updateRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
+	var sufferer object.Sufferer
+	err := json.NewDecoder(r.Body).Decode(&sufferer)
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
@@ -33,8 +29,10 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	if req.ID == "" || len(req.GeoJSON) == 0 {
-		response := object.NewResponse(http.StatusBadRequest, "Missing id or geojson", nil)
+
+	err = sufferer.ValidateFields("Name", "Nik", "DateOfBirth", "Coordinates")
+	if err != nil {
+		response := object.NewResponse(http.StatusBadRequest, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -51,7 +49,11 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	stmt, err := db.Prepare("UPDATE stunting_geojson SET geojson = ? WHERE id = ?")
+	// MARK: TODO
+	// - Implement JWT authentication and authorization for admin routes.
+	// - Get admin ID and insert to reported_by_id.
+	// For now, we assume the request is authenticated and authorized.
+	stmt, err := db.Prepare("INSERT INTO sufferer (id, name, nik, date_of_birth, coordinates, reported_by_id) VALUES (UUID(), ?, ?, ?, ST_GeomFromText(?), ?)")
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
@@ -61,7 +63,7 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(req.GeoJSON, req.ID)
+	_, err = stmt.Exec(sufferer.Name, sufferer.Nik, sufferer.DateOfBirth, object.FormatCoordinates(sufferer.Coordinates), "b0429037-66ad-11f0-a701-2811a8eb1247")
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
@@ -70,23 +72,7 @@ func GeoJsonUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, err.Error(), nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-	if rowsAffected == 0 {
-		response := object.NewResponse(http.StatusNotFound, "GeoJSON not found", nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	response := object.NewResponse(http.StatusOK, "GeoJSON updated successfully", nil)
+	response := object.NewResponse(http.StatusOK, "Sufferer added successfully", nil)
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

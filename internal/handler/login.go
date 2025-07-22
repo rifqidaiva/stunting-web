@@ -26,6 +26,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]any{
 		"document": map[string]any{
+			"page": "login",
 			"title": "Login - Stunting Kota Cirebon",
 			"meta": map[string]any{
 				"description": "Login to the Stunting Kota Cirebon system",

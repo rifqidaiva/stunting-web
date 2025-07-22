@@ -26,6 +26,7 @@ func Report(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]any{
 		"document": map[string]any{
+			"page": "report",
 			"title": "Stunting Report",
 			"meta": map[string]any{
 				"description": "Report on stunting cases in Cirebon",
