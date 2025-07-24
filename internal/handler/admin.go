@@ -24,9 +24,13 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 	var _navbar string = path.Join("web", "components", "_navbar.html")
 	var _footer string = path.Join("web", "components", "_footer.html")
 
+	var _addSuffererContent string = path.Join("web", "components", "admin", "_addSuffererContent.html")
+	var _dataContent string = path.Join("web", "components", "admin", "_dataContent.html")
+	var _statisticsContent string = path.Join("web", "components", "admin", "_statisticsContent.html")
+
 	data := map[string]any{
 		"document": map[string]any{
-			"page": "admin",
+			"page":  "admin",
 			"title": "Stunting Kota Cirebon",
 			"meta": map[string]any{
 				"description": "Edit Stunting Data - Stunting Kota Cirebon",
@@ -35,7 +39,7 @@ func Admin(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	template := template.Must(template.ParseFiles(edit, _head, _navbar, _footer))
+	template := template.Must(template.ParseFiles(edit, _head, _navbar, _footer, _addSuffererContent, _dataContent, _statisticsContent))
 
 	err := template.ExecuteTemplate(w, "admin", data)
 	if err != nil {
