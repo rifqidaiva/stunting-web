@@ -11,6 +11,20 @@ import (
 //
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
+//
+// AdminInsert godoc
+//
+// @Summary Insert a new sufferer
+// @Description Inserts a new sufferer into the database.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param sufferer body object.Sufferer true "Sufferer data"
+// @Success 200 {object} object.Response{data=nil} "Sufferer added successfully"
+// @Failure 405 {object} object.Response{data=nil} "Method Not Allowed"
+// @Failure 400 {object} object.Response{data=nil} "Invalid request body"
+// @Failure 500 {object} object.Response{data=nil} "Internal server error"
+// @Router /api/admin/insert [post]
 func AdminInsert(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)

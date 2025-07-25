@@ -13,6 +13,23 @@ import (
 //
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
+//
+// AdminUpdate godoc
+//
+// @Summary Update a sufferer
+// @Description	Updates a sufferer by ID. Only the fields you want to update need to be included in the request body (partial update).
+// @Description	The 'id' field is required to identify the sufferer to update.
+// @Description	The 'reported_by_id' field must NOT be included in the request body.
+// @Description	Other fields (such as name, nik, date_of_birth, coordinates, status) can be included as needed.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param sufferer body object.Sufferer true "Sufferer data to update (only fields to be updated, id and reported_by_id are required)"
+// @Success 200 {object} object.Response{data=nil} "Sufferer updated successfully"
+// @Failure 400 {object} object.Response{data=nil} "Invalid request body or missing ID"
+// @Failure 404 {object} object.Response{data=nil} "Sufferer ID not found"
+// @Failure 500 {object} object.Response{data=nil} "Internal server error"
+// @Router /api/admin/update [put]
 func AdminUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)

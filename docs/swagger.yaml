@@ -1,0 +1,311 @@
+definitions:
+  object.GeoFeature:
+    properties:
+      geometry:
+        $ref: '#/definitions/object.GeoGeometry'
+      properties:
+        $ref: '#/definitions/object.GeoProperties'
+      type:
+        type: string
+    type: object
+  object.GeoGeometry:
+    properties:
+      coordinates:
+        items:
+          type: number
+        type: array
+      type:
+        type: string
+    type: object
+  object.GeoJson:
+    properties:
+      features:
+        items:
+          $ref: '#/definitions/object.GeoFeature'
+        type: array
+      type:
+        type: string
+    type: object
+  object.GeoProperties:
+    properties:
+      date_of_birth:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      nik:
+        type: string
+      reported_by_id:
+        type: integer
+      status:
+        type: string
+    type: object
+  object.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+  object.Sufferer:
+    properties:
+      coordinates:
+        description: '[longitude, latitude]'
+        items:
+          type: number
+        type: array
+      date_of_birth:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      nik:
+        type: string
+      reported_by_id:
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API for managing stunting data
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Stunting Web API
+  version: 0.0.2
+paths:
+  /api/admin/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a sufferer by ID.
+      parameters:
+      - description: Sufferer ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sufferer deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Missing sufferer ID
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Sufferer ID not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Delete a sufferer
+      tags:
+      - Admin
+  /api/admin/get:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all sufferers from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/object.Sufferer'
+                  type: array
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get all sufferers
+      tags:
+      - Admin
+  /api/admin/get/geojson:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves GeoJSON data of all sufferers from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/object.GeoJson'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get GeoJSON of all sufferers
+      tags:
+      - Admin
+  /api/admin/insert:
+    post:
+      consumes:
+      - application/json
+      description: Inserts a new sufferer into the database.
+      parameters:
+      - description: Sufferer data
+        in: body
+        name: sufferer
+        required: true
+        schema:
+          $ref: '#/definitions/object.Sufferer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sufferer added successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Invalid request body
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "405":
+          description: Method Not Allowed
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Insert a new sufferer
+      tags:
+      - Admin
+  /api/admin/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Updates a sufferer by ID. Only the fields you want to update need to be included in the request body (partial update).
+        The 'id' field is required to identify the sufferer to update.
+        The 'reported_by_id' field must NOT be included in the request body.
+        Other fields (such as name, nik, date_of_birth, coordinates, status) can be included as needed.
+      parameters:
+      - description: Sufferer data to update (only fields to be updated, id and reported_by_id
+          are required)
+        in: body
+        name: sufferer
+        required: true
+        schema:
+          $ref: '#/definitions/object.Sufferer'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sufferer updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Invalid request body or missing ID
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Sufferer ID not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Update a sufferer
+      tags:
+      - Admin
+swagger: "2.0"

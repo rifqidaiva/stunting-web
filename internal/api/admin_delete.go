@@ -10,6 +10,20 @@ import (
 //
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
+//
+// AdminDelete godoc
+//
+// @Summary Delete a sufferer
+// @Description Deletes a sufferer by ID.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param id query string true "Sufferer ID"
+// @Success 200 {object} object.Response{data=nil} "Sufferer deleted successfully"
+// @Failure 400 {object} object.Response{data=nil} "Missing sufferer ID"
+// @Failure 404 {object} object.Response{data=nil} "Sufferer ID not found"
+// @Failure 500 {object} object.Response{data=nil} "Internal server error"
+// @Router /api/admin/delete [delete]
 func AdminDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
