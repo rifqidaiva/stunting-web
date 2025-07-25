@@ -14,7 +14,7 @@ import (
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
 //
-// AdminUpdate godoc
+// AdminUpdate swagger documentation
 //
 // @Summary Update a sufferer
 // @Description	Updates a sufferer by ID. Only the fields you want to update need to be included in the request body (partial update).

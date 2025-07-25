@@ -11,7 +11,7 @@ import (
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
 //
-// AdminGetGeoJson godoc
+// AdminGetGeoJson swagger documentation
 //
 // @Summary Get GeoJSON of all sufferers
 // @Description Retrieves GeoJSON data of all sufferers from the database.

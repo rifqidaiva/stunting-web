@@ -12,7 +12,7 @@ import (
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
 //
-// AdminInsert godoc
+// AdminInsert swagger documentation
 //
 // @Summary Insert a new sufferer
 // @Description Inserts a new sufferer into the database.

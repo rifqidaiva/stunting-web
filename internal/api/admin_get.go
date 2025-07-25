@@ -11,7 +11,7 @@ import (
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
 //
-// AdminGet godoc
+// AdminGet swagger documentation
 //
 // @Summary Get all sufferers
 // @Description Retrieves all sufferers from the database.

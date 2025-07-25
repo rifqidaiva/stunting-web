@@ -11,7 +11,7 @@ import (
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
 //
-// AdminDelete godoc
+// AdminDelete swagger documentation
 //
 // @Summary Delete a sufferer
 // @Description Deletes a sufferer by ID.
