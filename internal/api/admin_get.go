@@ -10,6 +10,17 @@ import (
 //
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
+//
+// AdminGet swagger documentation
+//
+// @Summary Get all sufferers
+// @Description Retrieves all sufferers from the database.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} object.Response{data=[]object.Sufferer}
+// @Failure 500 {object} object.Response{data=nil} "Internal server error"
+// @Router /api/admin/get [get]
 func AdminGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)

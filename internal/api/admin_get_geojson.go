@@ -10,6 +10,17 @@ import (
 //
 // MARK: TODO
 //   - Implement JWT authentication and authorization for admin routes.
+//
+// AdminGetGeoJson swagger documentation
+//
+// @Summary Get GeoJSON of all sufferers
+// @Description Retrieves GeoJSON data of all sufferers from the database.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} object.Response{data=object.GeoJson{}} "Success"
+// @Failure 500 {object} object.Response{data=nil} "Internal server error"
+// @Router /api/admin/get/geojson [get]
 func AdminGetGeoJson(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
