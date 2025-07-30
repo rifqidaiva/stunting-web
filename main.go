@@ -21,11 +21,10 @@ import (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:8080
 func main() {
-	http.HandleFunc("/api/admin/insert", api.AdminInsert)
+	// http.HandleFunc("/api/admin/get", api.AdminGet)
+
 	http.HandleFunc("/api/admin/get", api.AdminGet)
-	http.HandleFunc("/api/admin/get/geojson", api.AdminGetGeoJson)
 	http.HandleFunc("/api/admin/update", api.AdminUpdate)
-	http.HandleFunc("/api/admin/delete", api.AdminDelete)
 
 	// API test endpoint
 	http.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {
