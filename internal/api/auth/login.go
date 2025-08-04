@@ -10,6 +10,17 @@ import (
 )
 
 // Login handles user login and returns a JWT token.
+// @Summary Login user and return JWT token
+// @Description Login user with email and password, returns JWT token on success
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param user body object.LoginRequest true "User login details"
+// @Success 200 {object} object.Response{data=object.TokenResponse} "Login successful"
+// @Failure 400 {object} object.Response "Invalid request body or validation error"
+// @Failure 401 {object} object.Response "Unauthorized - Invalid email or password"
+// @Failure 500 {object} object.Response "Internal server error"
+// @Router /auth/login [post]
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)

@@ -17,12 +17,12 @@ import AdminSidebarUser from "./AdminSidebarUser.vue"
 
 const items = [
   {
-    title: "Tambah Penderita",
-    icon: PlusCircle,
+    title: "Laporan Masyarakat",
+    icon: Database,
   },
   {
-    title: "Data",
-    icon: Database,
+    title: "Tambah Balita Stunting",
+    icon: PlusCircle,
   },
   {
     title: "Statistik",

@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	_ "github.com/rifqidaiva/stunting-web/docs" // Import for Swagger documentation
-	"github.com/rifqidaiva/stunting-web/internal/api"
 	"github.com/rifqidaiva/stunting-web/internal/object"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -23,8 +22,8 @@ import (
 func main() {
 	// http.HandleFunc("/api/admin/get", api.AdminGet)
 
-	http.HandleFunc("/api/admin/get", api.AdminGet)
-	http.HandleFunc("/api/admin/update", api.AdminUpdate)
+	// http.HandleFunc("/api/admin/get", api.AdminGet)
+	// http.HandleFunc("/api/admin/update", api.AdminUpdate)
 
 	// API test endpoint
 	http.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {

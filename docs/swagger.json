@@ -16,9 +16,14 @@
     },
     "host": "localhost:8080",
     "paths": {
-        "/api/admin/delete": {
+        "/api/admin/intervensi/delete/{id}": {
             "delete": {
-                "description": "Deletes a sufferer by ID.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes an intervention record by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,95 +33,52 @@
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Delete a sufferer",
+                "summary": "Delete an intervention record",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Sufferer ID",
+                        "type": "integer",
+                        "description": "Intervention ID",
                         "name": "id",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sufferer deleted successfully",
+                        "description": "Intervention deleted successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
                     "400": {
-                        "description": "Missing sufferer ID",
+                        "description": "Invalid request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
                     "404": {
-                        "description": "Sufferer ID not found",
+                        "description": "Intervention not found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     }
                 }
             }
         },
-        "/api/admin/get": {
+        "/api/admin/intervensi/get/{id}": {
             "get": {
-                "description": "Retrieves all sufferers from the database.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves intervention data",
                 "consumes": [
                     "application/json"
                 ],
@@ -126,106 +88,52 @@
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Get all sufferers",
+                "summary": "Get intervention data",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Intervention ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Intervention data retrieved successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/object.Sufferer"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Intervention data not found",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     }
                 }
             }
         },
-        "/api/admin/get/geojson": {
-            "get": {
-                "description": "Retrieves GeoJSON data of all sufferers from the database.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Get GeoJSON of all sufferers",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/object.GeoJson"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/insert": {
+        "/api/admin/intervensi/insert": {
             "post": {
-                "description": "Inserts a new sufferer into the database.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Inserts a new intervention record",
                 "consumes": [
                     "application/json"
                 ],
@@ -235,97 +143,48 @@
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Insert a new sufferer",
+                "summary": "Insert a new intervention record",
                 "parameters": [
                     {
-                        "description": "Sufferer data",
-                        "name": "sufferer",
+                        "description": "Intervention data",
+                        "name": "intervention",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.Sufferer"
+                            "$ref": "#/definitions/object.InterventionData"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sufferer added successfully",
+                        "description": "Intervention inserted successfully",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
                     "400": {
-                        "description": "Invalid request body",
+                        "description": "Invalid request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "405": {
-                        "description": "Method Not Allowed",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     }
                 }
             }
         },
-        "/api/admin/update": {
+        "/api/admin/intervensi/update/{id}": {
             "put": {
-                "description": "Updates a sufferer by ID. Only the fields you want to update need to be included in the request body (partial update).\nThe 'id' field is required to identify the sufferer to update.\nThe 'reported_by_id' field must NOT be included in the request body.\nOther fields (such as name, nik, date_of_birth, coordinates, status) can be included as needed.",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing intervention record",
                 "consumes": [
                     "application/json"
                 ],
@@ -335,21 +194,621 @@
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Update a sufferer",
+                "summary": "Update an existing intervention record",
                 "parameters": [
                     {
-                        "description": "Sufferer data to update (only fields to be updated, id and reported_by_id are required)",
-                        "name": "sufferer",
+                        "type": "integer",
+                        "description": "Intervention ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Intervention data",
+                        "name": "intervention",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.Sufferer"
+                            "$ref": "#/definitions/object.InterventionData"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Sufferer updated successfully",
+                        "description": "Intervention updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/laporan/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes a laporan record by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a laporan record",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Laporan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Laporan not found",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/laporan/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves all reports by community members and admin users",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get all reports by community members and admin users",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Laporan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reports retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Report"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Reports not found",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/laporan/insert": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Inserts a new laporan record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Insert a new laporan record",
+                "parameters": [
+                    {
+                        "description": "Laporan data",
+                        "name": "laporan",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Report"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Laporan inserted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/laporan/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update pengguna, balita, keluarga, or laporan masyarakat data by admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update admin data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Laporan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Pengguna data to update",
+                        "name": "pengguna",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Update successful",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/riwayat-pemeriksaan/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes a pemeriksaan record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Delete a pemeriksaan record",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Pemeriksaan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat pemeriksaan deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Pemeriksaan not found",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/riwayat-pemeriksaan/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a pemeriksaan record by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get a pemeriksaan record",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Pemeriksaan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat pemeriksaan retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Pemeriksaan not found",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/riwayat-pemeriksaan/insert": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Inserts a new pemeriksaan record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Insert a new pemeriksaan record",
+                "parameters": [
+                    {
+                        "description": "Pemeriksaan data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.RiwayatPemeriksaan"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat pemeriksaan inserted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/riwayat-pemeriksaan/update/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates a pemeriksaan record by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Update a pemeriksaan record",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Pemeriksaan ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Pemeriksaan data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.RiwayatPemeriksaan"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Riwayat pemeriksaan updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Pemeriksaan not found",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/masyarakat/get": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves reports submitted by masyarakat",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Masyarakat"
+                ],
+                "summary": "Get reports by masyarakat",
+                "responses": {
+                    "200": {
+                        "description": "Reports retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/masyarakat/insert": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Inserts a new report submitted by masyarakat",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Masyarakat"
+                ],
+                "summary": "Insert a new report by masyarakat",
+                "parameters": [
+                    {
+                        "description": "Report data",
+                        "name": "report",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.Report"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Report inserted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "Login user with email and password, returns JWT token on success",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user and return JWT token",
+                "parameters": [
+                    {
+                        "description": "User login details",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
                         "schema": {
                             "allOf": [
                                 {
@@ -359,7 +818,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "object"
+                                            "$ref": "#/definitions/object.TokenResponse"
                                         }
                                     }
                                 }
@@ -367,57 +826,67 @@
                         }
                     },
                     "400": {
-                        "description": "Invalid request body or missing ID",
+                        "description": "Invalid request body or validation error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
-                    "404": {
-                        "description": "Sufferer ID not found",
+                    "401": {
+                        "description": "Unauthorized - Invalid email or password",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/object.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Register a new user with email, name, password, and address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User registration details",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/object.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registration successful",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or validation error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/object.Response"
                         }
                     }
                 }
@@ -425,68 +894,302 @@
         }
     },
     "definitions": {
-        "object.GeoFeature": {
+        "object.Balita": {
             "type": "object",
             "properties": {
-                "geometry": {
-                    "$ref": "#/definitions/object.GeoGeometry"
+                "berat_lahir": {
+                    "type": "string"
                 },
-                "properties": {
-                    "$ref": "#/definitions/object.GeoProperties"
+                "created_date": {
+                    "type": "string"
                 },
-                "type": {
+                "created_id": {
+                    "type": "string"
+                },
+                "deleted_date": {
+                    "type": "string"
+                },
+                "deleted_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_keluarga": {
+                    "type": "string"
+                },
+                "jenis_kelamin": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tanggal_lahir": {
+                    "type": "string"
+                },
+                "tinggi_lahir": {
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "updated_id": {
                     "type": "string"
                 }
             }
         },
-        "object.GeoGeometry": {
+        "object.Intervensi": {
             "type": "object",
             "properties": {
-                "coordinates": {
+                "created_date": {
+                    "type": "string"
+                },
+                "created_id": {
+                    "type": "string"
+                },
+                "deleted_date": {
+                    "type": "string"
+                },
+                "deleted_id": {
+                    "type": "string"
+                },
+                "deskripsi": {
+                    "type": "string"
+                },
+                "hasil": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_balita": {
+                    "type": "string"
+                },
+                "jenis": {
+                    "type": "string"
+                },
+                "tanggal": {
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "updated_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.InterventionData": {
+            "type": "object",
+            "properties": {
+                "deskripsi": {
+                    "type": "string"
+                },
+                "hasil": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_balita": {
+                    "type": "string"
+                },
+                "jenis": {
+                    "type": "string"
+                },
+                "tanggal": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Keluarga": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "created_id": {
+                    "type": "string"
+                },
+                "deleted_date": {
+                    "type": "string"
+                },
+                "deleted_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_kelurahan": {
+                    "type": "string"
+                },
+                "koordinat": {
                     "type": "array",
                     "items": {
                         "type": "number"
                     }
                 },
-                "type": {
+                "nama_ayah": {
                     "type": "string"
-                }
-            }
-        },
-        "object.GeoJson": {
-            "type": "object",
-            "properties": {
-                "features": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/object.GeoFeature"
-                    }
                 },
-                "type": {
+                "nama_ibu": {
+                    "type": "string"
+                },
+                "nik_ayah": {
+                    "type": "string"
+                },
+                "nik_ibu": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "type": "string"
+                },
+                "rt": {
+                    "type": "string"
+                },
+                "rw": {
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "updated_id": {
                     "type": "string"
                 }
             }
         },
-        "object.GeoProperties": {
+        "object.LaporanMasyarakat": {
             "type": "object",
             "properties": {
-                "date_of_birth": {
+                "created_date": {
+                    "type": "string"
+                },
+                "created_id": {
+                    "type": "string"
+                },
+                "deleted_date": {
+                    "type": "string"
+                },
+                "deleted_id": {
+                    "type": "string"
+                },
+                "hubungan_dengan_balita": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "name": {
                     "type": "string"
                 },
-                "nik": {
+                "id_balita": {
                     "type": "string"
                 },
-                "reported_by_id": {
-                    "type": "integer"
-                },
-                "status": {
+                "id_pengguna": {
                     "type": "string"
+                },
+                "id_status_laporan": {
+                    "type": "string"
+                },
+                "nomor_hp_keluarga_balita": {
+                    "type": "string"
+                },
+                "nomor_hp_pelapor": {
+                    "type": "string"
+                },
+                "tanggal_laporan": {
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "updated_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Pengguna": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Unhashed password for login, not stored in DB",
+                    "type": "string"
+                },
+                "password_hash": {
+                    "type": "string"
+                },
+                "role": {
+                    "description": "\"masyarakat\" or \"admin\"",
+                    "type": "string"
+                }
+            }
+        },
+        "object.RegisterRequest": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.Report": {
+            "type": "object",
+            "properties": {
+                "balita": {
+                    "$ref": "#/definitions/object.Balita"
+                },
+                "intervensi": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.Intervensi"
+                    }
+                },
+                "keluarga": {
+                    "$ref": "#/definitions/object.Keluarga"
+                },
+                "laporan_masyarakat": {
+                    "$ref": "#/definitions/object.LaporanMasyarakat"
+                },
+                "pengguna": {
+                    "$ref": "#/definitions/object.Pengguna"
+                },
+                "riwayat_pemeriksaan": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/object.RiwayatPemeriksaan"
+                    }
                 }
             }
         },
@@ -502,32 +1205,54 @@
                 }
             }
         },
-        "object.Sufferer": {
+        "object.RiwayatPemeriksaan": {
             "type": "object",
             "properties": {
-                "coordinates": {
-                    "description": "[longitude, latitude]",
-                    "type": "array",
-                    "items": {
-                        "type": "number"
-                    }
+                "berat_badan": {
+                    "type": "string"
                 },
-                "date_of_birth": {
+                "created_date": {
+                    "type": "string"
+                },
+                "created_id": {
+                    "type": "string"
+                },
+                "deleted_date": {
+                    "type": "string"
+                },
+                "deleted_id": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "name": {
+                "id_balita": {
                     "type": "string"
                 },
-                "nik": {
+                "keterangan": {
                     "type": "string"
                 },
-                "reported_by_id": {
+                "status_gizi": {
                     "type": "string"
                 },
-                "status": {
+                "tanggal": {
+                    "type": "string"
+                },
+                "tinggi_badan": {
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                },
+                "updated_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "object.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
                     "type": "string"
                 }
             }

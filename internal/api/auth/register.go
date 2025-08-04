@@ -10,6 +10,16 @@ import (
 )
 
 // Register handles user registration.
+// @Summary Register a new user
+// @Description Register a new user with email, name, password, and address
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param user body object.RegisterRequest true "User registration details"
+// @Success 200 {object} object.Response "Registration successful"
+// @Failure 400 {object} object.Response "Invalid request body or validation error"
+// @Failure 500 {object} object.Response "Internal server error"
+// @Router /auth/register [post]
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
