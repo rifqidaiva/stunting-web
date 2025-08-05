@@ -112,7 +112,7 @@ type Keluarga struct {
 // MARK: LaporanMasyarakat
 type LaporanMasyarakat struct {
 	Id                    string `json:"id"`
-	IdMasyarakat          string `json:"id_masyarakat"`
+	IdMasyarakat          string `json:"id_masyarakat"` // if NULL, this is an admin report
 	IdBalita              string `json:"id_balita"`
 	IdStatusLaporan       string `json:"id_status_laporan"`
 	TanggalLaporan        string `json:"tanggal_laporan"`

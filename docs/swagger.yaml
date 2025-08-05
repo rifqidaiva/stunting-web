@@ -1,4 +1,50 @@
 definitions:
+  api.balitaResponse:
+    properties:
+      berat_lahir:
+        type: string
+      created_date:
+        type: string
+      id:
+        type: string
+      id_keluarga:
+        type: string
+      jenis_kelamin:
+        type: string
+      kecamatan:
+        type: string
+      kelurahan:
+        type: string
+      nama:
+        type: string
+      nama_ayah:
+        type: string
+      nama_ibu:
+        type: string
+      nomor_kk:
+        type: string
+      tanggal_lahir:
+        type: string
+      tinggi_lahir:
+        type: string
+      umur:
+        description: calculated field in months
+        type: string
+      updated_date:
+        type: string
+    type: object
+  api.deleteBalitaRequest:
+    properties:
+      id:
+        type: string
+    type: object
+  api.deleteBalitaResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
   api.deleteKeluargaRequest:
     properties:
       id:
@@ -11,6 +57,15 @@ definitions:
       message:
         type: string
     type: object
+  api.getAllBalitaResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/api.balitaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
   api.getAllKeluargaResponse:
     properties:
       data:
@@ -19,6 +74,30 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  api.insertBalitaRequest:
+    properties:
+      berat_lahir:
+        description: in grams
+        type: string
+      id_keluarga:
+        type: string
+      jenis_kelamin:
+        description: '"L" or "P"'
+        type: string
+      nama:
+        type: string
+      tanggal_lahir:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+      tinggi_lahir:
+        description: in cm
+        type: string
+    type: object
+  api.insertBalitaResponse:
+    properties:
+      id:
+        type: string
     type: object
   api.insertKeluargaRequest:
     properties:
@@ -47,6 +126,30 @@ definitions:
         type: string
     type: object
   api.insertKeluargaResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  api.insertLaporanMasyarakatRequest:
+    properties:
+      hubungan_dengan_balita:
+        type: string
+      id_balita:
+        type: string
+      id_masyarakat:
+        description: dapat null jika laporan dari admin
+        type: string
+      id_status_laporan:
+        type: string
+      nomor_hp_keluarga_balita:
+        type: string
+      nomor_hp_pelapor:
+        type: string
+      tanggal_laporan:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+    type: object
+  api.insertLaporanMasyarakatResponse:
     properties:
       id:
         type: string
@@ -84,6 +187,34 @@ definitions:
       rw:
         type: string
       updated_date:
+        type: string
+    type: object
+  api.updateBalitaRequest:
+    properties:
+      berat_lahir:
+        description: in grams
+        type: string
+      id:
+        type: string
+      id_keluarga:
+        type: string
+      jenis_kelamin:
+        description: '"L" or "P"'
+        type: string
+      nama:
+        type: string
+      tanggal_lahir:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+      tinggi_lahir:
+        description: in cm
+        type: string
+    type: object
+  api.updateBalitaResponse:
+    properties:
+      id:
+        type: string
+      message:
         type: string
     type: object
   api.updateKeluargaRequest:
@@ -175,6 +306,393 @@ info:
   title: Stunting Web API
   version: 0.0.2
 paths:
+  /api/admin/balita/delete:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Soft delete balita data by setting deleted_date and deleted_id (Admin only)
+
+        Performs soft delete operation:
+        - Sets deleted_date to current timestamp
+        - Sets deleted_id to current user ID
+        - Data remains in database but is excluded from queries
+        - Can be restored if needed in the future
+        - Checks for related records before deletion
+      parameters:
+      - description: Balita ID to delete
+        in: body
+        name: balita
+        required: true
+        schema:
+          $ref: '#/definitions/api.deleteBalitaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Balita not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete balita data (soft delete)
+      tags:
+      - admin
+  /api/admin/balita/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get balita data based on query parameter (Admin only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all balita with total count
+        - With id parameter: Returns specific balita data
+
+        Balita data includes: nama, tanggal_lahir, jenis_kelamin, berat_lahir, tinggi_lahir, umur, keluarga info, location info
+      parameters:
+      - description: Balita ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.getAllBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Balita not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get balita data
+      tags:
+      - admin
+  /api/admin/balita/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new balita data (Admin only)
+
+        Inserts balita record with data including:
+        - id_keluarga, nama, tanggal_lahir, jenis_kelamin
+        - berat_lahir (in grams), tinggi_lahir (in cm)
+        - Validates keluarga existence and balita age criteria (under 5 years)
+      parameters:
+      - description: Balita data
+        in: body
+        name: balita
+        required: true
+        schema:
+          $ref: '#/definitions/api.insertBalitaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.insertBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new balita
+      tags:
+      - admin
+  /api/admin/balita/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restore soft deleted balita data by clearing deleted_date and deleted_id
+        (Admin only)
+      parameters:
+      - description: Balita ID to restore
+        in: body
+        name: balita
+        required: true
+        schema:
+          $ref: '#/definitions/api.deleteBalitaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita restored successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Balita not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Restore deleted balita data
+      tags:
+      - admin
+  /api/admin/balita/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Update existing balita data (Admin only)
+
+        Updates balita record with new data including:
+        - id_keluarga, nama, tanggal_lahir, jenis_kelamin
+        - berat_lahir (in grams), tinggi_lahir (in cm)
+        - Validates keluarga existence, balita age criteria, and prevents duplicates
+      parameters:
+      - description: Updated balita data
+        in: body
+        name: balita
+        required: true
+        schema:
+          $ref: '#/definitions/api.updateBalitaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.updateBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Balita not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update balita data
+      tags:
+      - admin
   /api/admin/keluarga/delete:
     delete:
       consumes:
@@ -553,6 +1071,77 @@ paths:
       security:
       - Bearer: []
       summary: Update keluarga data
+      tags:
+      - admin
+  /api/admin/laporan-masyarakat/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new laporan masyarakat data (Admin only)
+
+        Inserts laporan masyarakat record with data including:
+        - id_masyarakat (optional, null if admin report), id_balita, id_status_laporan
+        - tanggal_laporan, hubungan_dengan_balita, nomor_hp_pelapor, nomor_hp_keluarga_balita
+        - Validates balita existence, status laporan, and masyarakat (if provided)
+      parameters:
+      - description: Laporan masyarakat data
+        in: body
+        name: laporan
+        required: true
+        schema:
+          $ref: '#/definitions/api.insertLaporanMasyarakatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Laporan masyarakat inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.insertLaporanMasyarakatResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new laporan masyarakat
       tags:
       - admin
   /api/auth/login:

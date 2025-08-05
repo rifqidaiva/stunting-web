@@ -33,6 +33,14 @@ func main() {
 	http.HandleFunc("/api/admin/keluarga/delete", api.AdminKeluargaDelete)
 	http.HandleFunc("/api/admin/keluarga/restore", api.AdminKeluargaRestore)
 
+	http.HandleFunc("/api/admin/balita/get", api.AdminBalitaGet)
+	http.HandleFunc("/api/admin/balita/insert", api.AdminBalitaInsert)
+	http.HandleFunc("/api/admin/balita/update", api.AdminBalitaUpdate)
+	http.HandleFunc("/api/admin/balita/delete", api.AdminBalitaDelete)
+	http.HandleFunc("/api/admin/balita/restore", api.AdminBalitaRestore)
+
+	http.HandleFunc("/api/admin/laporan-masyarakat/insert", api.AdminLaporanMasyarakatInsert)
+
 	// API test endpoint
 	http.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {
 		response := object.NewResponse(http.StatusOK, "Test API is working", nil)
