@@ -2,13 +2,28 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/rifqidaiva/stunting-web/internal/object"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// RegisterAdmin handles admin registration.
+type registerAdminRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (r *registerAdminRequest) Validate() error {
+	if r.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+	if r.Password == "" {
+		return fmt.Errorf("password is required")
+	}
+	return nil
+}
+
 func RegisterAdmin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
@@ -18,8 +33,8 @@ func RegisterAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var admin object.Pengguna
-	err := json.NewDecoder(r.Body).Decode(&admin)
+	var req registerAdminRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, "Invalid request body", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -28,9 +43,8 @@ func RegisterAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	admin.Role = "admin" // Set role to admin
-
-	err = admin.ValidateFields("Email", "Nama", "Password", "Alamat")
+	// Validate required fields
+	err = req.Validate()
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
@@ -49,8 +63,26 @@ func RegisterAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	query := "INSERT INTO pengguna (email, nama, password_hash, role, alamat) VALUES (?, ?, ?, ?, ?)"
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(admin.Password), bcrypt.DefaultCost)
+	// Check if email already exists
+	var exists int
+	checkQuery := "SELECT COUNT(*) FROM pengguna WHERE email = ?"
+	err = db.QueryRow(checkQuery, req.Email).Scan(&exists)
+	if err != nil {
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check email", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	if exists > 0 {
+		response := object.NewResponse(http.StatusBadRequest, "Email already registered", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to hash password", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -59,6 +91,7 @@ func RegisterAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	query := "INSERT INTO pengguna (email, password_hash, role) VALUES (?, ?, ?)"
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to prepare statement", nil)
@@ -69,7 +102,7 @@ func RegisterAdmin(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(admin.Email, admin.Nama, hashedPassword, admin.Role, admin.Alamat)
+	result, err := stmt.Exec(req.Email, hashedPassword, "admin")
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to register admin", nil)
 		if err := response.WriteJson(w); err != nil {

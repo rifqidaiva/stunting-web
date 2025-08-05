@@ -1,90 +1,69 @@
 definitions:
-  object.Balita:
+  api.deleteKeluargaRequest:
     properties:
-      berat_lahir:
-        type: string
-      created_date:
-        type: string
-      created_id:
-        type: string
-      deleted_date:
-        type: string
-      deleted_id:
-        type: string
       id:
         type: string
-      id_keluarga:
-        type: string
-      jenis_kelamin:
-        type: string
-      nama:
-        type: string
-      tanggal_lahir:
-        type: string
-      tinggi_lahir:
-        type: string
-      updated_date:
-        type: string
-      updated_id:
-        type: string
     type: object
-  object.Intervensi:
+  api.deleteKeluargaResponse:
     properties:
-      created_date:
-        type: string
-      created_id:
-        type: string
-      deleted_date:
-        type: string
-      deleted_id:
-        type: string
-      deskripsi:
-        type: string
-      hasil:
-        type: string
       id:
         type: string
-      id_balita:
-        type: string
-      jenis:
-        type: string
-      tanggal:
-        type: string
-      updated_date:
-        type: string
-      updated_id:
+      message:
         type: string
     type: object
-  object.InterventionData:
+  api.getAllKeluargaResponse:
     properties:
-      deskripsi:
+      data:
+        items:
+          $ref: '#/definitions/api.keluargaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.insertKeluargaRequest:
+    properties:
+      alamat:
         type: string
-      hasil:
+      id_kelurahan:
         type: string
+      koordinat:
+        description: '[longitude, latitude]'
+        items:
+          type: number
+        type: array
+      nama_ayah:
+        type: string
+      nama_ibu:
+        type: string
+      nik_ayah:
+        type: string
+      nik_ibu:
+        type: string
+      nomor_kk:
+        type: string
+      rt:
+        type: string
+      rw:
+        type: string
+    type: object
+  api.insertKeluargaResponse:
+    properties:
       id:
         type: string
-      id_balita:
-        type: string
-      jenis:
-        type: string
-      tanggal:
-        type: string
     type: object
-  object.Keluarga:
+  api.keluargaResponse:
     properties:
       alamat:
         type: string
       created_date:
         type: string
-      created_id:
-        type: string
-      deleted_date:
-        type: string
-      deleted_id:
-        type: string
       id:
         type: string
       id_kelurahan:
+        type: string
+      kecamatan:
+        type: string
+      kelurahan:
         type: string
       koordinat:
         items:
@@ -106,95 +85,74 @@ definitions:
         type: string
       updated_date:
         type: string
-      updated_id:
-        type: string
     type: object
-  object.LaporanMasyarakat:
+  api.updateKeluargaRequest:
     properties:
-      created_date:
-        type: string
-      created_id:
-        type: string
-      deleted_date:
-        type: string
-      deleted_id:
-        type: string
-      hubungan_dengan_balita:
+      alamat:
         type: string
       id:
         type: string
-      id_balita:
+      id_kelurahan:
         type: string
-      id_pengguna:
+      koordinat:
+        description: '[longitude, latitude]'
+        items:
+          type: number
+        type: array
+      nama_ayah:
         type: string
-      id_status_laporan:
+      nama_ibu:
         type: string
-      nomor_hp_keluarga_balita:
+      nik_ayah:
         type: string
-      nomor_hp_pelapor:
+      nik_ibu:
         type: string
-      tanggal_laporan:
+      nomor_kk:
         type: string
-      updated_date:
+      rt:
         type: string
-      updated_id:
+      rw:
         type: string
     type: object
-  object.LoginRequest:
+  api.updateKeluargaResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  auth.loginRequest:
     properties:
       email:
         type: string
       password:
         type: string
     type: object
-  object.Pengguna:
+  auth.loginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  auth.registerRequest:
     properties:
       alamat:
         type: string
       email:
         type: string
-      id:
-        type: string
       nama:
         type: string
       password:
-        description: Unhashed password for login, not stored in DB
         type: string
-      password_hash:
+    type: object
+  auth.userProfileResponse:
+    properties:
+      data: {}
+      email:
+        type: string
+      id:
         type: string
       role:
-        description: '"masyarakat" or "admin"'
         type: string
-    type: object
-  object.RegisterRequest:
-    properties:
-      alamat:
-        type: string
-      email:
-        type: string
-      nama:
-        type: string
-      password:
-        type: string
-    type: object
-  object.Report:
-    properties:
-      balita:
-        $ref: '#/definitions/object.Balita'
-      intervensi:
-        items:
-          $ref: '#/definitions/object.Intervensi'
-        type: array
-      keluarga:
-        $ref: '#/definitions/object.Keluarga'
-      laporan_masyarakat:
-        $ref: '#/definitions/object.LaporanMasyarakat'
-      pengguna:
-        $ref: '#/definitions/object.Pengguna'
-      riwayat_pemeriksaan:
-        items:
-          $ref: '#/definitions/object.RiwayatPemeriksaan'
-        type: array
     type: object
   object.Response:
     properties:
@@ -203,40 +161,6 @@ definitions:
         type: string
       status_code:
         type: integer
-    type: object
-  object.RiwayatPemeriksaan:
-    properties:
-      berat_badan:
-        type: string
-      created_date:
-        type: string
-      created_id:
-        type: string
-      deleted_date:
-        type: string
-      deleted_id:
-        type: string
-      id:
-        type: string
-      id_balita:
-        type: string
-      keterangan:
-        type: string
-      status_gizi:
-        type: string
-      tanggal:
-        type: string
-      tinggi_badan:
-        type: string
-      updated_date:
-        type: string
-      updated_id:
-        type: string
-    type: object
-  object.TokenResponse:
-    properties:
-      token:
-        type: string
     type: object
 host: localhost:8080
 info:
@@ -251,505 +175,398 @@ info:
   title: Stunting Web API
   version: 0.0.2
 paths:
-  /api/admin/intervensi/delete/{id}:
+  /api/admin/keluarga/delete:
     delete:
       consumes:
       - application/json
-      description: Deletes an intervention record by ID
+      description: |-
+        Soft delete keluarga data by setting deleted_date and deleted_id (Admin only)
+
+        Performs soft delete operation:
+        - Sets deleted_date to current timestamp
+        - Sets deleted_id to current user ID
+        - Data remains in database but is excluded from queries
+        - Can be restored if needed in the future
       parameters:
-      - description: Intervention ID
-        in: path
-        name: id
+      - description: Keluarga ID to delete
+        in: body
+        name: keluarga
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/api.deleteKeluargaRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Intervention deleted successfully
+          description: Keluarga deleted successfully
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteKeluargaResponse'
+              type: object
         "400":
           description: Invalid request
           schema:
-            $ref: '#/definitions/object.Response'
-        "404":
-          description: Intervention not found
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Keluarga not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
       security:
-      - BearerAuth: []
-      summary: Delete an intervention record
+      - Bearer: []
+      summary: Delete keluarga data (soft delete)
       tags:
-      - Admin
-  /api/admin/intervensi/get/{id}:
+      - admin
+  /api/admin/keluarga/get:
     get:
       consumes:
       - application/json
-      description: Retrieves intervention data
+      description: |-
+        Get keluarga data based on query parameter (Admin only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all keluarga with total count
+        - With id parameter: Returns specific keluarga data
+
+        Keluarga data includes: nomor_kk, nama_ayah, nama_ibu, nik_ayah, nik_ibu, alamat, rt, rw, kelurahan, kecamatan, koordinat
       parameters:
-      - description: Intervention ID
-        in: path
+      - description: Keluarga ID
+        in: query
         name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Intervention data retrieved successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "404":
-          description: Intervention data not found
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Get intervention data
-      tags:
-      - Admin
-  /api/admin/intervensi/insert:
-    post:
-      consumes:
-      - application/json
-      description: Inserts a new intervention record
-      parameters:
-      - description: Intervention data
-        in: body
-        name: intervention
-        required: true
-        schema:
-          $ref: '#/definitions/object.InterventionData'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Intervention inserted successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Insert a new intervention record
-      tags:
-      - Admin
-  /api/admin/intervensi/update/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Updates an existing intervention record
-      parameters:
-      - description: Intervention ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Intervention data
-        in: body
-        name: intervention
-        required: true
-        schema:
-          $ref: '#/definitions/object.InterventionData'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Intervention updated successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Update an existing intervention record
-      tags:
-      - Admin
-  /api/admin/laporan/delete/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Deletes a laporan record by ID
-      parameters:
-      - description: Laporan ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Laporan deleted successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "404":
-          description: Laporan not found
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Delete a laporan record
-      tags:
-      - Admin
-  /api/admin/laporan/get/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves all reports by community members and admin users
-      parameters:
-      - description: Laporan ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Reports retrieved successfully
-          schema:
-            $ref: '#/definitions/object.Report'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "404":
-          description: Reports not found
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Get all reports by community members and admin users
-      tags:
-      - Admin
-  /api/admin/laporan/insert:
-    post:
-      consumes:
-      - application/json
-      description: Inserts a new laporan record
-      parameters:
-      - description: Laporan data
-        in: body
-        name: laporan
-        required: true
-        schema:
-          $ref: '#/definitions/object.Report'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Laporan inserted successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Insert a new laporan record
-      tags:
-      - Admin
-  /api/admin/laporan/update/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Update pengguna, balita, keluarga, or laporan masyarakat data by
-        admin
-      parameters:
-      - description: Laporan ID
-        in: path
-        name: id
-        required: true
         type: string
-      - description: Pengguna data to update
-        in: body
-        name: pengguna
-        schema:
-          additionalProperties: true
-          type: object
       produces:
       - application/json
       responses:
         "200":
-          description: Update successful
+          description: Keluarga data retrieved successfully
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.getAllKeluargaResponse'
+              type: object
         "400":
           description: Invalid request
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
           schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Update admin data
-      tags:
-      - Admin
-  /api/admin/riwayat-pemeriksaan/delete/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Deletes a pemeriksaan record
-      parameters:
-      - description: Pemeriksaan ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Riwayat pemeriksaan deleted successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "404":
-          description: Pemeriksaan not found
+          description: Keluarga not found
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
       security:
-      - BearerAuth: []
-      summary: Delete a pemeriksaan record
+      - Bearer: []
+      summary: Get keluarga data
       tags:
-      - Admin
-  /api/admin/riwayat-pemeriksaan/get/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves a pemeriksaan record by ID
-      parameters:
-      - description: Pemeriksaan ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Riwayat pemeriksaan retrieved successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "404":
-          description: Pemeriksaan not found
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Get a pemeriksaan record
-      tags:
-      - Admin
-  /api/admin/riwayat-pemeriksaan/insert:
+      - admin
+  /api/admin/keluarga/insert:
     post:
       consumes:
       - application/json
-      description: Inserts a new pemeriksaan record
+      description: Insert new keluarga data (Admin only)
       parameters:
-      - description: Pemeriksaan data
+      - description: Keluarga data
         in: body
-        name: request
+        name: keluarga
         required: true
         schema:
-          $ref: '#/definitions/object.RiwayatPemeriksaan'
+          $ref: '#/definitions/api.insertKeluargaRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Riwayat pemeriksaan inserted successfully
+          description: Keluarga inserted successfully
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.insertKeluargaResponse'
+              type: object
         "400":
           description: Invalid request
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
       security:
-      - BearerAuth: []
-      summary: Insert a new pemeriksaan record
+      - Bearer: []
+      summary: Insert new keluarga
       tags:
-      - Admin
-  /api/admin/riwayat-pemeriksaan/update/{id}:
+      - admin
+  /api/admin/keluarga/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restore soft deleted keluarga data by clearing deleted_date and
+        deleted_id (Admin only)
+      parameters:
+      - description: Keluarga ID to restore
+        in: body
+        name: keluarga
+        required: true
+        schema:
+          $ref: '#/definitions/api.deleteKeluargaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Keluarga restored successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteKeluargaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Keluarga not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Restore deleted keluarga data
+      tags:
+      - admin
+  /api/admin/keluarga/update:
     put:
       consumes:
       - application/json
-      description: Updates a pemeriksaan record by ID
+      description: |-
+        Update existing keluarga data (Admin only)
+
+        Updates keluarga record with new data including:
+        - nomor_kk, nama_ayah, nama_ibu, nik_ayah, nik_ibu
+        - alamat, rt, rw, id_kelurahan, koordinat
+        - Validates uniqueness of nomor_kk and NIK (excluding current record)
       parameters:
-      - description: Pemeriksaan ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Pemeriksaan data
+      - description: Updated keluarga data
         in: body
-        name: request
+        name: keluarga
         required: true
         schema:
-          $ref: '#/definitions/object.RiwayatPemeriksaan'
+          $ref: '#/definitions/api.updateKeluargaRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Riwayat pemeriksaan updated successfully
+          description: Keluarga updated successfully
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.updateKeluargaResponse'
+              type: object
         "400":
           description: Invalid request
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "404":
-          description: Pemeriksaan not found
+          description: Keluarga not found
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
       security:
-      - BearerAuth: []
-      summary: Update a pemeriksaan record
+      - Bearer: []
+      summary: Update keluarga data
       tags:
-      - Admin
-  /api/masyarakat/get:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves reports submitted by masyarakat
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Reports retrieved successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Get reports by masyarakat
-      tags:
-      - Masyarakat
-  /api/masyarakat/insert:
+      - admin
+  /api/auth/login:
     post:
       consumes:
       - application/json
-      description: Inserts a new report submitted by masyarakat
+      description: Login with email and password
       parameters:
-      - description: Report data
+      - description: Login request
         in: body
-        name: report
+        name: login
         required: true
         schema:
-          $ref: '#/definitions/object.Report'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Report inserted successfully
-          schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/object.Response'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/object.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/object.Response'
-      security:
-      - BearerAuth: []
-      summary: Insert a new report by masyarakat
-      tags:
-      - Masyarakat
-  /auth/login:
-    post:
-      consumes:
-      - application/json
-      description: Login user with email and password, returns JWT token on success
-      parameters:
-      - description: User login details
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/object.LoginRequest'
+          $ref: '#/definitions/auth.loginRequest'
       produces:
       - application/json
       responses:
@@ -760,51 +577,141 @@ paths:
             - $ref: '#/definitions/object.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/object.TokenResponse'
+                  $ref: '#/definitions/auth.loginResponse'
               type: object
         "400":
-          description: Invalid request body or validation error
+          description: Invalid request
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "401":
-          description: Unauthorized - Invalid email or password
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/object.Response'
-      summary: Login user and return JWT token
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: User login
       tags:
-      - Auth
-  /auth/register:
-    post:
+      - auth
+  /api/auth/profile:
+    get:
       consumes:
       - application/json
-      description: Register a new user with email, name, password, and address
-      parameters:
-      - description: User registration details
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/object.RegisterRequest'
+      description: |-
+        Get user profile data based on JWT token and role
+
+        Response data varies by role:
+        - masyarakat: {id, nama, alamat}
+        - petugas kesehatan: {id, id_skpd, nama, created_date}
+        - admin: {nama: "Administrator"}
       produces:
       - application/json
       responses:
         "200":
-          description: Registration successful
+          description: User profile retrieved successfully
           schema:
-            $ref: '#/definitions/object.Response'
-        "400":
-          description: Invalid request body or validation error
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/auth.userProfileResponse'
+                  - properties:
+                      data:
+                        type: object
+                    type: object
+              type: object
+        "401":
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/object.Response'
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Internal server error
           schema:
-            $ref: '#/definitions/object.Response'
-      summary: Register a new user
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get user profile
       tags:
-      - Auth
+      - auth
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with email, nama, password, and alamat
+      parameters:
+      - description: Register request
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/auth.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User registered successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: User registration
+      tags:
+      - auth
 swagger: "2.0"

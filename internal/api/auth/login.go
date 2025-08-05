@@ -3,24 +3,45 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/rifqidaiva/stunting-web/internal/object"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Login handles user login and returns a JWT token.
-// @Summary Login user and return JWT token
-// @Description Login user with email and password, returns JWT token on success
-// @Tags Auth
+type loginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (l *loginRequest) validate() error {
+	if l.Email == "" {
+		return fmt.Errorf("email is required")
+	}
+	if l.Password == "" {
+		return fmt.Errorf("password is required")
+	}
+	return nil
+}
+
+type loginResponse struct {
+	Token string `json:"token"`
+}
+
+// # Login handles user login requests
+//
+// @Summary User login
+// @Description Login with email and password
+// @Tags auth
 // @Accept json
 // @Produce json
-// @Param user body object.LoginRequest true "User login details"
-// @Success 200 {object} object.Response{data=object.TokenResponse} "Login successful"
-// @Failure 400 {object} object.Response "Invalid request body or validation error"
-// @Failure 401 {object} object.Response "Unauthorized - Invalid email or password"
-// @Failure 500 {object} object.Response "Internal server error"
-// @Router /auth/login [post]
+// @Param login body loginRequest true "Login request"
+// @Success 200 {object} object.Response{data=loginResponse} "Login successful"
+// @Failure 400 {object} object.Response{data=nil} "Invalid request"
+// @Failure 401 {object} object.Response{data=nil} "Unauthorized"
+// @Failure 500 {object} object.Response{data=nil} "Internal server error"
+// @Router /api/auth/login [post]
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
@@ -30,8 +51,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user object.Pengguna
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var req loginRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, "Invalid request body", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -40,7 +61,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = user.ValidateFields("Email", "Password")
+	err = req.validate()
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, err.Error(), nil)
 		if err := response.WriteJson(w); err != nil {
@@ -61,8 +82,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// Check user credentials
 	var storedUser object.Pengguna
-	query := "SELECT id, email, nama, password_hash, role, alamat FROM pengguna WHERE email = ?"
-	err = db.QueryRow(query, user.Email).Scan(&storedUser.Id, &storedUser.Email, &storedUser.Nama, &storedUser.PasswordHash, &storedUser.Role, &storedUser.Alamat)
+	query := "SELECT id, email, password_hash, role FROM pengguna WHERE email = ?"
+	err = db.QueryRow(query, req.Email).Scan(&storedUser.Id, &storedUser.Email, &storedUser.PasswordHash, &storedUser.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			response := object.NewResponse(http.StatusUnauthorized, "Invalid email or password", nil)
@@ -79,7 +100,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Compare the provided password with the hashed password
-	err = bcrypt.CompareHashAndPassword([]byte(storedUser.PasswordHash), []byte(user.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(storedUser.PasswordHash), []byte(req.Password))
 	if err != nil {
 		response := object.NewResponse(http.StatusUnauthorized, "Invalid email or password", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -98,8 +119,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := object.NewResponse(http.StatusOK, "Login successful", map[string]any{
-		"token": token,
+	response := object.NewResponse(http.StatusOK, "Login successful", loginResponse{
+		Token: token,
 	})
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

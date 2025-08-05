@@ -21,6 +21,21 @@ func GenerateJWT(userID, role string) (string, error) {
 	return token.SignedString(secretKey)
 }
 
+// GetJWTFromHeader extracts the JWT token from the Authorization header.
+// It expects the header to be in the format "Bearer <token>".
+// Returns the token string or an error if the header is invalid.
+func GetJWTFromHeader(header string) (string, error) {
+	if header == "" {
+		return "", errors.New("authorization header is required")
+	}
+
+	if len(header) < 7 || header[:7] != "Bearer " {
+		return "", errors.New("invalid authorization header format")
+	}
+
+	return header[7:], nil
+}
+
 // ParseJWT parses the JWT token and returns the user ID and role.
 func ParseJWT(tokenString string) (string, string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {

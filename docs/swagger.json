@@ -16,14 +16,14 @@
     },
     "host": "localhost:8080",
     "paths": {
-        "/api/admin/intervensi/delete/{id}": {
+        "/api/admin/keluarga/delete": {
             "delete": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "Bearer": []
                     }
                 ],
-                "description": "Deletes an intervention record by ID",
+                "description": "Soft delete keluarga data by setting deleted_date and deleted_id (Admin only)\n\nPerforms soft delete operation:\n- Sets deleted_date to current timestamp\n- Sets deleted_id to current user ID\n- Data remains in database but is excluded from queries\n- Can be restored if needed in the future",
                 "consumes": [
                     "application/json"
                 ],
@@ -31,54 +31,140 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "admin"
                 ],
-                "summary": "Delete an intervention record",
+                "summary": "Delete keluarga data (soft delete)",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Intervention ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "Keluarga ID to delete",
+                        "name": "keluarga",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.deleteKeluargaRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Intervention deleted successfully",
+                        "description": "Keluarga deleted successfully",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.deleteKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Invalid request",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "404": {
-                        "description": "Intervention not found",
+                        "description": "Keluarga not found",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             }
         },
-        "/api/admin/intervensi/get/{id}": {
+        "/api/admin/keluarga/get": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "Bearer": []
                     }
                 ],
-                "description": "Retrieves intervention data",
+                "description": "Get keluarga data based on query parameter (Admin only)\n\nResponse data varies by parameter:\n- Without id parameter: Returns all keluarga with total count\n- With id parameter: Returns specific keluarga data\n\nKeluarga data includes: nomor_kk, nama_ayah, nama_ibu, nik_ayah, nik_ibu, alamat, rt, rw, kelurahan, kecamatan, koordinat",
                 "consumes": [
                     "application/json"
                 ],
@@ -86,498 +172,137 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "admin"
                 ],
-                "summary": "Get intervention data",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Intervention ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Intervention data retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Intervention data not found",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/intervensi/insert": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Inserts a new intervention record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Insert a new intervention record",
-                "parameters": [
-                    {
-                        "description": "Intervention data",
-                        "name": "intervention",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.InterventionData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Intervention inserted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/intervensi/update/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Updates an existing intervention record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Update an existing intervention record",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Intervention ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Intervention data",
-                        "name": "intervention",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.InterventionData"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Intervention updated successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/laporan/delete/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Deletes a laporan record by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Delete a laporan record",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Laporan ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Laporan deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Laporan not found",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/laporan/get/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Retrieves all reports by community members and admin users",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Get all reports by community members and admin users",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Laporan ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Reports retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Report"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Reports not found",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/laporan/insert": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Inserts a new laporan record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Insert a new laporan record",
-                "parameters": [
-                    {
-                        "description": "Laporan data",
-                        "name": "laporan",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.Report"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Laporan inserted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/laporan/update/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update pengguna, balita, keluarga, or laporan masyarakat data by admin",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Update admin data",
+                "summary": "Get keluarga data",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Laporan ID",
+                        "description": "Keluarga ID",
                         "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Pengguna data to update",
-                        "name": "pengguna",
-                        "in": "body",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Update successful",
+                        "description": "Keluarga data retrieved successfully",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.getAllKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Invalid request",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "500": {
-                        "description": "Internal server error",
+                    "403": {
+                        "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/riwayat-pemeriksaan/delete/{id}": {
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Deletes a pemeriksaan record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Delete a pemeriksaan record",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Pemeriksaan ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Riwayat pemeriksaan deleted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "404": {
-                        "description": "Pemeriksaan not found",
+                        "description": "Keluarga not found",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             }
         },
-        "/api/admin/riwayat-pemeriksaan/get/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Retrieves a pemeriksaan record by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Get a pemeriksaan record",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Pemeriksaan ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Riwayat pemeriksaan retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Pemeriksaan not found",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/riwayat-pemeriksaan/insert": {
+        "/api/admin/keluarga/insert": {
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "Bearer": []
                     }
                 ],
-                "description": "Inserts a new pemeriksaan record",
+                "description": "Insert new keluarga data (Admin only)",
                 "consumes": [
                     "application/json"
                 ],
@@ -585,50 +310,263 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "admin"
                 ],
-                "summary": "Insert a new pemeriksaan record",
+                "summary": "Insert new keluarga",
                 "parameters": [
                     {
-                        "description": "Pemeriksaan data",
-                        "name": "request",
+                        "description": "Keluarga data",
+                        "name": "keluarga",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.RiwayatPemeriksaan"
+                            "$ref": "#/definitions/api.insertKeluargaRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Riwayat pemeriksaan inserted successfully",
+                        "description": "Keluarga inserted successfully",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.insertKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Invalid request",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             }
         },
-        "/api/admin/riwayat-pemeriksaan/update/{id}": {
+        "/api/admin/keluarga/restore": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Restore soft deleted keluarga data by clearing deleted_date and deleted_id (Admin only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Restore deleted keluarga data",
+                "parameters": [
+                    {
+                        "description": "Keluarga ID to restore",
+                        "name": "keluarga",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.deleteKeluargaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Keluarga restored successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.deleteKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Keluarga not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/keluarga/update": {
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "Bearer": []
                     }
                 ],
-                "description": "Updates a pemeriksaan record by ID",
+                "description": "Update existing keluarga data (Admin only)\n\nUpdates keluarga record with new data including:\n- nomor_kk, nama_ayah, nama_ibu, nik_ayah, nik_ibu\n- alamat, rt, rw, id_kelurahan, koordinat\n- Validates uniqueness of nomor_kk and NIK (excluding current record)",
                 "consumes": [
                     "application/json"
                 ],
@@ -636,103 +574,135 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "admin"
                 ],
-                "summary": "Update a pemeriksaan record",
+                "summary": "Update keluarga data",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Pemeriksaan ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Pemeriksaan data",
-                        "name": "request",
+                        "description": "Updated keluarga data",
+                        "name": "keluarga",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.RiwayatPemeriksaan"
+                            "$ref": "#/definitions/api.updateKeluargaRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Riwayat pemeriksaan updated successfully",
+                        "description": "Keluarga updated successfully",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.updateKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
                         "description": "Invalid request",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "404": {
-                        "description": "Pemeriksaan not found",
+                        "description": "Keluarga not found",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             }
         },
-        "/api/masyarakat/get": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Retrieves reports submitted by masyarakat",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Masyarakat"
-                ],
-                "summary": "Get reports by masyarakat",
-                "responses": {
-                    "200": {
-                        "description": "Reports retrieved successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/masyarakat/insert": {
+        "/api/auth/login": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Inserts a new report submitted by masyarakat",
+                "description": "Login with email and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -740,69 +710,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Masyarakat"
+                    "auth"
                 ],
-                "summary": "Insert a new report by masyarakat",
+                "summary": "User login",
                 "parameters": [
                     {
-                        "description": "Report data",
-                        "name": "report",
+                        "description": "Login request",
+                        "name": "login",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/object.Report"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Report inserted successfully",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/object.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/login": {
-            "post": {
-                "description": "Login user with email and password, returns JWT token on success",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login user and return JWT token",
-                "parameters": [
-                    {
-                        "description": "User login details",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.LoginRequest"
+                            "$ref": "#/definitions/auth.loginRequest"
                         }
                     }
                 ],
@@ -818,7 +736,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/object.TokenResponse"
+                                            "$ref": "#/definitions/auth.loginResponse"
                                         }
                                     }
                                 }
@@ -826,29 +744,70 @@
                         }
                     },
                     "400": {
-                        "description": "Invalid request body or validation error",
+                        "description": "Invalid request",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "401": {
-                        "description": "Unauthorized - Invalid email or password",
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             }
         },
-        "/auth/register": {
-            "post": {
-                "description": "Register a new user with email, name, password, and address",
+        "/api/auth/profile": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get user profile data based on JWT token and role\n\nResponse data varies by role:\n- masyarakat: {id, nama, alamat}\n- petugas kesehatan: {id, id_skpd, nama, created_date}\n- admin: {nama: \"Administrator\"}",
                 "consumes": [
                     "application/json"
                 ],
@@ -856,37 +815,174 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
-                "summary": "Register a new user",
-                "parameters": [
-                    {
-                        "description": "User registration details",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/object.RegisterRequest"
-                        }
-                    }
-                ],
+                "summary": "Get user profile",
                 "responses": {
                     "200": {
-                        "description": "Registration successful",
+                        "description": "User profile retrieved successfully",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/auth.userProfileResponse"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
-                    "400": {
-                        "description": "Invalid request body or validation error",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/object.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "description": "Register a new user with email, nama, password, and alamat",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "Register request",
+                        "name": "register",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.registerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -894,115 +990,87 @@
         }
     },
     "definitions": {
-        "object.Balita": {
+        "api.deleteKeluargaRequest": {
             "type": "object",
             "properties": {
-                "berat_lahir": {
-                    "type": "string"
-                },
-                "created_date": {
-                    "type": "string"
-                },
-                "created_id": {
-                    "type": "string"
-                },
-                "deleted_date": {
-                    "type": "string"
-                },
-                "deleted_id": {
-                    "type": "string"
-                },
                 "id": {
-                    "type": "string"
-                },
-                "id_keluarga": {
-                    "type": "string"
-                },
-                "jenis_kelamin": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "tanggal_lahir": {
-                    "type": "string"
-                },
-                "tinggi_lahir": {
-                    "type": "string"
-                },
-                "updated_date": {
-                    "type": "string"
-                },
-                "updated_id": {
                     "type": "string"
                 }
             }
         },
-        "object.Intervensi": {
+        "api.deleteKeluargaResponse": {
             "type": "object",
             "properties": {
-                "created_date": {
-                    "type": "string"
-                },
-                "created_id": {
-                    "type": "string"
-                },
-                "deleted_date": {
-                    "type": "string"
-                },
-                "deleted_id": {
-                    "type": "string"
-                },
-                "deskripsi": {
-                    "type": "string"
-                },
-                "hasil": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
-                "id_balita": {
-                    "type": "string"
-                },
-                "jenis": {
-                    "type": "string"
-                },
-                "tanggal": {
-                    "type": "string"
-                },
-                "updated_date": {
-                    "type": "string"
-                },
-                "updated_id": {
+                "message": {
                     "type": "string"
                 }
             }
         },
-        "object.InterventionData": {
+        "api.getAllKeluargaResponse": {
             "type": "object",
             "properties": {
-                "deskripsi": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.keluargaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.insertKeluargaRequest": {
+            "type": "object",
+            "properties": {
+                "alamat": {
                     "type": "string"
                 },
-                "hasil": {
+                "id_kelurahan": {
                     "type": "string"
                 },
-                "id": {
+                "koordinat": {
+                    "description": "[longitude, latitude]",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "nama_ayah": {
                     "type": "string"
                 },
-                "id_balita": {
+                "nama_ibu": {
                     "type": "string"
                 },
-                "jenis": {
+                "nik_ayah": {
                     "type": "string"
                 },
-                "tanggal": {
+                "nik_ibu": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "type": "string"
+                },
+                "rt": {
+                    "type": "string"
+                },
+                "rw": {
                     "type": "string"
                 }
             }
         },
-        "object.Keluarga": {
+        "api.insertKeluargaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.keluargaResponse": {
             "type": "object",
             "properties": {
                 "alamat": {
@@ -1011,19 +1079,16 @@
                 "created_date": {
                     "type": "string"
                 },
-                "created_id": {
-                    "type": "string"
-                },
-                "deleted_date": {
-                    "type": "string"
-                },
-                "deleted_id": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },
                 "id_kelurahan": {
+                    "type": "string"
+                },
+                "kecamatan": {
+                    "type": "string"
+                },
+                "kelurahan": {
                     "type": "string"
                 },
                 "koordinat": {
@@ -1055,60 +1120,63 @@
                 },
                 "updated_date": {
                     "type": "string"
-                },
-                "updated_id": {
-                    "type": "string"
                 }
             }
         },
-        "object.LaporanMasyarakat": {
+        "api.updateKeluargaRequest": {
             "type": "object",
             "properties": {
-                "created_date": {
-                    "type": "string"
-                },
-                "created_id": {
-                    "type": "string"
-                },
-                "deleted_date": {
-                    "type": "string"
-                },
-                "deleted_id": {
-                    "type": "string"
-                },
-                "hubungan_dengan_balita": {
+                "alamat": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "id_balita": {
+                "id_kelurahan": {
                     "type": "string"
                 },
-                "id_pengguna": {
+                "koordinat": {
+                    "description": "[longitude, latitude]",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "nama_ayah": {
                     "type": "string"
                 },
-                "id_status_laporan": {
+                "nama_ibu": {
                     "type": "string"
                 },
-                "nomor_hp_keluarga_balita": {
+                "nik_ayah": {
                     "type": "string"
                 },
-                "nomor_hp_pelapor": {
+                "nik_ibu": {
                     "type": "string"
                 },
-                "tanggal_laporan": {
+                "nomor_kk": {
                     "type": "string"
                 },
-                "updated_date": {
+                "rt": {
                     "type": "string"
                 },
-                "updated_id": {
+                "rw": {
                     "type": "string"
                 }
             }
         },
-        "object.LoginRequest": {
+        "api.updateKeluargaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.loginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1119,7 +1187,15 @@
                 }
             }
         },
-        "object.Pengguna": {
+        "auth.loginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.registerRequest": {
             "type": "object",
             "properties": {
                 "alamat": {
@@ -1128,68 +1204,26 @@
                 "email": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "nama": {
                     "type": "string"
                 },
                 "password": {
-                    "description": "Unhashed password for login, not stored in DB",
+                    "type": "string"
+                }
+            }
+        },
+        "auth.userProfileResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "email": {
                     "type": "string"
                 },
-                "password_hash": {
+                "id": {
                     "type": "string"
                 },
                 "role": {
-                    "description": "\"masyarakat\" or \"admin\"",
                     "type": "string"
-                }
-            }
-        },
-        "object.RegisterRequest": {
-            "type": "object",
-            "properties": {
-                "alamat": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "nama": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "object.Report": {
-            "type": "object",
-            "properties": {
-                "balita": {
-                    "$ref": "#/definitions/object.Balita"
-                },
-                "intervensi": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/object.Intervensi"
-                    }
-                },
-                "keluarga": {
-                    "$ref": "#/definitions/object.Keluarga"
-                },
-                "laporan_masyarakat": {
-                    "$ref": "#/definitions/object.LaporanMasyarakat"
-                },
-                "pengguna": {
-                    "$ref": "#/definitions/object.Pengguna"
-                },
-                "riwayat_pemeriksaan": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/object.RiwayatPemeriksaan"
-                    }
                 }
             }
         },
@@ -1202,58 +1236,6 @@
                 },
                 "status_code": {
                     "type": "integer"
-                }
-            }
-        },
-        "object.RiwayatPemeriksaan": {
-            "type": "object",
-            "properties": {
-                "berat_badan": {
-                    "type": "string"
-                },
-                "created_date": {
-                    "type": "string"
-                },
-                "created_id": {
-                    "type": "string"
-                },
-                "deleted_date": {
-                    "type": "string"
-                },
-                "deleted_id": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "id_balita": {
-                    "type": "string"
-                },
-                "keterangan": {
-                    "type": "string"
-                },
-                "status_gizi": {
-                    "type": "string"
-                },
-                "tanggal": {
-                    "type": "string"
-                },
-                "tinggi_badan": {
-                    "type": "string"
-                },
-                "updated_date": {
-                    "type": "string"
-                },
-                "updated_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "object.TokenResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
                 }
             }
         }
