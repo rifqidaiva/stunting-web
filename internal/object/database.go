@@ -154,6 +154,7 @@ type Intervensi struct {
 	Tanggal   string `json:"tanggal"`
 	Deskripsi string `json:"deskripsi"`
 	Hasil     string `json:"hasil"`
+	// IdPetugasKesehatan string `json:"id_petugas_kesehatan"`
 
 	CreatedId   string `json:"created_id"`
 	CreatedDate string `json:"created_date"`
@@ -161,6 +162,13 @@ type Intervensi struct {
 	UpdatedDate string `json:"updated_date"`
 	DeletedId   string `json:"deleted_id"`
 	DeletedDate string `json:"deleted_date"`
+}
+
+// MARK: IntervensiPetugas (Junction Table)
+type IntervensiPetugas struct {
+	Id                 string `json:"id"`
+	IdIntervensi       string `json:"id_intervensi"`
+	IdPetugasKesehatan string `json:"id_petugas_kesehatan"`
 }
 
 // MARK: StatusLaporan

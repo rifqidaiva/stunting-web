@@ -6,7 +6,7 @@ import App from "./App.vue"
 
 import Home from "./components/Home.vue"
 import Admin from "./components/admin/Admin.vue"
-import Report from "./components/report/Report.vue"
+import Community from "./components/community/Community.vue"
 
 const routes = [
   {
@@ -18,8 +18,8 @@ const routes = [
     component: Admin,
   },
   {
-    path: "/report",
-    component: Report,
+    path: "/community",
+    component: Community,
   },
 ]
 

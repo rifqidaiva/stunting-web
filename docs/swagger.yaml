@@ -57,6 +57,42 @@ definitions:
       message:
         type: string
     type: object
+  api.deleteLaporanMasyarakatRequest:
+    properties:
+      id:
+        type: string
+    type: object
+  api.deleteLaporanMasyarakatResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  api.deletePetugasKesehatanRequest:
+    properties:
+      id:
+        type: string
+    type: object
+  api.deletePetugasKesehatanResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  api.deleteSkpdRequest:
+    properties:
+      id:
+        type: string
+    type: object
+  api.deleteSkpdResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
   api.getAllBalitaResponse:
     properties:
       data:
@@ -71,6 +107,33 @@ definitions:
       data:
         items:
           $ref: '#/definitions/api.keluargaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.getAllLaporanMasyarakatResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/api.laporanMasyarakatResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.getAllPetugasKesehatanResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/api.petugasKesehatanResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  api.getAllSkpdResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/api.skpdResponse'
         type: array
       total:
         type: integer
@@ -154,6 +217,35 @@ definitions:
       id:
         type: string
     type: object
+  api.insertPetugasKesehatanRequest:
+    properties:
+      email:
+        type: string
+      id_skpd:
+        type: string
+      nama:
+        type: string
+      password:
+        type: string
+    type: object
+  api.insertPetugasKesehatanResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  api.insertSkpdRequest:
+    properties:
+      jenis:
+        description: '"puskesmas", "kelurahan", "skpd"'
+        type: string
+      skpd:
+        type: string
+    type: object
+  api.insertSkpdResponse:
+    properties:
+      id:
+        type: string
+    type: object
   api.keluargaResponse:
     properties:
       alamat:
@@ -185,6 +277,92 @@ definitions:
       rt:
         type: string
       rw:
+        type: string
+      updated_date:
+        type: string
+    type: object
+  api.laporanMasyarakatResponse:
+    properties:
+      alamat:
+        type: string
+      created_date:
+        type: string
+      email_pelapor:
+        type: string
+      hubungan_dengan_balita:
+        type: string
+      id:
+        type: string
+      id_balita:
+        type: string
+      id_masyarakat:
+        type: string
+      id_status_laporan:
+        type: string
+      jenis_laporan:
+        description: '"masyarakat" atau "admin"'
+        type: string
+      kecamatan:
+        type: string
+      kelurahan:
+        type: string
+      nama_ayah:
+        type: string
+      nama_balita:
+        type: string
+      nama_ibu:
+        type: string
+      nama_pelapor:
+        type: string
+      nomor_hp_keluarga_balita:
+        type: string
+      nomor_hp_pelapor:
+        type: string
+      nomor_kk:
+        type: string
+      status_laporan:
+        type: string
+      tanggal_laporan:
+        type: string
+      updated_date:
+        type: string
+    type: object
+  api.petugasKesehatanResponse:
+    properties:
+      created_date:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      id_pengguna:
+        type: string
+      id_skpd:
+        type: string
+      intervensi_count:
+        description: jumlah intervensi terkait
+        type: integer
+      jenis_skpd:
+        type: string
+      nama:
+        type: string
+      skpd:
+        type: string
+      updated_date:
+        type: string
+    type: object
+  api.skpdResponse:
+    properties:
+      created_date:
+        type: string
+      id:
+        type: string
+      jenis:
+        type: string
+      petugas_count:
+        description: jumlah petugas kesehatan terkait
+        type: integer
+      skpd:
         type: string
       updated_date:
         type: string
@@ -246,6 +424,72 @@ definitions:
         type: string
     type: object
   api.updateKeluargaResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  api.updateLaporanMasyarakatRequest:
+    properties:
+      hubungan_dengan_balita:
+        type: string
+      id:
+        type: string
+      id_balita:
+        type: string
+      id_masyarakat:
+        description: dapat null jika laporan dari admin
+        type: string
+      id_status_laporan:
+        type: string
+      nomor_hp_keluarga_balita:
+        type: string
+      nomor_hp_pelapor:
+        type: string
+      tanggal_laporan:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+    type: object
+  api.updateLaporanMasyarakatResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  api.updatePetugasKesehatanRequest:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      id_skpd:
+        type: string
+      nama:
+        type: string
+      password:
+        description: Optional - only update if provided
+        type: string
+    type: object
+  api.updatePetugasKesehatanResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  api.updateSkpdRequest:
+    properties:
+      id:
+        type: string
+      jenis:
+        description: '"puskesmas", "kelurahan", "skpd"'
+        type: string
+      skpd:
+        type: string
+    type: object
+  api.updateSkpdResponse:
     properties:
       id:
         type: string
@@ -1073,6 +1317,167 @@ paths:
       summary: Update keluarga data
       tags:
       - admin
+  /api/admin/laporan-masyarakat/delete:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Soft delete laporan masyarakat data by setting deleted_date and deleted_id (Admin only)
+
+        Performs soft delete operation:
+        - Sets deleted_date to current timestamp
+        - Sets deleted_id to current user ID
+        - Data remains in database but is excluded from queries
+        - Can be restored if needed in the future
+        - Checks for related records before deletion
+      parameters:
+      - description: Laporan Masyarakat ID to delete
+        in: body
+        name: laporan
+        required: true
+        schema:
+          $ref: '#/definitions/api.deleteLaporanMasyarakatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Laporan masyarakat deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteLaporanMasyarakatResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Laporan masyarakat not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete laporan masyarakat data (soft delete)
+      tags:
+      - admin
+  /api/admin/laporan-masyarakat/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get laporan masyarakat data based on query parameter (Admin only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all laporan masyarakat with total count
+        - With id parameter: Returns specific laporan masyarakat data
+
+        Laporan masyarakat data includes: pelapor info, balita info, keluarga info, status laporan, contact details
+      parameters:
+      - description: Laporan Masyarakat ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Laporan masyarakat data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.getAllLaporanMasyarakatResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Laporan masyarakat not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get laporan masyarakat data
+      tags:
+      - admin
   /api/admin/laporan-masyarakat/insert:
     post:
       consumes:
@@ -1142,6 +1547,938 @@ paths:
       security:
       - Bearer: []
       summary: Insert new laporan masyarakat
+      tags:
+      - admin
+  /api/admin/laporan-masyarakat/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restore soft deleted laporan masyarakat data by clearing deleted_date
+        and deleted_id (Admin only)
+      parameters:
+      - description: Laporan Masyarakat ID to restore
+        in: body
+        name: laporan
+        required: true
+        schema:
+          $ref: '#/definitions/api.deleteLaporanMasyarakatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Laporan masyarakat restored successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteLaporanMasyarakatResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Laporan masyarakat not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Restore deleted laporan masyarakat data
+      tags:
+      - admin
+  /api/admin/laporan-masyarakat/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Update existing laporan masyarakat data (Admin only)
+
+        Updates laporan masyarakat record with new data including:
+        - id_masyarakat (optional, null if admin report), id_balita, id_status_laporan
+        - tanggal_laporan, hubungan_dengan_balita, nomor_hp_pelapor, nomor_hp_keluarga_balita
+        - Validates balita existence, status laporan, masyarakat (if provided), and prevents duplicates
+      parameters:
+      - description: Updated laporan masyarakat data
+        in: body
+        name: laporan
+        required: true
+        schema:
+          $ref: '#/definitions/api.updateLaporanMasyarakatRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Laporan masyarakat updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.updateLaporanMasyarakatResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Laporan masyarakat not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update laporan masyarakat data
+      tags:
+      - admin
+  /api/admin/petugas-kesehatan:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get petugas kesehatan data based on query parameter (Admin only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all petugas kesehatan with total count
+        - With id parameter: Returns specific petugas kesehatan data
+
+        Petugas kesehatan data includes: nama, email, SKPD info, intervensi count, creation/update dates
+      parameters:
+      - description: Petugas Kesehatan ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Petugas kesehatan data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.getAllPetugasKesehatanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Petugas kesehatan not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get petugas kesehatan data
+      tags:
+      - admin
+  /api/admin/petugas-kesehatan/delete:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Soft delete petugas kesehatan data by setting deleted_date and deleted_id (Admin only)
+
+        Performs soft delete operation:
+        - Sets deleted_date to current timestamp
+        - Sets deleted_id to current user ID
+        - Data remains in database but is excluded from queries
+        - Can be restored if needed in the future
+        - Checks for related records before deletion
+      parameters:
+      - description: Petugas Kesehatan ID to delete
+        in: body
+        name: petugas
+        required: true
+        schema:
+          $ref: '#/definitions/api.deletePetugasKesehatanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Petugas kesehatan deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deletePetugasKesehatanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Petugas kesehatan not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete petugas kesehatan data (soft delete)
+      tags:
+      - admin
+  /api/admin/petugas-kesehatan/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new petugas kesehatan data (Admin only)
+
+        Creates a complete petugas kesehatan record including:
+        - Creates pengguna account with email and hashed password
+        - Creates petugas_kesehatan record linked to SKPD
+        - Sets role as "petugas kesehatan" in pengguna table
+        - Validates email uniqueness and SKPD existence
+      parameters:
+      - description: Petugas kesehatan data
+        in: body
+        name: petugas
+        required: true
+        schema:
+          $ref: '#/definitions/api.insertPetugasKesehatanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Petugas kesehatan inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.insertPetugasKesehatanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new petugas kesehatan
+      tags:
+      - admin
+  /api/admin/petugas-kesehatan/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restore soft deleted petugas kesehatan data by clearing deleted_date
+        and deleted_id (Admin only)
+      parameters:
+      - description: Petugas Kesehatan ID to restore
+        in: body
+        name: petugas
+        required: true
+        schema:
+          $ref: '#/definitions/api.deletePetugasKesehatanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Petugas kesehatan restored successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deletePetugasKesehatanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Petugas kesehatan not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Restore deleted petugas kesehatan data
+      tags:
+      - admin
+  /api/admin/petugas-kesehatan/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Update existing petugas kesehatan data (Admin only)
+
+        Updates petugas kesehatan record including:
+        - Updates pengguna account (email and optionally password)
+        - Updates petugas_kesehatan record (nama and SKPD)
+        - Validates email uniqueness (excluding current record)
+        - Validates SKPD existence and name uniqueness within SKPD
+        - Checks for related intervensi before allowing SKPD change
+      parameters:
+      - description: Updated petugas kesehatan data
+        in: body
+        name: petugas
+        required: true
+        schema:
+          $ref: '#/definitions/api.updatePetugasKesehatanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Petugas kesehatan updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.updatePetugasKesehatanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Petugas kesehatan not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update petugas kesehatan data
+      tags:
+      - admin
+  /api/admin/skpd/delete:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Soft delete SKPD data by setting deleted_date and deleted_id (Admin only)
+
+        Performs soft delete operation:
+        - Sets deleted_date to current timestamp
+        - Sets deleted_id to current user ID
+        - Data remains in database but is excluded from queries
+        - Can be restored if needed in the future
+        - Checks for related records before deletion
+      parameters:
+      - description: SKPD ID to delete
+        in: body
+        name: skpd
+        required: true
+        schema:
+          $ref: '#/definitions/api.deleteSkpdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: SKPD deleted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteSkpdResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: SKPD not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Delete SKPD data (soft delete)
+      tags:
+      - admin
+  /api/admin/skpd/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get SKPD data based on query parameter (Admin only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all SKPD with total count
+        - With id parameter: Returns specific SKPD data
+
+        SKPD data includes: skpd name, jenis (type), petugas count, creation/update dates
+      parameters:
+      - description: SKPD ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: SKPD data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.getAllSkpdResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: SKPD not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get SKPD data
+      tags:
+      - admin
+  /api/admin/skpd/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new SKPD data (Admin only)
+
+        Inserts SKPD record with data including:
+        - skpd (nama SKPD), jenis (puskesmas/kelurahan/skpd)
+        - Validates uniqueness of SKPD name within the same jenis
+        - Supports different types of SKPD organizations
+      parameters:
+      - description: SKPD data
+        in: body
+        name: skpd
+        required: true
+        schema:
+          $ref: '#/definitions/api.insertSkpdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: SKPD inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.insertSkpdResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new SKPD
+      tags:
+      - admin
+  /api/admin/skpd/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restore soft deleted SKPD data by clearing deleted_date and deleted_id
+        (Admin only)
+      parameters:
+      - description: SKPD ID to restore
+        in: body
+        name: skpd
+        required: true
+        schema:
+          $ref: '#/definitions/api.deleteSkpdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: SKPD restored successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.deleteSkpdResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: SKPD not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Restore deleted SKPD data
+      tags:
+      - admin
+  /api/admin/skpd/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Update existing SKPD data (Admin only)
+
+        Updates SKPD record with new data including:
+        - skpd (nama SKPD), jenis (puskesmas/kelurahan/skpd)
+        - Validates uniqueness of SKPD name within the same jenis (excluding current record)
+        - Checks for related petugas kesehatan before allowing jenis change
+      parameters:
+      - description: Updated SKPD data
+        in: body
+        name: skpd
+        required: true
+        schema:
+          $ref: '#/definitions/api.updateSkpdRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: SKPD updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.updateSkpdResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: SKPD not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update SKPD data
       tags:
       - admin
   /api/auth/login:
