@@ -34,7 +34,7 @@ type getKeluargaByIdResponse struct {
     Data keluargaResponse `json:"data"`
 }
 
-// # AdminKeluargaGet handles getting keluarga data
+// # KeluargaGet handles getting keluarga data
 //
 // @Summary Get keluarga data
 // @Description Get keluarga data based on query parameter (Admin only)
@@ -56,7 +56,7 @@ type getKeluargaByIdResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Keluarga not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/keluarga/get [get]
-func AdminKeluargaGet(w http.ResponseWriter, r *http.Request) {
+func KeluargaGet(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodGet {
         response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
         if err := response.WriteJson(w); err != nil {

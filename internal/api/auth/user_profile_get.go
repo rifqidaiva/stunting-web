@@ -27,7 +27,7 @@ type petugasKesehatanData struct {
 	Created string `json:"created_date"`
 }
 
-// # GetUserProfile handles getting user profile based on token
+// # UserProfileGet handles getting user profile based on token
 //
 // @Summary Get user profile
 // @Description Get user profile data based on JWT token and role
@@ -45,7 +45,7 @@ type petugasKesehatanData struct {
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/auth/profile [get]
-func GetUserProfile(w http.ResponseWriter, r *http.Request) {
+func UserProfileGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

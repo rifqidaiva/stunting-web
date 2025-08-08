@@ -36,7 +36,7 @@ type getBalitaByIdResponse struct {
 	Data balitaResponse `json:"data"`
 }
 
-// # AdminBalitaGet handles getting balita data
+// # BalitaGet handles getting balita data
 //
 // @Summary Get balita data
 // @Description Get balita data based on query parameter (Admin only)
@@ -58,7 +58,7 @@ type getBalitaByIdResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Balita not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/balita/get [get]
-func AdminBalitaGet(w http.ResponseWriter, r *http.Request) {
+func BalitaGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

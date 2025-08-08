@@ -27,7 +27,7 @@ type deleteLaporanMasyarakatResponse struct {
 	Message string `json:"message"`
 }
 
-// # DeleteLaporanMasyarakat handles soft deleting laporan masyarakat data
+// # LaporanMasyarakatDelete handles soft deleting laporan masyarakat data
 //
 // @Summary Delete laporan masyarakat data (soft delete)
 // @Description Soft delete laporan masyarakat data by setting deleted_date and deleted_id (Admin only)
@@ -50,7 +50,7 @@ type deleteLaporanMasyarakatResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Laporan masyarakat not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/laporan-masyarakat/delete [delete]
-func AdminLaporanMasyarakatDelete(w http.ResponseWriter, r *http.Request) {
+func LaporanMasyarakatDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -265,7 +265,7 @@ func AdminLaporanMasyarakatDelete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// # RestoreLaporanMasyarakat handles restoring soft deleted laporan masyarakat data (optional feature)
+// # LaporanMasyarakatRestore handles restoring soft deleted laporan masyarakat data (optional feature)
 //
 // @Summary Restore deleted laporan masyarakat data
 // @Description Restore soft deleted laporan masyarakat data by clearing deleted_date and deleted_id (Admin only)
@@ -281,7 +281,7 @@ func AdminLaporanMasyarakatDelete(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} object.Response{data=nil} "Laporan masyarakat not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/laporan-masyarakat/restore [post]
-func AdminLaporanMasyarakatRestore(w http.ResponseWriter, r *http.Request) {
+func LaporanMasyarakatRestore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

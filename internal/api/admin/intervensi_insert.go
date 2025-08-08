@@ -74,7 +74,7 @@ type insertIntervensiResponse struct {
     Id string `json:"id"`
 }
 
-// # InsertIntervensi handles inserting new intervensi data
+// # IntervensiInsert handles inserting new intervensi data
 //
 // @Summary Insert new intervensi
 // @Description Insert new intervensi data (Admin only)
@@ -96,7 +96,7 @@ type insertIntervensiResponse struct {
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/intervensi/insert [post]
-func AdminIntervensiInsert(w http.ResponseWriter, r *http.Request) {
+func IntervensiInsert(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
         response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
         if err := response.WriteJson(w); err != nil {

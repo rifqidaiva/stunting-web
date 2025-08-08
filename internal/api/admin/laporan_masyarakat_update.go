@@ -98,7 +98,7 @@ type updateLaporanMasyarakatResponse struct {
 	Message string `json:"message"`
 }
 
-// # UpdateLaporanMasyarakat handles updating laporan masyarakat data
+// # LaporanMasyarakatUpdate handles updating laporan masyarakat data
 //
 // @Summary Update laporan masyarakat data
 // @Description Update existing laporan masyarakat data (Admin only)
@@ -119,7 +119,7 @@ type updateLaporanMasyarakatResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Laporan masyarakat not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/laporan-masyarakat/update [put]
-func AdminLaporanMasyarakatUpdate(w http.ResponseWriter, r *http.Request) {
+func LaporanMasyarakatUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

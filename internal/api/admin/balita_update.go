@@ -108,7 +108,7 @@ type updateBalitaResponse struct {
     Message string `json:"message"`
 }
 
-// # UpdateBalita handles updating balita data
+// # BalitaUpdate handles updating balita data
 //
 // @Summary Update balita data
 // @Description Update existing balita data (Admin only)
@@ -129,7 +129,7 @@ type updateBalitaResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Balita not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/balita/update [put]
-func AdminBalitaUpdate(w http.ResponseWriter, r *http.Request) {
+func BalitaUpdate(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPut {
         response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
         if err := response.WriteJson(w); err != nil {

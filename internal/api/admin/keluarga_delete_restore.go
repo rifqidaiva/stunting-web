@@ -26,7 +26,7 @@ type deleteKeluargaResponse struct {
     Message string `json:"message"`
 }
 
-// # DeleteKeluarga handles soft deleting keluarga data
+// # KeluargaDelete handles soft deleting keluarga data
 //
 // @Summary Delete keluarga data (soft delete)
 // @Description Soft delete keluarga data by setting deleted_date and deleted_id (Admin only)
@@ -48,7 +48,7 @@ type deleteKeluargaResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Keluarga not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/keluarga/delete [delete]
-func AdminKeluargaDelete(w http.ResponseWriter, r *http.Request) {
+func KeluargaDelete(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodDelete {
         response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
         if err := response.WriteJson(w); err != nil {
@@ -244,7 +244,7 @@ func AdminKeluargaDelete(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-// # RestoreKeluarga handles restoring soft deleted keluarga data (optional feature)
+// # KeluargaRestore handles restoring soft deleted keluarga data (optional feature)
 //
 // @Summary Restore deleted keluarga data
 // @Description Restore soft deleted keluarga data by clearing deleted_date and deleted_id (Admin only)
@@ -260,7 +260,7 @@ func AdminKeluargaDelete(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} object.Response{data=nil} "Keluarga not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/keluarga/restore [post]
-func AdminKeluargaRestore(w http.ResponseWriter, r *http.Request) {
+func KeluargaRestore(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
         response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
         if err := response.WriteJson(w); err != nil {

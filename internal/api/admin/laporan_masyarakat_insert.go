@@ -92,7 +92,7 @@ type insertLaporanMasyarakatResponse struct {
 	Id string `json:"id"`
 }
 
-// # InsertLaporanMasyarakat handles inserting new laporan masyarakat data
+// # LaporanMasyarakatInsert handles inserting new laporan masyarakat data
 //
 // @Summary Insert new laporan masyarakat
 // @Description Insert new laporan masyarakat data (Admin only)
@@ -112,7 +112,7 @@ type insertLaporanMasyarakatResponse struct {
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/laporan-masyarakat/insert [post]
-func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
+func LaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

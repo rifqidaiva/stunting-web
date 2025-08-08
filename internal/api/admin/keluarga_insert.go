@@ -114,7 +114,7 @@ type insertKeluargaResponse struct {
 	Id string `json:"id"`
 }
 
-// # InsertKeluarga handles inserting new keluarga data
+// # KeluargaInsert handles inserting new keluarga data
 //
 // @Summary Insert new keluarga
 // @Description Insert new keluarga data (Admin only)
@@ -129,7 +129,7 @@ type insertKeluargaResponse struct {
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/keluarga/insert [post]
-func AdminKeluargaInsert(w http.ResponseWriter, r *http.Request) {
+func KeluargaInsert(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

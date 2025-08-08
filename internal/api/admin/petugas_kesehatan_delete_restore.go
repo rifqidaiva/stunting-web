@@ -26,7 +26,7 @@ type deletePetugasKesehatanResponse struct {
 	Message string `json:"message"`
 }
 
-// # DeletePetugasKesehatan handles soft deleting petugas kesehatan data
+// # PetugasKesehatanDelete handles soft deleting petugas kesehatan data
 //
 // @Summary Delete petugas kesehatan data (soft delete)
 // @Description Soft delete petugas kesehatan data by setting deleted_date and deleted_id (Admin only)
@@ -49,7 +49,7 @@ type deletePetugasKesehatanResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Petugas kesehatan not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/petugas-kesehatan/delete [delete]
-func AdminPetugasKesehatanDelete(w http.ResponseWriter, r *http.Request) {
+func PetugasKesehatanDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -279,7 +279,7 @@ func AdminPetugasKesehatanDelete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// # RestorePetugasKesehatan handles restoring soft deleted petugas kesehatan data
+// # PetugasKesehatanRestore handles restoring soft deleted petugas kesehatan data
 //
 // @Summary Restore deleted petugas kesehatan data
 // @Description Restore soft deleted petugas kesehatan data by clearing deleted_date and deleted_id (Admin only)
@@ -295,7 +295,7 @@ func AdminPetugasKesehatanDelete(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} object.Response{data=nil} "Petugas kesehatan not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/petugas-kesehatan/restore [post]
-func AdminPetugasKesehatanRestore(w http.ResponseWriter, r *http.Request) {
+func PetugasKesehatanRestore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

@@ -29,7 +29,7 @@ type getPetugasKesehatanByIdResponse struct {
 	Data petugasKesehatanResponse `json:"data"`
 }
 
-// # AdminPetugasKesehatanGet handles getting petugas kesehatan data
+// # PetugasKesehatanGet handles getting petugas kesehatan data
 //
 // @Summary Get petugas kesehatan data
 // @Description Get petugas kesehatan data based on query parameter (Admin only)
@@ -51,7 +51,7 @@ type getPetugasKesehatanByIdResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Petugas kesehatan not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/petugas-kesehatan/get [get]
-func AdminPetugasKesehatanGet(w http.ResponseWriter, r *http.Request) {
+func PetugasKesehatanGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

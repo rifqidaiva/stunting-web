@@ -40,7 +40,7 @@ type getLaporanMasyarakatByIdResponse struct {
 	Data laporanMasyarakatResponse `json:"data"`
 }
 
-// # AdminLaporanMasyarakatGet handles getting laporan masyarakat data
+// # LaporanMasyarakatGet handles getting laporan masyarakat data
 //
 // @Summary Get laporan masyarakat data
 // @Description Get laporan masyarakat data based on query parameter (Admin only)
@@ -62,7 +62,7 @@ type getLaporanMasyarakatByIdResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Laporan masyarakat not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/laporan-masyarakat/get [get]
-func AdminLaporanMasyarakatGet(w http.ResponseWriter, r *http.Request) {
+func LaporanMasyarakatGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

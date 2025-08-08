@@ -25,7 +25,7 @@ type getSkpdByIdResponse struct {
 	Data skpdResponse `json:"data"`
 }
 
-// # AdminSkpdGet handles getting SKPD data
+// # SKPDGet handles getting SKPD data
 //
 // @Summary Get SKPD data
 // @Description Get SKPD data based on query parameter (Admin only)
@@ -47,7 +47,7 @@ type getSkpdByIdResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "SKPD not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/skpd/get [get]
-func AdminSkpdGet(w http.ResponseWriter, r *http.Request) {
+func SKPDGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

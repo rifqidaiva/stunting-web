@@ -26,7 +26,7 @@ type deleteBalitaResponse struct {
 	Message string `json:"message"`
 }
 
-// # DeleteBalita handles soft deleting balita data
+// # BalitaDelete handles soft deleting balita data
 //
 // @Summary Delete balita data (soft delete)
 // @Description Soft delete balita data by setting deleted_date and deleted_id (Admin only)
@@ -49,7 +49,7 @@ type deleteBalitaResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Balita not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/balita/delete [delete]
-func AdminBalitaDelete(w http.ResponseWriter, r *http.Request) {
+func BalitaDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -243,7 +243,7 @@ func AdminBalitaDelete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// # RestoreBalita handles restoring soft deleted balita data (optional feature)
+// # BalitaRestore handles restoring soft deleted balita data (optional feature)
 //
 // @Summary Restore deleted balita data
 // @Description Restore soft deleted balita data by clearing deleted_date and deleted_id (Admin only)
@@ -259,7 +259,7 @@ func AdminBalitaDelete(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} object.Response{data=nil} "Balita not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/balita/restore [post]
-func AdminBalitaRestore(w http.ResponseWriter, r *http.Request) {
+func BalitaRestore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

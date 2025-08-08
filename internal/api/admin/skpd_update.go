@@ -54,7 +54,7 @@ type updateSkpdResponse struct {
 	Message string `json:"message"`
 }
 
-// # UpdateSkpd handles updating SKPD data
+// # SKPDUpdate handles updating SKPD data
 //
 // @Summary Update SKPD data
 // @Description Update existing SKPD data (Admin only)
@@ -75,7 +75,7 @@ type updateSkpdResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "SKPD not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/skpd/update [put]
-func AdminSkpdUpdate(w http.ResponseWriter, r *http.Request) {
+func SKPDUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

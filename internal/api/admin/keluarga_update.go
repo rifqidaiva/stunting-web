@@ -120,7 +120,7 @@ type updateKeluargaResponse struct {
 	Message string `json:"message"`
 }
 
-// # UpdateKeluarga handles updating keluarga data
+// # KeluargaUpdate handles updating keluarga data
 //
 // @Summary Update keluarga data
 // @Description Update existing keluarga data (Admin only)
@@ -141,7 +141,7 @@ type updateKeluargaResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Keluarga not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/keluarga/update [put]
-func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
+func KeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

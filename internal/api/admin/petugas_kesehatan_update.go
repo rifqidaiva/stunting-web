@@ -73,7 +73,7 @@ type updatePetugasKesehatanResponse struct {
 	Message string `json:"message"`
 }
 
-// # UpdatePetugasKesehatan handles updating petugas kesehatan data
+// # PetugasKesehatanUpdate handles updating petugas kesehatan data
 //
 // @Summary Update petugas kesehatan data
 // @Description Update existing petugas kesehatan data (Admin only)
@@ -97,7 +97,7 @@ type updatePetugasKesehatanResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Petugas kesehatan not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/petugas-kesehatan/update [put]
-func AdminPetugasKesehatanUpdate(w http.ResponseWriter, r *http.Request) {
+func PetugasKesehatanUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

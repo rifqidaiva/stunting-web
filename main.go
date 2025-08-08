@@ -26,71 +26,71 @@ func main() {
 	http.HandleFunc("/api/auth/login", auth.Login)
 	http.HandleFunc("/api/auth/register", auth.Register)
 	http.HandleFunc("/api/auth/register_admin", auth.RegisterAdmin)
-	http.HandleFunc("/api/auth/profile", auth.GetUserProfile)
+	http.HandleFunc("/api/auth/profile", auth.UserProfileGet)
 
 	/* ===================
 	   Admin API Endpoints
 	====================== */
 
 	// SKPD Management
-	http.HandleFunc("/api/admin/skpd/get", admin.AdminSkpdGet)
-	http.HandleFunc("/api/admin/skpd/insert", admin.AdminSkpdInsert)
-	http.HandleFunc("/api/admin/skpd/update", admin.AdminSkpdUpdate)
-	http.HandleFunc("/api/admin/skpd/delete", admin.AdminSkpdDelete)
-	http.HandleFunc("/api/admin/skpd/restore", admin.AdminSkpdRestore)
+	http.HandleFunc("/api/admin/skpd/get", admin.SKPDGet)
+	http.HandleFunc("/api/admin/skpd/insert", admin.SKPDInsert)
+	http.HandleFunc("/api/admin/skpd/update", admin.SKPDUpdate)
+	http.HandleFunc("/api/admin/skpd/delete", admin.SKPDDelete)
+	http.HandleFunc("/api/admin/skpd/restore", admin.SKPDRestore)
 
 	// Petugas Kesehatan Management
-	http.HandleFunc("/api/admin/petugas-kesehatan/get", admin.AdminPetugasKesehatanGet)
-	http.HandleFunc("/api/admin/petugas-kesehatan/insert", admin.AdminPetugasKesehatanInsert)
-	http.HandleFunc("/api/admin/petugas-kesehatan/update", admin.AdminPetugasKesehatanUpdate)
-	http.HandleFunc("/api/admin/petugas-kesehatan/delete", admin.AdminPetugasKesehatanDelete)
-	http.HandleFunc("/api/admin/petugas-kesehatan/restore", admin.AdminPetugasKesehatanRestore)
+	http.HandleFunc("/api/admin/petugas-kesehatan/get", admin.PetugasKesehatanGet)
+	http.HandleFunc("/api/admin/petugas-kesehatan/insert", admin.PetugasKesehatanInsert)
+	http.HandleFunc("/api/admin/petugas-kesehatan/update", admin.PetugasKesehatanUpdate)
+	http.HandleFunc("/api/admin/petugas-kesehatan/delete", admin.PetugasKesehatanDelete)
+	http.HandleFunc("/api/admin/petugas-kesehatan/restore", admin.PetugasKesehatanRestore)
 
 	// Keluarga Management
-	http.HandleFunc("/api/admin/keluarga/get", admin.AdminKeluargaGet)
-	http.HandleFunc("/api/admin/keluarga/insert", admin.AdminKeluargaInsert)
-	http.HandleFunc("/api/admin/keluarga/update", admin.AdminKeluargaUpdate)
-	http.HandleFunc("/api/admin/keluarga/delete", admin.AdminKeluargaDelete)
-	http.HandleFunc("/api/admin/keluarga/restore", admin.AdminKeluargaRestore)
+	http.HandleFunc("/api/admin/keluarga/get", admin.KeluargaGet)
+	http.HandleFunc("/api/admin/keluarga/insert", admin.KeluargaInsert)
+	http.HandleFunc("/api/admin/keluarga/update", admin.KeluargaUpdate)
+	http.HandleFunc("/api/admin/keluarga/delete", admin.KeluargaDelete)
+	http.HandleFunc("/api/admin/keluarga/restore", admin.KeluargaRestore)
 
 	// Balita Management
-	http.HandleFunc("/api/admin/balita/get", admin.AdminBalitaGet)
-	http.HandleFunc("/api/admin/balita/insert", admin.AdminBalitaInsert)
-	http.HandleFunc("/api/admin/balita/update", admin.AdminBalitaUpdate)
-	http.HandleFunc("/api/admin/balita/delete", admin.AdminBalitaDelete)
-	http.HandleFunc("/api/admin/balita/restore", admin.AdminBalitaRestore)
+	http.HandleFunc("/api/admin/balita/get", admin.BalitaGet)
+	http.HandleFunc("/api/admin/balita/insert", admin.BalitaInsert)
+	http.HandleFunc("/api/admin/balita/update", admin.BalitaUpdate)
+	http.HandleFunc("/api/admin/balita/delete", admin.BalitaDelete)
+	http.HandleFunc("/api/admin/balita/restore", admin.BalitaRestore)
 
 	// Laporan Masyarakat Management
-	http.HandleFunc("/api/admin/laporan-masyarakat/get", admin.AdminLaporanMasyarakatGet)
-	http.HandleFunc("/api/admin/laporan-masyarakat/insert", admin.AdminLaporanMasyarakatInsert)
-	http.HandleFunc("/api/admin/laporan-masyarakat/update", admin.AdminLaporanMasyarakatUpdate)
-	http.HandleFunc("/api/admin/laporan-masyarakat/delete", admin.AdminLaporanMasyarakatDelete)
-	http.HandleFunc("/api/admin/laporan-masyarakat/restore", admin.AdminLaporanMasyarakatRestore)
+	http.HandleFunc("/api/admin/laporan-masyarakat/get", admin.LaporanMasyarakatGet)
+	http.HandleFunc("/api/admin/laporan-masyarakat/insert", admin.LaporanMasyarakatInsert)
+	http.HandleFunc("/api/admin/laporan-masyarakat/update", admin.LaporanMasyarakatUpdate)
+	http.HandleFunc("/api/admin/laporan-masyarakat/delete", admin.LaporanMasyarakatDelete)
+	http.HandleFunc("/api/admin/laporan-masyarakat/restore", admin.LaporanMasyarakatRestore)
 
-	// Intervensi Management (Admin)
-	// http.HandleFunc("/api/admin/intervensi/get", admin.AdminIntervensiGet)
-	// http.HandleFunc("/api/admin/intervensi/insert", admin.AdminIntervensiInsert)
-	// http.HandleFunc("/api/admin/intervensi/update", admin.AdminIntervensiUpdate)
-	// http.HandleFunc("/api/admin/intervensi/delete", admin.AdminIntervensiDelete)
-	// http.HandleFunc("/api/admin/intervensi/restore", admin.AdminIntervensiRestore)
+	// Intervensi Management
+	http.HandleFunc("/api/admin/intervensi/get", admin.IntervensiGet)
+	http.HandleFunc("/api/admin/intervensi/insert", admin.IntervensiInsert)
+	http.HandleFunc("/api/admin/intervensi/update", admin.IntervensiUpdate)
+	http.HandleFunc("/api/admin/intervensi/delete", admin.IntervensiDelete)
+	http.HandleFunc("/api/admin/intervensi/restore", admin.IntervensiRestore)
 
-	// Riwayat Pemeriksaan Management (Admin)
-	// http.HandleFunc("/api/admin/riwayat-pemeriksaan/get", admin.AdminRiwayatPemeriksaanGet)
-	// http.HandleFunc("/api/admin/riwayat-pemeriksaan/insert", admin.AdminRiwayatPemeriksaanInsert)
-	// http.HandleFunc("/api/admin/riwayat-pemeriksaan/update", admin.AdminRiwayatPemeriksaanUpdate)
-	// http.HandleFunc("/api/admin/riwayat-pemeriksaan/delete", admin.AdminRiwayatPemeriksaanDelete)
-	// http.HandleFunc("/api/admin/riwayat-pemeriksaan/restore", admin.AdminRiwayatPemeriksaanRestore)
+	// Riwayat Pemeriksaan Management
+	http.HandleFunc("/api/admin/riwayat-pemeriksaan/get", admin.RiwayatPemeriksaanGet)
+	http.HandleFunc("/api/admin/riwayat-pemeriksaan/insert", admin.RiwayatPemeriksaanInsert)
+	http.HandleFunc("/api/admin/riwayat-pemeriksaan/update", admin.RiwayatPemeriksaanUpdate)
+	http.HandleFunc("/api/admin/riwayat-pemeriksaan/delete", admin.RiwayatPemeriksaanDelete)
+	http.HandleFunc("/api/admin/riwayat-pemeriksaan/restore", admin.RiwayatPemeriksaanRestore)
 
 	// Intervensi Petugas (Junction Table)
-	// http.HandleFunc("/api/admin/intervensi-petugas/get", admin.AdminIntervensiPetugasGet)
-	// http.HandleFunc("/api/admin/intervensi-petugas/assign", admin.AdminIntervensiPetugasAssign)
-	// http.HandleFunc("/api/admin/intervensi-petugas/remove", admin.AdminIntervensiPetugasRemove)
+	http.HandleFunc("/api/admin/intervensi-petugas/get", admin.IntervensiPetugasGet)
+	http.HandleFunc("/api/admin/intervensi-petugas/assign", admin.IntervensiPetugasAssign)
+	http.HandleFunc("/api/admin/intervensi-petugas/remove", admin.IntervensiPetugasRemove)
 
 	// Master Data Management
-	// http.HandleFunc("/api/admin/status-laporan/get", admin.AdminStatusLaporanGet)
-	// http.HandleFunc("/api/admin/masyarakat/get", admin.AdminMasyarakatGet)
-	// http.HandleFunc("/api/admin/kecamatan/get", admin.AdminKecamatanGet)
-	// http.HandleFunc("/api/admin/kelurahan/get", admin.AdminKelurahanGet)
+	// http.HandleFunc("/api/admin/status-laporan/get", admin.StatusLaporanGet)
+	// http.HandleFunc("/api/admin/masyarakat/get", admin.MasyarakatGet)
+	// http.HandleFunc("/api/admin/kecamatan/get", admin.KecamatanGet)
+	// http.HandleFunc("/api/admin/kelurahan/get", admin.KelurahanGet)
 
 	/* ========================
 	   Masyarakat API Endpoints

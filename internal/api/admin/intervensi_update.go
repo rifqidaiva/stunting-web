@@ -81,7 +81,7 @@ type updateIntervensiResponse struct {
 	Message string `json:"message"`
 }
 
-// # UpdateIntervensi handles updating intervensi data
+// # IntervensiUpdate handles updating intervensi data
 //
 // @Summary Update intervensi data
 // @Description Update existing intervensi data (Admin only)
@@ -105,7 +105,7 @@ type updateIntervensiResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "Intervensi not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/intervensi/update [put]
-func AdminIntervensiUpdate(w http.ResponseWriter, r *http.Request) {
+func IntervensiUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {

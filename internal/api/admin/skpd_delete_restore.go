@@ -26,7 +26,7 @@ type deleteSkpdResponse struct {
 	Message string `json:"message"`
 }
 
-// # DeleteSkpd handles soft deleting SKPD data
+// # SKPDDelete handles soft deleting SKPD data
 //
 // @Summary Delete SKPD data (soft delete)
 // @Description Soft delete SKPD data by setting deleted_date and deleted_id (Admin only)
@@ -49,7 +49,7 @@ type deleteSkpdResponse struct {
 // @Failure 404 {object} object.Response{data=nil} "SKPD not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/skpd/delete [delete]
-func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
+func SKPDDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -263,7 +263,7 @@ func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// # RestoreSkpd handles restoring soft deleted SKPD data (optional feature)
+// # SKPDRestore handles restoring soft deleted SKPD data (optional feature)
 //
 // @Summary Restore deleted SKPD data
 // @Description Restore soft deleted SKPD data by clearing deleted_date and deleted_id (Admin only)
@@ -279,7 +279,7 @@ func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
 // @Failure 404 {object} object.Response{data=nil} "SKPD not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
 // @Router /api/admin/skpd/restore [post]
-func AdminSkpdRestore(w http.ResponseWriter, r *http.Request) {
+func SKPDRestore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
