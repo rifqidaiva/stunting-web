@@ -1,4 +1,4 @@
-package api
+package admin
 
 import (
 	"database/sql"
@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"strconv"
 	"time"
 
 	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
-type insertLaporanMasyarakatRequest struct {
+type updateLaporanMasyarakatRequest struct {
+	Id                    string `json:"id"`
 	IdMasyarakat          string `json:"id_masyarakat"` // dapat null jika laporan dari admin
 	IdBalita              string `json:"id_balita"`
 	IdStatusLaporan       string `json:"id_status_laporan"`
@@ -22,7 +22,12 @@ type insertLaporanMasyarakatRequest struct {
 	NomorHpKeluargaBalita string `json:"nomor_hp_keluarga_balita"`
 }
 
-func (r *insertLaporanMasyarakatRequest) validate() error {
+func (r *updateLaporanMasyarakatRequest) validate() error {
+	// ID validation
+	if r.Id == "" {
+		return fmt.Errorf("laporan masyarakat ID is required")
+	}
+
 	// ID Balita validation (wajib)
 	if r.IdBalita == "" {
 		return fmt.Errorf("id balita is required")
@@ -88,32 +93,34 @@ func (r *insertLaporanMasyarakatRequest) validate() error {
 	return nil
 }
 
-type insertLaporanMasyarakatResponse struct {
-	Id string `json:"id"`
+type updateLaporanMasyarakatResponse struct {
+	Id      string `json:"id"`
+	Message string `json:"message"`
 }
 
-// # InsertLaporanMasyarakat handles inserting new laporan masyarakat data
+// # UpdateLaporanMasyarakat handles updating laporan masyarakat data
 //
-// @Summary Insert new laporan masyarakat
-// @Description Insert new laporan masyarakat data (Admin only)
+// @Summary Update laporan masyarakat data
+// @Description Update existing laporan masyarakat data (Admin only)
 // @Description
-// @Description Inserts laporan masyarakat record with data including:
+// @Description Updates laporan masyarakat record with new data including:
 // @Description - id_masyarakat (optional, null if admin report), id_balita, id_status_laporan
 // @Description - tanggal_laporan, hubungan_dengan_balita, nomor_hp_pelapor, nomor_hp_keluarga_balita
-// @Description - Validates balita existence, status laporan, and masyarakat (if provided)
+// @Description - Validates balita existence, status laporan, masyarakat (if provided), and prevents duplicates
 // @Tags admin
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param laporan body insertLaporanMasyarakatRequest true "Laporan masyarakat data"
-// @Success 200 {object} object.Response{data=insertLaporanMasyarakatResponse} "Laporan masyarakat inserted successfully"
+// @Param laporan body updateLaporanMasyarakatRequest true "Updated laporan masyarakat data"
+// @Success 200 {object} object.Response{data=updateLaporanMasyarakatResponse} "Laporan masyarakat updated successfully"
 // @Failure 400 {object} object.Response{data=nil} "Invalid request"
 // @Failure 401 {object} object.Response{data=nil} "Unauthorized"
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
+// @Failure 404 {object} object.Response{data=nil} "Laporan masyarakat not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
-// @Router /api/admin/laporan-masyarakat/insert [post]
-func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+// @Router /api/admin/laporan-masyarakat/update [put]
+func AdminLaporanMasyarakatUpdate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -151,7 +158,7 @@ func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse request body
-	var req insertLaporanMasyarakatRequest
+	var req updateLaporanMasyarakatRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, "Invalid request body", nil)
@@ -181,6 +188,25 @@ func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
+
+	// Check if laporan masyarakat exists and not soft deleted
+	var exists int
+	checkExistQuery := "SELECT COUNT(*) FROM laporan_masyarakat WHERE id = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkExistQuery, req.Id).Scan(&exists)
+	if err != nil {
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check laporan masyarakat existence", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	if exists == 0 {
+		response := object.NewResponse(http.StatusNotFound, "Laporan masyarakat not found", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
 
 	// Check if balita exists and not soft deleted
 	var balitaExists int
@@ -241,17 +267,17 @@ func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Check for duplicate laporan (same balita, tanggal laporan yang sama, dan pelapor yang sama)
+	// Check for duplicate laporan (same balita, tanggal laporan yang sama, dan pelapor yang sama, excluding current record)
 	var duplicateExists int
 	var checkDuplicateQuery string
 	if req.IdMasyarakat != "" {
 		checkDuplicateQuery = `SELECT COUNT(*) FROM laporan_masyarakat 
-            WHERE id_balita = ? AND tanggal_laporan = ? AND id_masyarakat = ? AND deleted_date IS NULL`
-		err = db.QueryRow(checkDuplicateQuery, req.IdBalita, req.TanggalLaporan, req.IdMasyarakat).Scan(&duplicateExists)
+            WHERE id_balita = ? AND tanggal_laporan = ? AND id_masyarakat = ? AND id != ? AND deleted_date IS NULL`
+		err = db.QueryRow(checkDuplicateQuery, req.IdBalita, req.TanggalLaporan, req.IdMasyarakat, req.Id).Scan(&duplicateExists)
 	} else {
 		checkDuplicateQuery = `SELECT COUNT(*) FROM laporan_masyarakat 
-            WHERE id_balita = ? AND tanggal_laporan = ? AND id_masyarakat IS NULL AND deleted_date IS NULL`
-		err = db.QueryRow(checkDuplicateQuery, req.IdBalita, req.TanggalLaporan).Scan(&duplicateExists)
+            WHERE id_balita = ? AND tanggal_laporan = ? AND id_masyarakat IS NULL AND id != ? AND deleted_date IS NULL`
+		err = db.QueryRow(checkDuplicateQuery, req.IdBalita, req.TanggalLaporan, req.Id).Scan(&duplicateExists)
 	}
 
 	if err != nil {
@@ -269,21 +295,35 @@ func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if laporan has related riwayat pemeriksaan records (warn user)
+	var riwayatCount int
+	checkRiwayatQuery := `SELECT COUNT(*) FROM riwayat_pemeriksaan 
+        WHERE id_balita = ? AND deleted_date IS NULL`
+	err = db.QueryRow(checkRiwayatQuery, req.IdBalita).Scan(&riwayatCount)
+	if err != nil {
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check related riwayat pemeriksaan", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
 	// Current timestamp
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
-	// Prepare insert query based on whether id_masyarakat is provided
-	var insertQuery string
+	// Prepare update query based on whether id_masyarakat is provided
+	var updateQuery string
 	var result sql.Result
 
 	if req.IdMasyarakat != "" {
-		// Insert laporan with masyarakat
-		insertQuery = `INSERT INTO laporan_masyarakat 
-            (id_masyarakat, id_balita, id_status_laporan, tanggal_laporan, hubungan_dengan_balita, 
-            nomor_hp_pelapor, nomor_hp_keluarga_balita, created_id, created_date) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+		// Update laporan with masyarakat
+		updateQuery = `UPDATE laporan_masyarakat SET 
+            id_masyarakat = ?, id_balita = ?, id_status_laporan = ?, tanggal_laporan = ?,
+            hubungan_dengan_balita = ?, nomor_hp_pelapor = ?, nomor_hp_keluarga_balita = ?,
+            updated_id = ?, updated_date = ?
+            WHERE id = ? AND deleted_date IS NULL`
 
-		result, err = db.Exec(insertQuery,
+		result, err = db.Exec(updateQuery,
 			req.IdMasyarakat,
 			req.IdBalita,
 			req.IdStatusLaporan,
@@ -293,15 +333,17 @@ func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
 			req.NomorHpKeluargaBalita,
 			userId,
 			currentTime,
+			req.Id,
 		)
 	} else {
-		// Insert laporan tanpa masyarakat (laporan admin)
-		insertQuery = `INSERT INTO laporan_masyarakat 
-            (id_masyarakat, id_balita, id_status_laporan, tanggal_laporan, hubungan_dengan_balita, 
-            nomor_hp_pelapor, nomor_hp_keluarga_balita, created_id, created_date) 
-            VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)`
+		// Update laporan tanpa masyarakat (admin report)
+		updateQuery = `UPDATE laporan_masyarakat SET 
+            id_masyarakat = NULL, id_balita = ?, id_status_laporan = ?, tanggal_laporan = ?,
+            hubungan_dengan_balita = ?, nomor_hp_pelapor = ?, nomor_hp_keluarga_balita = ?,
+            updated_id = ?, updated_date = ?
+            WHERE id = ? AND deleted_date IS NULL`
 
-		result, err = db.Exec(insertQuery,
+		result, err = db.Exec(updateQuery,
 			req.IdBalita,
 			req.IdStatusLaporan,
 			req.TanggalLaporan,
@@ -310,29 +352,45 @@ func AdminLaporanMasyarakatInsert(w http.ResponseWriter, r *http.Request) {
 			req.NomorHpKeluargaBalita,
 			userId,
 			currentTime,
+			req.Id,
 		)
 	}
 
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to insert laporan masyarakat", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to update laporan masyarakat", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Get the inserted ID
-	insertedId, err := result.LastInsertId()
+	// Check if any rows were affected
+	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to retrieve inserted ID", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check update result", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	response := object.NewResponse(http.StatusOK, "Laporan masyarakat inserted successfully", insertLaporanMasyarakatResponse{
-		Id: strconv.FormatInt(insertedId, 10),
+	if rowsAffected == 0 {
+		response := object.NewResponse(http.StatusNotFound, "Laporan masyarakat not found, already deleted or no changes made", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Prepare response message with warnings if applicable
+	message := "Data laporan masyarakat berhasil diperbarui"
+	if riwayatCount > 0 {
+		message += fmt.Sprintf(" (Note: This balita has %d related riwayat pemeriksaan)", riwayatCount)
+	}
+
+	response := object.NewResponse(http.StatusOK, "Laporan masyarakat updated successfully", updateLaporanMasyarakatResponse{
+		Id:      req.Id,
+		Message: message,
 	})
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

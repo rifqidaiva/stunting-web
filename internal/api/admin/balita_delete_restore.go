@@ -1,4 +1,4 @@
-package api
+package admin
 
 import (
 	"database/sql"
@@ -10,26 +10,26 @@ import (
 	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
-type deleteSkpdRequest struct {
+type deleteBalitaRequest struct {
 	Id string `json:"id"`
 }
 
-func (r *deleteSkpdRequest) validate() error {
+func (r *deleteBalitaRequest) validate() error {
 	if r.Id == "" {
-		return fmt.Errorf("SKPD ID is required")
+		return fmt.Errorf("balita ID is required")
 	}
 	return nil
 }
 
-type deleteSkpdResponse struct {
+type deleteBalitaResponse struct {
 	Id      string `json:"id"`
 	Message string `json:"message"`
 }
 
-// # DeleteSkpd handles soft deleting SKPD data
+// # DeleteBalita handles soft deleting balita data
 //
-// @Summary Delete SKPD data (soft delete)
-// @Description Soft delete SKPD data by setting deleted_date and deleted_id (Admin only)
+// @Summary Delete balita data (soft delete)
+// @Description Soft delete balita data by setting deleted_date and deleted_id (Admin only)
 // @Description
 // @Description Performs soft delete operation:
 // @Description - Sets deleted_date to current timestamp
@@ -41,15 +41,15 @@ type deleteSkpdResponse struct {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param skpd body deleteSkpdRequest true "SKPD ID to delete"
-// @Success 200 {object} object.Response{data=deleteSkpdResponse} "SKPD deleted successfully"
+// @Param balita body deleteBalitaRequest true "Balita ID to delete"
+// @Success 200 {object} object.Response{data=deleteBalitaResponse} "Balita deleted successfully"
 // @Failure 400 {object} object.Response{data=nil} "Invalid request"
 // @Failure 401 {object} object.Response{data=nil} "Unauthorized"
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
-// @Failure 404 {object} object.Response{data=nil} "SKPD not found"
+// @Failure 404 {object} object.Response{data=nil} "Balita not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
-// @Router /api/admin/skpd/delete [delete]
-func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
+// @Router /api/admin/balita/delete [delete]
+func AdminBalitaDelete(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -88,7 +88,7 @@ func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse request body
-	var req deleteSkpdRequest
+	var req deleteBalitaRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, "Invalid request body", nil)
@@ -119,20 +119,20 @@ func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// Check if SKPD exists and not already soft deleted
+	// Check if balita exists and not already soft deleted
 	var exists int
 	var deletedDate sql.NullString
-	checkQuery := "SELECT COUNT(*), deleted_date FROM skpd WHERE id = ? GROUP BY deleted_date"
+	checkQuery := "SELECT COUNT(*), deleted_date FROM balita WHERE id = ? GROUP BY deleted_date"
 	err = db.QueryRow(checkQuery, req.Id).Scan(&exists, &deletedDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			response := object.NewResponse(http.StatusNotFound, "SKPD not found", nil)
+			response := object.NewResponse(http.StatusNotFound, "Balita not found", nil)
 			if err := response.WriteJson(w); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to check SKPD existence", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check balita existence", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -140,7 +140,7 @@ func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if exists == 0 {
-		response := object.NewResponse(http.StatusNotFound, "SKPD not found", nil)
+		response := object.NewResponse(http.StatusNotFound, "Balita not found", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -149,78 +149,67 @@ func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
 
 	// Check if already soft deleted
 	if deletedDate.Valid {
-		response := object.NewResponse(http.StatusBadRequest, "SKPD already deleted", nil)
+		response := object.NewResponse(http.StatusBadRequest, "Balita already deleted", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Get SKPD details for additional information
-	var skpdName, jenisSkpd string
-	detailQuery := "SELECT skpd, jenis FROM skpd WHERE id = ?"
-	err = db.QueryRow(detailQuery, req.Id).Scan(&skpdName, &jenisSkpd)
+	// Check if balita has related laporan masyarakat records (prevent deletion if has reports)
+	var laporanCount int
+	checkLaporanQuery := "SELECT COUNT(*) FROM laporan_masyarakat WHERE id_balita = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkLaporanQuery, req.Id).Scan(&laporanCount)
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to get SKPD details", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check related laporan", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Check if SKPD has related petugas kesehatan records (prevent deletion if has staff)
-	var petugasCount int
-	checkPetugasQuery := "SELECT COUNT(*) FROM petugas_kesehatan WHERE id_skpd = ? AND deleted_date IS NULL"
-	err = db.QueryRow(checkPetugasQuery, req.Id).Scan(&petugasCount)
-	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to check related petugas kesehatan", nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	if petugasCount > 0 {
+	if laporanCount > 0 {
 		response := object.NewResponse(http.StatusBadRequest,
-			fmt.Sprintf("Cannot delete SKPD '%s'. There are %d active petugas kesehatan records related to this SKPD", skpdName, petugasCount), nil)
+			fmt.Sprintf("Cannot delete balita. There are %d active laporan masyarakat records related to this balita", laporanCount), nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Check if SKPD has related intervensi records through petugas kesehatan (informational)
-	var intervensiCount int
-	checkIntervensiQuery := `SELECT COUNT(*) FROM intervensi_petugas ip 
-        JOIN petugas_kesehatan pk ON ip.id_petugas_kesehatan = pk.id 
-        WHERE pk.id_skpd = ? AND pk.deleted_date IS NULL`
-	err = db.QueryRow(checkIntervensiQuery, req.Id).Scan(&intervensiCount)
+	// Check if balita has related riwayat pemeriksaan records (prevent deletion if has medical history)
+	var riwayatCount int
+	checkRiwayatQuery := "SELECT COUNT(*) FROM riwayat_pemeriksaan WHERE id_balita = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkRiwayatQuery, req.Id).Scan(&riwayatCount)
 	if err != nil {
-		// Not critical, continue with deletion
-		intervensiCount = 0
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check related riwayat pemeriksaan", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
 	}
 
-	// Check if there are any soft deleted petugas kesehatan that could be restored later
-	var deletedPetugasCount int
-	checkDeletedPetugasQuery := "SELECT COUNT(*) FROM petugas_kesehatan WHERE id_skpd = ? AND deleted_date IS NOT NULL"
-	err = db.QueryRow(checkDeletedPetugasQuery, req.Id).Scan(&deletedPetugasCount)
-	if err != nil {
-		// Not critical, continue with deletion
-		deletedPetugasCount = 0
+	if riwayatCount > 0 {
+		response := object.NewResponse(http.StatusBadRequest,
+			fmt.Sprintf("Cannot delete balita. There are %d active riwayat pemeriksaan records related to this balita", riwayatCount), nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
 	}
 
 	// Current timestamp
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
 	// Perform soft delete
-	deleteQuery := `UPDATE skpd SET 
+	deleteQuery := `UPDATE balita SET 
         deleted_id = ?, 
         deleted_date = ? 
         WHERE id = ? AND deleted_date IS NULL`
 
 	result, err := db.Exec(deleteQuery, userId, currentTime, req.Id)
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to delete SKPD", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to delete balita", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -238,48 +227,39 @@ func AdminSkpdDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if rowsAffected == 0 {
-		response := object.NewResponse(http.StatusNotFound, "SKPD not found or already deleted", nil)
+		response := object.NewResponse(http.StatusNotFound, "Balita not found or already deleted", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Prepare response message with additional information
-	message := fmt.Sprintf("Data SKPD '%s' (jenis: %s) berhasil dihapus", skpdName, jenisSkpd)
-	if deletedPetugasCount > 0 {
-		message += fmt.Sprintf(" (Note: This SKPD had %d deleted petugas kesehatan)", deletedPetugasCount)
-	}
-	if intervensiCount > 0 {
-		message += fmt.Sprintf(" (Note: Related to %d historical intervensi records)", intervensiCount)
-	}
-
-	response := object.NewResponse(http.StatusOK, "SKPD deleted successfully", deleteSkpdResponse{
+	response := object.NewResponse(http.StatusOK, "Balita deleted successfully", deleteBalitaResponse{
 		Id:      req.Id,
-		Message: message,
+		Message: "Data balita berhasil dihapus",
 	})
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-// # RestoreSkpd handles restoring soft deleted SKPD data (optional feature)
+// # RestoreBalita handles restoring soft deleted balita data (optional feature)
 //
-// @Summary Restore deleted SKPD data
-// @Description Restore soft deleted SKPD data by clearing deleted_date and deleted_id (Admin only)
+// @Summary Restore deleted balita data
+// @Description Restore soft deleted balita data by clearing deleted_date and deleted_id (Admin only)
 // @Tags admin
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param skpd body deleteSkpdRequest true "SKPD ID to restore"
-// @Success 200 {object} object.Response{data=deleteSkpdResponse} "SKPD restored successfully"
+// @Param balita body deleteBalitaRequest true "Balita ID to restore"
+// @Success 200 {object} object.Response{data=deleteBalitaResponse} "Balita restored successfully"
 // @Failure 400 {object} object.Response{data=nil} "Invalid request"
 // @Failure 401 {object} object.Response{data=nil} "Unauthorized"
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
-// @Failure 404 {object} object.Response{data=nil} "SKPD not found"
+// @Failure 404 {object} object.Response{data=nil} "Balita not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
-// @Router /api/admin/skpd/restore [post]
-func AdminSkpdRestore(w http.ResponseWriter, r *http.Request) {
+// @Router /api/admin/balita/restore [post]
+func AdminBalitaRestore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -318,7 +298,7 @@ func AdminSkpdRestore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse request body
-	var req deleteSkpdRequest
+	var req deleteBalitaRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, "Invalid request body", nil)
@@ -349,12 +329,12 @@ func AdminSkpdRestore(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// Check if SKPD exists and is soft deleted
+	// Check if balita exists and is soft deleted
 	var exists int
-	checkQuery := "SELECT COUNT(*) FROM skpd WHERE id = ? AND deleted_date IS NOT NULL"
+	checkQuery := "SELECT COUNT(*) FROM balita WHERE id = ? AND deleted_date IS NOT NULL"
 	err = db.QueryRow(checkQuery, req.Id).Scan(&exists)
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to check SKPD existence", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check balita existence", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -362,60 +342,49 @@ func AdminSkpdRestore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if exists == 0 {
-		response := object.NewResponse(http.StatusNotFound, "SKPD not found or not deleted", nil)
+		response := object.NewResponse(http.StatusNotFound, "Balita not found or not deleted", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Get SKPD details for validation and response
-	var skpdName, jenisSkpd string
-	detailQuery := "SELECT skpd, jenis FROM skpd WHERE id = ?"
-	err = db.QueryRow(detailQuery, req.Id).Scan(&skpdName, &jenisSkpd)
+	// Check if related keluarga still exists and is not soft deleted
+	var keluargaExists int
+	var balitaIdKeluarga string
+	getKeluargaQuery := "SELECT id_keluarga FROM balita WHERE id = ?"
+	err = db.QueryRow(getKeluargaQuery, req.Id).Scan(&balitaIdKeluarga)
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to get SKPD details", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to get balita keluarga", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Check for naming conflicts before restore (same name and jenis, not soft deleted)
-	var conflictExists int
-	conflictQuery := "SELECT COUNT(*) FROM skpd WHERE skpd = ? AND jenis = ? AND id != ? AND deleted_date IS NULL"
-	err = db.QueryRow(conflictQuery, skpdName, jenisSkpd, req.Id).Scan(&conflictExists)
+	checkKeluargaQuery := "SELECT COUNT(*) FROM keluarga WHERE id = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkKeluargaQuery, balitaIdKeluarga).Scan(&keluargaExists)
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to check naming conflicts", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check related keluarga", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	if conflictExists > 0 {
-		response := object.NewResponse(http.StatusBadRequest,
-			fmt.Sprintf("Cannot restore SKPD. Another SKPD with name '%s' and jenis '%s' already exists", skpdName, jenisSkpd), nil)
+	if keluargaExists == 0 {
+		response := object.NewResponse(http.StatusBadRequest, "Cannot restore balita. Related keluarga does not exist or is deleted", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
-	}
-
-	// Check for soft deleted petugas kesehatan that could be restored with this SKPD
-	var deletedPetugasCount int
-	checkDeletedPetugasQuery := "SELECT COUNT(*) FROM petugas_kesehatan WHERE id_skpd = ? AND deleted_date IS NOT NULL"
-	err = db.QueryRow(checkDeletedPetugasQuery, req.Id).Scan(&deletedPetugasCount)
-	if err != nil {
-		// Not critical, continue with restore
-		deletedPetugasCount = 0
 	}
 
 	// Current timestamp for updated_date
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
-	// Restore SKPD (clear soft delete fields)
-	restoreQuery := `UPDATE skpd SET 
+	// Restore balita (clear soft delete fields)
+	restoreQuery := `UPDATE balita SET 
         deleted_id = NULL, 
         deleted_date = NULL,
         updated_id = ?,
@@ -424,7 +393,7 @@ func AdminSkpdRestore(w http.ResponseWriter, r *http.Request) {
 
 	result, err := db.Exec(restoreQuery, userId, currentTime, req.Id)
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to restore SKPD", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to restore balita", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -442,22 +411,16 @@ func AdminSkpdRestore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if rowsAffected == 0 {
-		response := object.NewResponse(http.StatusNotFound, "SKPD not found or not deleted", nil)
+		response := object.NewResponse(http.StatusNotFound, "Balita not found or not deleted", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Prepare response message with additional information
-	message := fmt.Sprintf("Data SKPD '%s' (jenis: %s) berhasil dipulihkan", skpdName, jenisSkpd)
-	if deletedPetugasCount > 0 {
-		message += fmt.Sprintf(" (Note: This SKPD has %d deleted petugas kesehatan that can be restored separately)", deletedPetugasCount)
-	}
-
-	response := object.NewResponse(http.StatusOK, "SKPD restored successfully", deleteSkpdResponse{
+	response := object.NewResponse(http.StatusOK, "Balita restored successfully", deleteBalitaResponse{
 		Id:      req.Id,
-		Message: message,
+		Message: "Data balita berhasil dipulihkan",
 	})
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

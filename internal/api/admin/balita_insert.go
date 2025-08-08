@@ -1,4 +1,4 @@
-package api
+package admin
 
 import (
 	"encoding/json"
@@ -11,8 +11,7 @@ import (
 	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
-type updateBalitaRequest struct {
-    Id           string `json:"id"`
+type insertBalitaRequest struct {
     IdKeluarga   string `json:"id_keluarga"`
     Nama         string `json:"nama"`
     TanggalLahir string `json:"tanggal_lahir"` // Format: YYYY-MM-DD
@@ -21,12 +20,7 @@ type updateBalitaRequest struct {
     TinggiLahir  string `json:"tinggi_lahir"`  // in cm
 }
 
-func (r *updateBalitaRequest) validate() error {
-    // ID validation
-    if r.Id == "" {
-        return fmt.Errorf("balita ID is required")
-    }
-
+func (r *insertBalitaRequest) validate() error {
     // ID Keluarga validation
     if r.IdKeluarga == "" {
         return fmt.Errorf("id keluarga is required")
@@ -103,34 +97,32 @@ func (r *updateBalitaRequest) validate() error {
     return nil
 }
 
-type updateBalitaResponse struct {
-    Id      string `json:"id"`
-    Message string `json:"message"`
+type insertBalitaResponse struct {
+    Id string `json:"id"`
 }
 
-// # UpdateBalita handles updating balita data
+// # InsertBalita handles inserting new balita data
 //
-// @Summary Update balita data
-// @Description Update existing balita data (Admin only)
+// @Summary Insert new balita
+// @Description Insert new balita data (Admin only)
 // @Description
-// @Description Updates balita record with new data including:
+// @Description Inserts balita record with data including:
 // @Description - id_keluarga, nama, tanggal_lahir, jenis_kelamin
 // @Description - berat_lahir (in grams), tinggi_lahir (in cm)
-// @Description - Validates keluarga existence, balita age criteria, and prevents duplicates
+// @Description - Validates keluarga existence and balita age criteria (under 5 years)
 // @Tags admin
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param balita body updateBalitaRequest true "Updated balita data"
-// @Success 200 {object} object.Response{data=updateBalitaResponse} "Balita updated successfully"
+// @Param balita body insertBalitaRequest true "Balita data"
+// @Success 200 {object} object.Response{data=insertBalitaResponse} "Balita inserted successfully"
 // @Failure 400 {object} object.Response{data=nil} "Invalid request"
 // @Failure 401 {object} object.Response{data=nil} "Unauthorized"
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
-// @Failure 404 {object} object.Response{data=nil} "Balita not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
-// @Router /api/admin/balita/update [put]
-func AdminBalitaUpdate(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodPut {
+// @Router /api/admin/balita/insert [post]
+func AdminBalitaInsert(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
         response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
         if err := response.WriteJson(w); err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -168,7 +160,7 @@ func AdminBalitaUpdate(w http.ResponseWriter, r *http.Request) {
     }
 
     // Parse request body
-    var req updateBalitaRequest
+    var req insertBalitaRequest
     err = json.NewDecoder(r.Body).Decode(&req)
     if err != nil {
         response := object.NewResponse(http.StatusBadRequest, "Invalid request body", nil)
@@ -199,25 +191,6 @@ func AdminBalitaUpdate(w http.ResponseWriter, r *http.Request) {
     }
     defer db.Close()
 
-    // Check if balita exists and not soft deleted
-    var exists int
-    checkExistQuery := "SELECT COUNT(*) FROM balita WHERE id = ? AND deleted_date IS NULL"
-    err = db.QueryRow(checkExistQuery, req.Id).Scan(&exists)
-    if err != nil {
-        response := object.NewResponse(http.StatusInternalServerError, "Failed to check balita existence", nil)
-        if err := response.WriteJson(w); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-        }
-        return
-    }
-    if exists == 0 {
-        response := object.NewResponse(http.StatusNotFound, "Balita not found", nil)
-        if err := response.WriteJson(w); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-        }
-        return
-    }
-
     // Check if keluarga exists and not soft deleted
     var keluargaExists int
     checkKeluargaQuery := "SELECT COUNT(*) FROM keluarga WHERE id = ? AND deleted_date IS NULL"
@@ -237,11 +210,11 @@ func AdminBalitaUpdate(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Check for duplicate balita (same name, birth date, and keluarga, excluding current record)
+    // Check for duplicate balita (same name, birth date, and keluarga)
     var duplicateExists int
     checkDuplicateQuery := `SELECT COUNT(*) FROM balita 
-        WHERE id_keluarga = ? AND nama = ? AND tanggal_lahir = ? AND id != ? AND deleted_date IS NULL`
-    err = db.QueryRow(checkDuplicateQuery, req.IdKeluarga, req.Nama, req.TanggalLahir, req.Id).Scan(&duplicateExists)
+        WHERE id_keluarga = ? AND nama = ? AND tanggal_lahir = ? AND deleted_date IS NULL`
+    err = db.QueryRow(checkDuplicateQuery, req.IdKeluarga, req.Nama, req.TanggalLahir).Scan(&duplicateExists)
     if err != nil {
         response := object.NewResponse(http.StatusInternalServerError, "Failed to check duplicate balita", nil)
         if err := response.WriteJson(w); err != nil {
@@ -257,40 +230,15 @@ func AdminBalitaUpdate(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Check if balita has related laporan masyarakat records (warn user)
-    var laporanCount int
-    checkLaporanQuery := "SELECT COUNT(*) FROM laporan_masyarakat WHERE id_balita = ? AND deleted_date IS NULL"
-    err = db.QueryRow(checkLaporanQuery, req.Id).Scan(&laporanCount)
-    if err != nil {
-        response := object.NewResponse(http.StatusInternalServerError, "Failed to check related laporan", nil)
-        if err := response.WriteJson(w); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-        }
-        return
-    }
-
-    // Check if balita has related riwayat pemeriksaan records (warn user)
-    var riwayatCount int
-    checkRiwayatQuery := "SELECT COUNT(*) FROM riwayat_pemeriksaan WHERE id_balita = ? AND deleted_date IS NULL"
-    err = db.QueryRow(checkRiwayatQuery, req.Id).Scan(&riwayatCount)
-    if err != nil {
-        response := object.NewResponse(http.StatusInternalServerError, "Failed to check related riwayat pemeriksaan", nil)
-        if err := response.WriteJson(w); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-        }
-        return
-    }
-
     // Current timestamp
     currentTime := time.Now().Format("2006-01-02 15:04:05")
 
-    // Update balita
-    updateQuery := `UPDATE balita SET 
-        id_keluarga = ?, nama = ?, tanggal_lahir = ?, jenis_kelamin = ?,
-        berat_lahir = ?, tinggi_lahir = ?, updated_id = ?, updated_date = ?
-        WHERE id = ? AND deleted_date IS NULL`
+    // Insert balita
+    insertQuery := `INSERT INTO balita 
+        (id_keluarga, nama, tanggal_lahir, jenis_kelamin, berat_lahir, tinggi_lahir, created_id, created_date) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
-    result, err := db.Exec(updateQuery,
+    result, err := db.Exec(insertQuery,
         req.IdKeluarga,
         req.Nama,
         req.TanggalLahir,
@@ -299,43 +247,27 @@ func AdminBalitaUpdate(w http.ResponseWriter, r *http.Request) {
         req.TinggiLahir,
         userId,
         currentTime,
-        req.Id,
     )
     if err != nil {
-        response := object.NewResponse(http.StatusInternalServerError, "Failed to update balita", nil)
+        response := object.NewResponse(http.StatusInternalServerError, "Failed to insert balita", nil)
         if err := response.WriteJson(w); err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
         }
         return
     }
 
-    // Check if any rows were affected
-    rowsAffected, err := result.RowsAffected()
+    // Get the inserted ID
+    insertedId, err := result.LastInsertId()
     if err != nil {
-        response := object.NewResponse(http.StatusInternalServerError, "Failed to check update result", nil)
+        response := object.NewResponse(http.StatusInternalServerError, "Failed to retrieve inserted ID", nil)
         if err := response.WriteJson(w); err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
         }
         return
     }
 
-    if rowsAffected == 0 {
-        response := object.NewResponse(http.StatusNotFound, "Balita not found, already deleted or no changes made", nil)
-        if err := response.WriteJson(w); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-        }
-        return
-    }
-
-    // Prepare response message with warnings if applicable
-    message := "Data balita berhasil diperbarui"
-    if laporanCount > 0 || riwayatCount > 0 {
-        message += fmt.Sprintf(" (Note: This balita has %d related laporan and %d related riwayat pemeriksaan)", laporanCount, riwayatCount)
-    }
-
-    response := object.NewResponse(http.StatusOK, "Balita updated successfully", updateBalitaResponse{
-        Id:      req.Id,
-        Message: message,
+    response := object.NewResponse(http.StatusOK, "Balita inserted successfully", insertBalitaResponse{
+        Id: strconv.FormatInt(insertedId, 10),
     })
     if err := response.WriteJson(w); err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)

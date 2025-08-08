@@ -162,6 +162,24 @@ definitions:
       id:
         type: string
     type: object
+  api.insertIntervensiRequest:
+    properties:
+      deskripsi:
+        type: string
+      hasil:
+        type: string
+      jenis:
+        description: '"gizi", "kesehatan", "sosial"'
+        type: string
+      tanggal:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+    type: object
+  api.insertIntervensiResponse:
+    properties:
+      id:
+        type: string
+    type: object
   api.insertKeluargaRequest:
     properties:
       alamat:
@@ -395,6 +413,28 @@ definitions:
       message:
         type: string
     type: object
+  api.updateIntervensiRequest:
+    properties:
+      deskripsi:
+        type: string
+      hasil:
+        type: string
+      id:
+        type: string
+      jenis:
+        description: '"gizi", "kesehatan", "sosial"'
+        type: string
+      tanggal:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+    type: object
+  api.updateIntervensiResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
   api.updateKeluargaRequest:
     properties:
       alamat:
@@ -469,7 +509,7 @@ definitions:
       nama:
         type: string
       password:
-        description: Optional - only update if provided
+        description: Required - wajib diisi
         type: string
     type: object
   api.updatePetugasKesehatanResponse:
@@ -935,6 +975,162 @@ paths:
       security:
       - Bearer: []
       summary: Update balita data
+      tags:
+      - admin
+  /api/admin/intervensi/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new intervensi data (Admin only)
+
+        Creates a new intervensi record with:
+        - jenis: type of intervention (gizi, kesehatan, sosial)
+        - tanggal: intervention date (YYYY-MM-DD format)
+        - deskripsi: detailed description of the intervention
+        - hasil: results or outcomes of the intervention
+        - Validates intervention type and date constraints
+      parameters:
+      - description: Intervensi data
+        in: body
+        name: intervensi
+        required: true
+        schema:
+          $ref: '#/definitions/api.insertIntervensiRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Intervensi inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.insertIntervensiResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new intervensi
+      tags:
+      - admin
+  /api/admin/intervensi/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Update existing intervensi data (Admin only)
+
+        Updates intervensi record including:
+        - jenis: type of intervention (gizi, kesehatan, sosial)
+        - tanggal: intervention date (YYYY-MM-DD format)
+        - deskripsi: detailed description of the intervention
+        - hasil: results or outcomes of the intervention
+        - Validates intervention type and date constraints
+        - Checks for related records before allowing changes
+      parameters:
+      - description: Updated intervensi data
+        in: body
+        name: intervensi
+        required: true
+        schema:
+          $ref: '#/definitions/api.updateIntervensiRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Intervensi updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.updateIntervensiResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Intervensi not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update intervensi data
       tags:
       - admin
   /api/admin/keluarga/delete:
@@ -1704,85 +1900,6 @@ paths:
       summary: Update laporan masyarakat data
       tags:
       - admin
-  /api/admin/petugas-kesehatan:
-    get:
-      consumes:
-      - application/json
-      description: |-
-        Get petugas kesehatan data based on query parameter (Admin only)
-
-        Response data varies by parameter:
-        - Without id parameter: Returns all petugas kesehatan with total count
-        - With id parameter: Returns specific petugas kesehatan data
-
-        Petugas kesehatan data includes: nama, email, SKPD info, intervensi count, creation/update dates
-      parameters:
-      - description: Petugas Kesehatan ID
-        in: query
-        name: id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Petugas kesehatan data retrieved successfully
-          schema:
-            allOf:
-            - $ref: '#/definitions/object.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/api.getAllPetugasKesehatanResponse'
-              type: object
-        "400":
-          description: Invalid request
-          schema:
-            allOf:
-            - $ref: '#/definitions/object.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
-        "401":
-          description: Unauthorized
-          schema:
-            allOf:
-            - $ref: '#/definitions/object.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
-        "403":
-          description: Forbidden
-          schema:
-            allOf:
-            - $ref: '#/definitions/object.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
-        "404":
-          description: Petugas kesehatan not found
-          schema:
-            allOf:
-            - $ref: '#/definitions/object.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
-        "500":
-          description: Internal server error
-          schema:
-            allOf:
-            - $ref: '#/definitions/object.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
-      security:
-      - Bearer: []
-      summary: Get petugas kesehatan data
-      tags:
-      - admin
   /api/admin/petugas-kesehatan/delete:
     delete:
       consumes:
@@ -1863,6 +1980,85 @@ paths:
       security:
       - Bearer: []
       summary: Delete petugas kesehatan data (soft delete)
+      tags:
+      - admin
+  /api/admin/petugas-kesehatan/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get petugas kesehatan data based on query parameter (Admin only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all petugas kesehatan with total count
+        - With id parameter: Returns specific petugas kesehatan data
+
+        Petugas kesehatan data includes: nama, email, SKPD info, intervensi count, creation/update dates
+      parameters:
+      - description: Petugas Kesehatan ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Petugas kesehatan data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/api.getAllPetugasKesehatanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Petugas kesehatan not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get petugas kesehatan data
       tags:
       - admin
   /api/admin/petugas-kesehatan/insert:
@@ -2020,11 +2216,12 @@ paths:
         Update existing petugas kesehatan data (Admin only)
 
         Updates petugas kesehatan record including:
-        - Updates pengguna account (email and optionally password)
+        - Updates pengguna account (email and password)
         - Updates petugas_kesehatan record (nama and SKPD)
         - Validates email uniqueness (excluding current record)
         - Validates SKPD existence and name uniqueness within SKPD
         - Checks for related intervensi before allowing SKPD change
+        - Password is required and will be updated if different from current
       parameters:
       - description: Updated petugas kesehatan data
         in: body

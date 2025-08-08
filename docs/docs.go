@@ -707,6 +707,270 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/intervensi/insert": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Insert new intervensi data (Admin only)\n\nCreates a new intervensi record with:\n- jenis: type of intervention (gizi, kesehatan, sosial)\n- tanggal: intervention date (YYYY-MM-DD format)\n- deskripsi: detailed description of the intervention\n- hasil: results or outcomes of the intervention\n- Validates intervention type and date constraints",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Insert new intervensi",
+                "parameters": [
+                    {
+                        "description": "Intervensi data",
+                        "name": "intervensi",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.insertIntervensiRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Intervensi inserted successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.insertIntervensiResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/intervensi/update": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update existing intervensi data (Admin only)\n\nUpdates intervensi record including:\n- jenis: type of intervention (gizi, kesehatan, sosial)\n- tanggal: intervention date (YYYY-MM-DD format)\n- deskripsi: detailed description of the intervention\n- hasil: results or outcomes of the intervention\n- Validates intervention type and date constraints\n- Checks for related records before allowing changes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Update intervensi data",
+                "parameters": [
+                    {
+                        "description": "Updated intervensi data",
+                        "name": "intervensi",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.updateIntervensiRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Intervensi updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/api.updateIntervensiResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Intervensi not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/keluarga/delete": {
             "delete": {
                 "security": [
@@ -2075,14 +2339,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/petugas-kesehatan": {
-            "get": {
+        "/api/admin/petugas-kesehatan/delete": {
+            "delete": {
                 "security": [
                     {
                         "Bearer": []
                     }
                 ],
-                "description": "Get petugas kesehatan data based on query parameter (Admin only)\n\nResponse data varies by parameter:\n- Without id parameter: Returns all petugas kesehatan with total count\n- With id parameter: Returns specific petugas kesehatan data\n\nPetugas kesehatan data includes: nama, email, SKPD info, intervensi count, creation/update dates",
+                "description": "Soft delete petugas kesehatan data by setting deleted_date and deleted_id (Admin only)\n\nPerforms soft delete operation:\n- Sets deleted_date to current timestamp\n- Sets deleted_id to current user ID\n- Data remains in database but is excluded from queries\n- Can be restored if needed in the future\n- Checks for related records before deletion",
                 "consumes": [
                     "application/json"
                 ],
@@ -2092,18 +2356,21 @@ const docTemplate = `{
                 "tags": [
                     "admin"
                 ],
-                "summary": "Get petugas kesehatan data",
+                "summary": "Delete petugas kesehatan data (soft delete)",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Petugas Kesehatan ID",
-                        "name": "id",
-                        "in": "query"
+                        "description": "Petugas Kesehatan ID to delete",
+                        "name": "petugas",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.deletePetugasKesehatanRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Petugas kesehatan data retrieved successfully",
+                        "description": "Petugas kesehatan deleted successfully",
                         "schema": {
                             "allOf": [
                                 {
@@ -2113,7 +2380,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.getAllPetugasKesehatanResponse"
+                                            "$ref": "#/definitions/api.deletePetugasKesehatanResponse"
                                         }
                                     }
                                 }
@@ -2213,14 +2480,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/admin/petugas-kesehatan/delete": {
-            "delete": {
+        "/api/admin/petugas-kesehatan/get": {
+            "get": {
                 "security": [
                     {
                         "Bearer": []
                     }
                 ],
-                "description": "Soft delete petugas kesehatan data by setting deleted_date and deleted_id (Admin only)\n\nPerforms soft delete operation:\n- Sets deleted_date to current timestamp\n- Sets deleted_id to current user ID\n- Data remains in database but is excluded from queries\n- Can be restored if needed in the future\n- Checks for related records before deletion",
+                "description": "Get petugas kesehatan data based on query parameter (Admin only)\n\nResponse data varies by parameter:\n- Without id parameter: Returns all petugas kesehatan with total count\n- With id parameter: Returns specific petugas kesehatan data\n\nPetugas kesehatan data includes: nama, email, SKPD info, intervensi count, creation/update dates",
                 "consumes": [
                     "application/json"
                 ],
@@ -2230,21 +2497,18 @@ const docTemplate = `{
                 "tags": [
                     "admin"
                 ],
-                "summary": "Delete petugas kesehatan data (soft delete)",
+                "summary": "Get petugas kesehatan data",
                 "parameters": [
                     {
-                        "description": "Petugas Kesehatan ID to delete",
-                        "name": "petugas",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.deletePetugasKesehatanRequest"
-                        }
+                        "type": "string",
+                        "description": "Petugas Kesehatan ID",
+                        "name": "id",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Petugas kesehatan deleted successfully",
+                        "description": "Petugas kesehatan data retrieved successfully",
                         "schema": {
                             "allOf": [
                                 {
@@ -2254,7 +2518,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/api.deletePetugasKesehatanResponse"
+                                            "$ref": "#/definitions/api.getAllPetugasKesehatanResponse"
                                         }
                                     }
                                 }
@@ -2625,7 +2889,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Update existing petugas kesehatan data (Admin only)\n\nUpdates petugas kesehatan record including:\n- Updates pengguna account (email and optionally password)\n- Updates petugas_kesehatan record (nama and SKPD)\n- Validates email uniqueness (excluding current record)\n- Validates SKPD existence and name uniqueness within SKPD\n- Checks for related intervensi before allowing SKPD change",
+                "description": "Update existing petugas kesehatan data (Admin only)\n\nUpdates petugas kesehatan record including:\n- Updates pengguna account (email and password)\n- Updates petugas_kesehatan record (nama and SKPD)\n- Validates email uniqueness (excluding current record)\n- Validates SKPD existence and name uniqueness within SKPD\n- Checks for related intervensi before allowing SKPD change\n- Password is required and will be updated if different from current",
                 "consumes": [
                     "application/json"
                 ],
@@ -3984,6 +4248,33 @@ const docTemplate = `{
                 }
             }
         },
+        "api.insertIntervensiRequest": {
+            "type": "object",
+            "properties": {
+                "deskripsi": {
+                    "type": "string"
+                },
+                "hasil": {
+                    "type": "string"
+                },
+                "jenis": {
+                    "description": "\"gizi\", \"kesehatan\", \"sosial\"",
+                    "type": "string"
+                },
+                "tanggal": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                }
+            }
+        },
+        "api.insertIntervensiResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "api.insertKeluargaRequest": {
             "type": "object",
             "properties": {
@@ -4335,6 +4626,39 @@ const docTemplate = `{
                 }
             }
         },
+        "api.updateIntervensiRequest": {
+            "type": "object",
+            "properties": {
+                "deskripsi": {
+                    "type": "string"
+                },
+                "hasil": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "jenis": {
+                    "description": "\"gizi\", \"kesehatan\", \"sosial\"",
+                    "type": "string"
+                },
+                "tanggal": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                }
+            }
+        },
+        "api.updateIntervensiResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "api.updateKeluargaRequest": {
             "type": "object",
             "properties": {
@@ -4446,7 +4770,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "description": "Optional - only update if provided",
+                    "description": "Required - wajib diisi",
                     "type": "string"
                 }
             }

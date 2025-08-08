@@ -1,4 +1,4 @@
-package api
+package admin
 
 import (
 	"database/sql"
@@ -50,7 +50,7 @@ type getPetugasKesehatanByIdResponse struct {
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
 // @Failure 404 {object} object.Response{data=nil} "Petugas kesehatan not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
-// @Router /api/admin/petugas-kesehatan [get]
+// @Router /api/admin/petugas-kesehatan/get [get]
 func AdminPetugasKesehatanGet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)

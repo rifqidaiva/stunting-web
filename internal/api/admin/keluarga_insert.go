@@ -1,35 +1,30 @@
-package api
+package admin
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/rifqidaiva/stunting-web/internal/object"
 )
 
-type updateKeluargaRequest struct {
-	Id          string     `json:"id"`
-	NomorKk     string     `json:"nomor_kk"`
-	NamaAyah    string     `json:"nama_ayah"`
-	NamaIbu     string     `json:"nama_ibu"`
-	NikAyah     string     `json:"nik_ayah"`
-	NikIbu      string     `json:"nik_ibu"`
-	Alamat      string     `json:"alamat"`
-	Rt          string     `json:"rt"`
-	Rw          string     `json:"rw"`
-	IdKelurahan string     `json:"id_kelurahan"`
+type insertKeluargaRequest struct {
+	NomorKk     string    `json:"nomor_kk"`
+	NamaAyah    string    `json:"nama_ayah"`
+	NamaIbu     string    `json:"nama_ibu"`
+	NikAyah     string    `json:"nik_ayah"`
+	NikIbu      string    `json:"nik_ibu"`
+	Alamat      string    `json:"alamat"`
+	Rt          string    `json:"rt"`
+	Rw          string    `json:"rw"`
+	IdKelurahan string    `json:"id_kelurahan"`
 	Koordinat   [2]float64 `json:"koordinat"` // [longitude, latitude]
 }
 
-func (r *updateKeluargaRequest) validate() error {
-	// ID validation
-	if r.Id == "" {
-		return fmt.Errorf("keluarga ID is required")
-	}
-
+func (r *insertKeluargaRequest) validate() error {
 	// Nomor KK validation: 16 digits
 	if r.NomorKk == "" {
 		return fmt.Errorf("nomor KK is required")
@@ -115,34 +110,27 @@ func (r *updateKeluargaRequest) validate() error {
 	return nil
 }
 
-type updateKeluargaResponse struct {
-	Id      string `json:"id"`
-	Message string `json:"message"`
+type insertKeluargaResponse struct {
+	Id string `json:"id"`
 }
 
-// # UpdateKeluarga handles updating keluarga data
+// # InsertKeluarga handles inserting new keluarga data
 //
-// @Summary Update keluarga data
-// @Description Update existing keluarga data (Admin only)
-// @Description
-// @Description Updates keluarga record with new data including:
-// @Description - nomor_kk, nama_ayah, nama_ibu, nik_ayah, nik_ibu
-// @Description - alamat, rt, rw, id_kelurahan, koordinat
-// @Description - Validates uniqueness of nomor_kk and NIK (excluding current record)
+// @Summary Insert new keluarga
+// @Description Insert new keluarga data (Admin only)
 // @Tags admin
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param keluarga body updateKeluargaRequest true "Updated keluarga data"
-// @Success 200 {object} object.Response{data=updateKeluargaResponse} "Keluarga updated successfully"
+// @Param keluarga body insertKeluargaRequest true "Keluarga data"
+// @Success 200 {object} object.Response{data=insertKeluargaResponse} "Keluarga inserted successfully"
 // @Failure 400 {object} object.Response{data=nil} "Invalid request"
 // @Failure 401 {object} object.Response{data=nil} "Unauthorized"
 // @Failure 403 {object} object.Response{data=nil} "Forbidden"
-// @Failure 404 {object} object.Response{data=nil} "Keluarga not found"
 // @Failure 500 {object} object.Response{data=nil} "Internal server error"
-// @Router /api/admin/keluarga/update [put]
-func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPut {
+// @Router /api/admin/keluarga/insert [post]
+func AdminKeluargaInsert(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
 		response := object.NewResponse(http.StatusMethodNotAllowed, "Method Not Allowed", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -180,7 +168,7 @@ func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse request body
-	var req updateKeluargaRequest
+	var req insertKeluargaRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		response := object.NewResponse(http.StatusBadRequest, "Invalid request body", nil)
@@ -211,28 +199,10 @@ func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// Check if keluarga exists and not soft deleted
+	// Check if Nomor KK already exists (not soft deleted)
 	var exists int
-	checkExistQuery := "SELECT COUNT(*) FROM keluarga WHERE id = ? AND deleted_date IS NULL"
-	err = db.QueryRow(checkExistQuery, req.Id).Scan(&exists)
-	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to check keluarga existence", nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-	if exists == 0 {
-		response := object.NewResponse(http.StatusNotFound, "Keluarga not found", nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	// Check if Nomor KK already exists (excluding current record and not soft deleted)
-	checkKKQuery := "SELECT COUNT(*) FROM keluarga WHERE nomor_kk = ? AND id != ? AND deleted_date IS NULL"
-	err = db.QueryRow(checkKKQuery, req.NomorKk, req.Id).Scan(&exists)
+	checkQuery := "SELECT COUNT(*) FROM keluarga WHERE nomor_kk = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkQuery, req.NomorKk).Scan(&exists)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to check nomor KK", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -248,9 +218,9 @@ func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if NIK Ayah already exists (excluding current record and not soft deleted)
-	checkNikAyahQuery := "SELECT COUNT(*) FROM keluarga WHERE nik_ayah = ? AND id != ? AND deleted_date IS NULL"
-	err = db.QueryRow(checkNikAyahQuery, req.NikAyah, req.Id).Scan(&exists)
+	// Check if NIK Ayah already exists (not soft deleted)
+	checkNikAyah := "SELECT COUNT(*) FROM keluarga WHERE nik_ayah = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkNikAyah, req.NikAyah).Scan(&exists)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to check NIK ayah", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -266,9 +236,9 @@ func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if NIK Ibu already exists (excluding current record and not soft deleted)
-	checkNikIbuQuery := "SELECT COUNT(*) FROM keluarga WHERE nik_ibu = ? AND id != ? AND deleted_date IS NULL"
-	err = db.QueryRow(checkNikIbuQuery, req.NikIbu, req.Id).Scan(&exists)
+	// Check if NIK Ibu already exists (not soft deleted)
+	checkNikIbu := "SELECT COUNT(*) FROM keluarga WHERE nik_ibu = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkNikIbu, req.NikIbu).Scan(&exists)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to check NIK ibu", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -286,8 +256,8 @@ func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 
 	// Check if kelurahan exists
 	var kelurahanExists int
-	checkKelurahanQuery := "SELECT COUNT(*) FROM kelurahan WHERE id = ?"
-	err = db.QueryRow(checkKelurahanQuery, req.IdKelurahan).Scan(&kelurahanExists)
+	checkKelurahan := "SELECT COUNT(*) FROM kelurahan WHERE id = ?"
+	err = db.QueryRow(checkKelurahan, req.IdKelurahan).Scan(&kelurahanExists)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to check kelurahan", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -309,14 +279,12 @@ func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 	// Current timestamp
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
-	// Update keluarga
-	updateQuery := `UPDATE keluarga SET 
-        nomor_kk = ?, nama_ayah = ?, nama_ibu = ?, nik_ayah = ?, nik_ibu = ?,
-        alamat = ?, rt = ?, rw = ?, id_kelurahan = ?, 
-        koordinat = ST_GeomFromText(?), updated_id = ?, updated_date = ?
-        WHERE id = ? AND deleted_date IS NULL`
+	// Insert keluarga - Use ST_GeomFromText() for GEOMETRY field
+	insertQuery := `INSERT INTO keluarga 
+        (nomor_kk, nama_ayah, nama_ibu, nik_ayah, nik_ibu, alamat, rt, rw, id_kelurahan, koordinat, created_id, created_date) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?), ?, ?)`
 
-	result, err := db.Exec(updateQuery,
+	result, err := db.Exec(insertQuery,
 		req.NomorKk,
 		req.NamaAyah,
 		req.NamaIbu,
@@ -329,37 +297,27 @@ func AdminKeluargaUpdate(w http.ResponseWriter, r *http.Request) {
 		koordinatWKT,
 		userId,
 		currentTime,
-		req.Id,
 	)
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to update keluarga", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to insert keluarga", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Check if any rows were affected
-	rowsAffected, err := result.RowsAffected()
+	// Get the inserted ID
+	insertedId, err := result.LastInsertId()
 	if err != nil {
-		response := object.NewResponse(http.StatusInternalServerError, "Failed to check update result", nil)
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to retrieve inserted ID", nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	if rowsAffected == 0 {
-		response := object.NewResponse(http.StatusNotFound, "Keluarga not found, already deleted or no changes made", nil)
-		if err := response.WriteJson(w); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	response := object.NewResponse(http.StatusOK, "Keluarga updated successfully", updateKeluargaResponse{
-		Id:      req.Id,
-		Message: "Data keluarga berhasil diperbarui",
+	response := object.NewResponse(http.StatusOK, "Keluarga inserted successfully", insertKeluargaResponse{
+		Id: strconv.FormatInt(insertedId, 10),
 	})
 	if err := response.WriteJson(w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
