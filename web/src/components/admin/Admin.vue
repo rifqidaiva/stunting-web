@@ -1,35 +1,41 @@
 <script setup lang="ts">
-import { ref } from "vue"
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
 import AdminSidebar from "@/components/admin/AdminSidebar.vue"
-import AdminAddStunting from "./menu/AdminAddStunting.vue"
-import AdminCommunityReport from "./menu/AdminCommunityReport.vue"
-import AdminStatistics from "./menu/AdminStatistics.vue"
-
-const activeMenu = ref("Tambah Balita Stunting")
-function handleMenuChange(menu: string) {
-  activeMenu.value = menu
-}
 </script>
 
 <template>
   <SidebarProvider>
-    <AdminSidebar
-      :activeMenu="activeMenu"
-      @menu-change="handleMenuChange" />
+    <AdminSidebar />
     <SidebarInset>
       <main class="p-4">
         <SidebarTrigger class="my-2" />
-        <div v-if="activeMenu === 'Laporan Masyarakat'">
-          <AdminCommunityReport />
-        </div>
-        <div v-else-if="activeMenu === 'Tambah Balita Stunting'">
-          <AdminAddStunting />
-        </div>
-        <div v-else-if="activeMenu === 'Statistik'">
-          <AdminStatistics />
+        <div class="relative overflow-hidden">
+          <router-view v-slot="{ Component, route }">
+            <transition
+              name="fade"
+              mode="out-in"
+              appear
+              :duration="150">
+              <component
+                :is="Component"
+                :key="route.path"
+                class="w-full" />
+            </transition>
+          </router-view>
         </div>
       </main>
     </SidebarInset>
   </SidebarProvider>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
