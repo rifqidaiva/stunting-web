@@ -130,14 +130,15 @@ type LaporanMasyarakat struct {
 
 // MARK: RiwayatPemeriksaan
 type RiwayatPemeriksaan struct {
-	Id           string `json:"id"`
-	IdBalita     string `json:"id_balita"`
-	IdIntervensi string `json:"id_intervensi"`
-	Tanggal      string `json:"tanggal"`
-	BeratBadan   string `json:"berat_badan"`
-	TinggiBadan  string `json:"tinggi_badan"`
-	StatusGizi   string `json:"status_gizi"` // "normal", "stunting", "gizi buruk"
-	Keterangan   string `json:"keterangan"`
+	Id                  string `json:"id"`
+	IdBalita            string `json:"id_balita"`
+	IdIntervensi        string `json:"id_intervensi"`
+	IdLaporanMasyarakat string `json:"id_laporan_masyarakat"`
+	Tanggal             string `json:"tanggal"`
+	BeratBadan          string `json:"berat_badan"`
+	TinggiBadan         string `json:"tinggi_badan"`
+	StatusGizi          string `json:"status_gizi"` // "normal", "stunting", "gizi buruk"
+	Keterangan          string `json:"keterangan"`
 
 	CreatedId   string `json:"created_id"`
 	CreatedDate string `json:"created_date"`
@@ -150,6 +151,7 @@ type RiwayatPemeriksaan struct {
 // MARK: Intervensi
 type Intervensi struct {
 	Id        string `json:"id"`
+	IdBalita  string `json:"id_balita"`
 	Jenis     string `json:"jenis"` // "gizi", "kesehatan", "sosial"
 	Tanggal   string `json:"tanggal"`
 	Deskripsi string `json:"deskripsi"`

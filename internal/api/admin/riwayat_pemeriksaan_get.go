@@ -9,28 +9,32 @@ import (
 )
 
 type riwayatPemeriksaanResponse struct {
-	Id                string `json:"id"`
-	IdBalita          string `json:"id_balita"`
-	NamaBalita        string `json:"nama_balita"`
-	UmurBalita        string `json:"umur_balita"`
-	JenisKelamin      string `json:"jenis_kelamin"`
-	NamaAyah          string `json:"nama_ayah"`
-	NamaIbu           string `json:"nama_ibu"`
-	NomorKk           string `json:"nomor_kk"`
-	IdIntervensi      string `json:"id_intervensi"`
-	JenisIntervensi   string `json:"jenis_intervensi"`
-	TanggalIntervensi string `json:"tanggal_intervensi"`
-	Tanggal           string `json:"tanggal"`
-	BeratBadan        string `json:"berat_badan"`
-	TinggiBadan       string `json:"tinggi_badan"`
-	StatusGizi        string `json:"status_gizi"`
-	Keterangan        string `json:"keterangan"`
-	Kelurahan         string `json:"kelurahan"`
-	Kecamatan         string `json:"kecamatan"`
-	CreatedDate       string `json:"created_date"`
-	UpdatedDate       string `json:"updated_date,omitempty"`
-	CreatedBy         string `json:"created_by,omitempty"`
-	UpdatedBy         string `json:"updated_by,omitempty"`
+	Id                  string `json:"id"`
+	IdBalita            string `json:"id_balita"`
+	NamaBalita          string `json:"nama_balita"`
+	UmurBalita          string `json:"umur_balita"`
+	JenisKelamin        string `json:"jenis_kelamin"`
+	NamaAyah            string `json:"nama_ayah"`
+	NamaIbu             string `json:"nama_ibu"`
+	NomorKk             string `json:"nomor_kk"`
+	IdIntervensi        string `json:"id_intervensi"`
+	JenisIntervensi     string `json:"jenis_intervensi"`
+	TanggalIntervensi   string `json:"tanggal_intervensi"`
+	IdLaporanMasyarakat string `json:"id_laporan_masyarakat"` // <- Field baru
+	StatusLaporan       string `json:"status_laporan"`        // <- Field baru
+	TanggalLaporan      string `json:"tanggal_laporan"`       // <- Field baru
+	JenisLaporan        string `json:"jenis_laporan"`         // <- Field baru (masyarakat/admin)
+	Tanggal             string `json:"tanggal"`
+	BeratBadan          string `json:"berat_badan"`
+	TinggiBadan         string `json:"tinggi_badan"`
+	StatusGizi          string `json:"status_gizi"`
+	Keterangan          string `json:"keterangan"`
+	Kelurahan           string `json:"kelurahan"`
+	Kecamatan           string `json:"kecamatan"`
+	CreatedDate         string `json:"created_date"`
+	UpdatedDate         string `json:"updated_date,omitempty"`
+	CreatedBy           string `json:"created_by,omitempty"`
+	UpdatedBy           string `json:"updated_by,omitempty"`
 }
 
 type getAllRiwayatPemeriksaanResponse struct {
@@ -48,15 +52,21 @@ type getRiwayatPemeriksaanByIdResponse struct {
 // @Description Get riwayat pemeriksaan data based on query parameter (Admin only)
 // @Description
 // @Description Response data varies by parameter:
-// @Description - Without id parameter: Returns all riwayat pemeriksaan with total count
+// @Description - Without any parameter: Returns all riwayat pemeriksaan with total count
 // @Description - With id parameter: Returns specific riwayat pemeriksaan data
+// @Description - With id_balita parameter: Returns all riwayat pemeriksaan for specific balita
+// @Description - With id_laporan_masyarakat parameter: Returns all riwayat pemeriksaan for specific laporan
+// @Description - With id_intervensi parameter: Returns all riwayat pemeriksaan for specific intervensi
 // @Description
-// @Description Riwayat pemeriksaan data includes: balita info, intervensi info, examination details, location info
+// @Description Riwayat pemeriksaan data includes: balita info, intervensi info, laporan info, examination details, location info
 // @Tags admin
 // @Accept json
 // @Produce json
 // @Security Bearer
 // @Param id query string false "Riwayat Pemeriksaan ID"
+// @Param id_balita query string false "Balita ID"
+// @Param id_laporan_masyarakat query string false "Laporan Masyarakat ID"
+// @Param id_intervensi query string false "Intervensi ID"
 // @Success 200 {object} object.Response{data=getAllRiwayatPemeriksaanResponse} "Riwayat pemeriksaan data retrieved successfully"
 // @Failure 400 {object} object.Response{data=nil} "Invalid request"
 // @Failure 401 {object} object.Response{data=nil} "Unauthorized"
@@ -113,8 +123,12 @@ func RiwayatPemeriksaanGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// Check if ID parameter is provided
+	// Check query parameters
 	idParam := r.URL.Query().Get("id")
+	idBalitaParam := r.URL.Query().Get("id_balita")
+	idLaporanParam := r.URL.Query().Get("id_laporan_masyarakat")
+	idIntervensiParam := r.URL.Query().Get("id_intervensi")
+
 	if idParam != "" {
 		// Get specific riwayat pemeriksaan by ID
 		riwayat, err := getRiwayatPemeriksaanById(db, idParam)
@@ -135,6 +149,60 @@ func RiwayatPemeriksaanGet(w http.ResponseWriter, r *http.Request) {
 
 		response := object.NewResponse(http.StatusOK, "Riwayat pemeriksaan retrieved successfully", getRiwayatPemeriksaanByIdResponse{
 			Data: riwayat,
+		})
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else if idBalitaParam != "" {
+		// Get all riwayat pemeriksaan for specific balita
+		riwayatList, total, err := getRiwayatPemeriksaanByBalita(db, idBalitaParam)
+		if err != nil {
+			response := object.NewResponse(http.StatusInternalServerError, "Failed to get riwayat pemeriksaan by balita", nil)
+			if err := response.WriteJson(w); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		response := object.NewResponse(http.StatusOK, "Riwayat pemeriksaan by balita retrieved successfully", getAllRiwayatPemeriksaanResponse{
+			Data:  riwayatList,
+			Total: total,
+		})
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else if idLaporanParam != "" {
+		// Get all riwayat pemeriksaan for specific laporan masyarakat
+		riwayatList, total, err := getRiwayatPemeriksaanByLaporan(db, idLaporanParam)
+		if err != nil {
+			response := object.NewResponse(http.StatusInternalServerError, "Failed to get riwayat pemeriksaan by laporan", nil)
+			if err := response.WriteJson(w); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		response := object.NewResponse(http.StatusOK, "Riwayat pemeriksaan by laporan retrieved successfully", getAllRiwayatPemeriksaanResponse{
+			Data:  riwayatList,
+			Total: total,
+		})
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	} else if idIntervensiParam != "" {
+		// Get all riwayat pemeriksaan for specific intervensi
+		riwayatList, total, err := getRiwayatPemeriksaanByIntervensi(db, idIntervensiParam)
+		if err != nil {
+			response := object.NewResponse(http.StatusInternalServerError, "Failed to get riwayat pemeriksaan by intervensi", nil)
+			if err := response.WriteJson(w); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		response := object.NewResponse(http.StatusOK, "Riwayat pemeriksaan by intervensi retrieved successfully", getAllRiwayatPemeriksaanResponse{
+			Data:  riwayatList,
+			Total: total,
 		})
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -165,10 +233,11 @@ func getRiwayatPemeriksaanById(db *sql.DB, id string) (riwayatPemeriksaanRespons
 	var riwayat riwayatPemeriksaanResponse
 	var updatedDate sql.NullString
 	var createdBy, updatedBy sql.NullString
+	var idMasyarakatLaporan sql.NullString
 
 	query := `
         SELECT 
-            rp.id, rp.id_balita, rp.id_intervensi, rp.tanggal,
+            rp.id, rp.id_balita, rp.id_intervensi, rp.id_laporan_masyarakat, rp.tanggal,
             rp.berat_badan, rp.tinggi_badan, rp.status_gizi, rp.keterangan,
             rp.created_date, rp.updated_date,
             b.nama as nama_balita, b.jenis_kelamin,
@@ -176,6 +245,7 @@ func getRiwayatPemeriksaanById(db *sql.DB, id string) (riwayatPemeriksaanRespons
             k.nomor_kk, k.nama_ayah, k.nama_ibu,
             kel.kelurahan, kec.kecamatan,
             i.jenis as jenis_intervensi, i.tanggal as tanggal_intervensi,
+            lm.id_masyarakat, sl.status as status_laporan, lm.tanggal_laporan,
             pc.email as created_by,
             pu.email as updated_by
         FROM riwayat_pemeriksaan rp
@@ -184,6 +254,8 @@ func getRiwayatPemeriksaanById(db *sql.DB, id string) (riwayatPemeriksaanRespons
         LEFT JOIN kelurahan kel ON k.id_kelurahan = kel.id
         LEFT JOIN kecamatan kec ON kel.id_kecamatan = kec.id
         LEFT JOIN intervensi i ON rp.id_intervensi = i.id AND i.deleted_date IS NULL
+        LEFT JOIN laporan_masyarakat lm ON rp.id_laporan_masyarakat = lm.id AND lm.deleted_date IS NULL
+        LEFT JOIN status_laporan sl ON lm.id_status_laporan = sl.id
         LEFT JOIN pengguna pc ON rp.created_id = pc.id
         LEFT JOIN pengguna pu ON rp.updated_id = pu.id
         WHERE rp.id = ? AND rp.deleted_date IS NULL
@@ -193,6 +265,7 @@ func getRiwayatPemeriksaanById(db *sql.DB, id string) (riwayatPemeriksaanRespons
 		&riwayat.Id,
 		&riwayat.IdBalita,
 		&riwayat.IdIntervensi,
+		&riwayat.IdLaporanMasyarakat,
 		&riwayat.Tanggal,
 		&riwayat.BeratBadan,
 		&riwayat.TinggiBadan,
@@ -210,6 +283,9 @@ func getRiwayatPemeriksaanById(db *sql.DB, id string) (riwayatPemeriksaanRespons
 		&riwayat.Kecamatan,
 		&riwayat.JenisIntervensi,
 		&riwayat.TanggalIntervensi,
+		&idMasyarakatLaporan,
+		&riwayat.StatusLaporan,
+		&riwayat.TanggalLaporan,
 		&createdBy,
 		&updatedBy,
 	)
@@ -220,6 +296,13 @@ func getRiwayatPemeriksaanById(db *sql.DB, id string) (riwayatPemeriksaanRespons
 
 	// Format umur balita
 	riwayat.UmurBalita = formatUmurBalita(riwayat.UmurBalita)
+
+	// Determine jenis laporan
+	if idMasyarakatLaporan.Valid {
+		riwayat.JenisLaporan = "masyarakat"
+	} else {
+		riwayat.JenisLaporan = "admin"
+	}
 
 	// Handle nullable fields
 	if updatedDate.Valid {
@@ -241,7 +324,7 @@ func getAllRiwayatPemeriksaan(db *sql.DB) ([]riwayatPemeriksaanResponse, int, er
 
 	query := `
         SELECT 
-            rp.id, rp.id_balita, rp.id_intervensi, rp.tanggal,
+            rp.id, rp.id_balita, rp.id_intervensi, rp.id_laporan_masyarakat, rp.tanggal,
             rp.berat_badan, rp.tinggi_badan, rp.status_gizi, rp.keterangan,
             rp.created_date, rp.updated_date,
             b.nama as nama_balita, b.jenis_kelamin,
@@ -249,6 +332,7 @@ func getAllRiwayatPemeriksaan(db *sql.DB) ([]riwayatPemeriksaanResponse, int, er
             k.nomor_kk, k.nama_ayah, k.nama_ibu,
             kel.kelurahan, kec.kecamatan,
             i.jenis as jenis_intervensi, i.tanggal as tanggal_intervensi,
+            lm.id_masyarakat, sl.status as status_laporan, lm.tanggal_laporan,
             pc.email as created_by,
             pu.email as updated_by
         FROM riwayat_pemeriksaan rp
@@ -257,6 +341,8 @@ func getAllRiwayatPemeriksaan(db *sql.DB) ([]riwayatPemeriksaanResponse, int, er
         LEFT JOIN kelurahan kel ON k.id_kelurahan = kel.id
         LEFT JOIN kecamatan kec ON kel.id_kecamatan = kec.id
         LEFT JOIN intervensi i ON rp.id_intervensi = i.id AND i.deleted_date IS NULL
+        LEFT JOIN laporan_masyarakat lm ON rp.id_laporan_masyarakat = lm.id AND lm.deleted_date IS NULL
+        LEFT JOIN status_laporan sl ON lm.id_status_laporan = sl.id
         LEFT JOIN pengguna pc ON rp.created_id = pc.id
         LEFT JOIN pengguna pu ON rp.updated_id = pu.id
         WHERE rp.deleted_date IS NULL
@@ -273,11 +359,13 @@ func getAllRiwayatPemeriksaan(db *sql.DB) ([]riwayatPemeriksaanResponse, int, er
 		var riwayat riwayatPemeriksaanResponse
 		var updatedDate sql.NullString
 		var createdBy, updatedBy sql.NullString
+		var idMasyarakatLaporan sql.NullString
 
 		err := rows.Scan(
 			&riwayat.Id,
 			&riwayat.IdBalita,
 			&riwayat.IdIntervensi,
+			&riwayat.IdLaporanMasyarakat,
 			&riwayat.Tanggal,
 			&riwayat.BeratBadan,
 			&riwayat.TinggiBadan,
@@ -295,6 +383,9 @@ func getAllRiwayatPemeriksaan(db *sql.DB) ([]riwayatPemeriksaanResponse, int, er
 			&riwayat.Kecamatan,
 			&riwayat.JenisIntervensi,
 			&riwayat.TanggalIntervensi,
+			&idMasyarakatLaporan,
+			&riwayat.StatusLaporan,
+			&riwayat.TanggalLaporan,
 			&createdBy,
 			&updatedBy,
 		)
@@ -305,6 +396,13 @@ func getAllRiwayatPemeriksaan(db *sql.DB) ([]riwayatPemeriksaanResponse, int, er
 
 		// Format umur balita
 		riwayat.UmurBalita = formatUmurBalita(riwayat.UmurBalita)
+
+		// Determine jenis laporan
+		if idMasyarakatLaporan.Valid {
+			riwayat.JenisLaporan = "masyarakat"
+		} else {
+			riwayat.JenisLaporan = "admin"
+		}
 
 		// Handle nullable fields
 		if updatedDate.Valid {
@@ -359,4 +457,325 @@ func formatUmurBalita(umurBulan string) string {
 		}
 		return fmt.Sprintf("%d tahun %d bulan", years, remainingMonths)
 	}
+}
+
+// Helper function to get riwayat pemeriksaan by balita ID
+func getRiwayatPemeriksaanByBalita(db *sql.DB, idBalita string) ([]riwayatPemeriksaanResponse, int, error) {
+	var riwayatList []riwayatPemeriksaanResponse
+
+	query := `
+        SELECT 
+            rp.id, rp.id_balita, rp.id_intervensi, rp.id_laporan_masyarakat, rp.tanggal,
+            rp.berat_badan, rp.tinggi_badan, rp.status_gizi, rp.keterangan,
+            rp.created_date, rp.updated_date,
+            b.nama as nama_balita, b.jenis_kelamin,
+            TIMESTAMPDIFF(MONTH, b.tanggal_lahir, CURDATE()) as umur_bulan,
+            k.nomor_kk, k.nama_ayah, k.nama_ibu,
+            kel.kelurahan, kec.kecamatan,
+            i.jenis as jenis_intervensi, i.tanggal as tanggal_intervensi,
+            lm.id_masyarakat, sl.status as status_laporan, lm.tanggal_laporan,
+            pc.email as created_by,
+            pu.email as updated_by
+        FROM riwayat_pemeriksaan rp
+        LEFT JOIN balita b ON rp.id_balita = b.id AND b.deleted_date IS NULL
+        LEFT JOIN keluarga k ON b.id_keluarga = k.id AND k.deleted_date IS NULL
+        LEFT JOIN kelurahan kel ON k.id_kelurahan = kel.id
+        LEFT JOIN kecamatan kec ON kel.id_kecamatan = kec.id
+        LEFT JOIN intervensi i ON rp.id_intervensi = i.id AND i.deleted_date IS NULL
+        LEFT JOIN laporan_masyarakat lm ON rp.id_laporan_masyarakat = lm.id AND lm.deleted_date IS NULL
+        LEFT JOIN status_laporan sl ON lm.id_status_laporan = sl.id
+        LEFT JOIN pengguna pc ON rp.created_id = pc.id
+        LEFT JOIN pengguna pu ON rp.updated_id = pu.id
+        WHERE rp.id_balita = ? AND rp.deleted_date IS NULL
+        ORDER BY rp.tanggal DESC, rp.created_date DESC
+    `
+
+	rows, err := db.Query(query, idBalita)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var riwayat riwayatPemeriksaanResponse
+		var updatedDate sql.NullString
+		var createdBy, updatedBy sql.NullString
+		var idMasyarakatLaporan sql.NullString
+
+		err := rows.Scan(
+			&riwayat.Id,
+			&riwayat.IdBalita,
+			&riwayat.IdIntervensi,
+			&riwayat.IdLaporanMasyarakat,
+			&riwayat.Tanggal,
+			&riwayat.BeratBadan,
+			&riwayat.TinggiBadan,
+			&riwayat.StatusGizi,
+			&riwayat.Keterangan,
+			&riwayat.CreatedDate,
+			&updatedDate,
+			&riwayat.NamaBalita,
+			&riwayat.JenisKelamin,
+			&riwayat.UmurBalita,
+			&riwayat.NomorKk,
+			&riwayat.NamaAyah,
+			&riwayat.NamaIbu,
+			&riwayat.Kelurahan,
+			&riwayat.Kecamatan,
+			&riwayat.JenisIntervensi,
+			&riwayat.TanggalIntervensi,
+			&idMasyarakatLaporan,
+			&riwayat.StatusLaporan,
+			&riwayat.TanggalLaporan,
+			&createdBy,
+			&updatedBy,
+		)
+
+		if err != nil {
+			return nil, 0, err
+		}
+
+		// Format umur balita
+		riwayat.UmurBalita = formatUmurBalita(riwayat.UmurBalita)
+
+		// Determine jenis laporan
+		if idMasyarakatLaporan.Valid {
+			riwayat.JenisLaporan = "masyarakat"
+		} else {
+			riwayat.JenisLaporan = "admin"
+		}
+
+		// Handle nullable fields
+		if updatedDate.Valid {
+			riwayat.UpdatedDate = updatedDate.String
+		}
+		if createdBy.Valid {
+			riwayat.CreatedBy = createdBy.String
+		}
+		if updatedBy.Valid {
+			riwayat.UpdatedBy = updatedBy.String
+		}
+
+		riwayatList = append(riwayatList, riwayat)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	return riwayatList, len(riwayatList), nil
+}
+
+// Helper function to get riwayat pemeriksaan by laporan masyarakat ID
+func getRiwayatPemeriksaanByLaporan(db *sql.DB, idLaporan string) ([]riwayatPemeriksaanResponse, int, error) {
+	var riwayatList []riwayatPemeriksaanResponse
+
+	query := `
+        SELECT 
+            rp.id, rp.id_balita, rp.id_intervensi, rp.id_laporan_masyarakat, rp.tanggal,
+            rp.berat_badan, rp.tinggi_badan, rp.status_gizi, rp.keterangan,
+            rp.created_date, rp.updated_date,
+            b.nama as nama_balita, b.jenis_kelamin,
+            TIMESTAMPDIFF(MONTH, b.tanggal_lahir, CURDATE()) as umur_bulan,
+            k.nomor_kk, k.nama_ayah, k.nama_ibu,
+            kel.kelurahan, kec.kecamatan,
+            i.jenis as jenis_intervensi, i.tanggal as tanggal_intervensi,
+            lm.id_masyarakat, sl.status as status_laporan, lm.tanggal_laporan,
+            pc.email as created_by,
+            pu.email as updated_by
+        FROM riwayat_pemeriksaan rp
+        LEFT JOIN balita b ON rp.id_balita = b.id AND b.deleted_date IS NULL
+        LEFT JOIN keluarga k ON b.id_keluarga = k.id AND k.deleted_date IS NULL
+        LEFT JOIN kelurahan kel ON k.id_kelurahan = kel.id
+        LEFT JOIN kecamatan kec ON kel.id_kecamatan = kec.id
+        LEFT JOIN intervensi i ON rp.id_intervensi = i.id AND i.deleted_date IS NULL
+        LEFT JOIN laporan_masyarakat lm ON rp.id_laporan_masyarakat = lm.id AND lm.deleted_date IS NULL
+        LEFT JOIN status_laporan sl ON lm.id_status_laporan = sl.id
+        LEFT JOIN pengguna pc ON rp.created_id = pc.id
+        LEFT JOIN pengguna pu ON rp.updated_id = pu.id
+        WHERE rp.id_laporan_masyarakat = ? AND rp.deleted_date IS NULL
+        ORDER BY rp.tanggal DESC, rp.created_date DESC
+    `
+
+	rows, err := db.Query(query, idLaporan)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var riwayat riwayatPemeriksaanResponse
+		var updatedDate sql.NullString
+		var createdBy, updatedBy sql.NullString
+		var idMasyarakatLaporan sql.NullString
+
+		err := rows.Scan(
+			&riwayat.Id,
+			&riwayat.IdBalita,
+			&riwayat.IdIntervensi,
+			&riwayat.IdLaporanMasyarakat,
+			&riwayat.Tanggal,
+			&riwayat.BeratBadan,
+			&riwayat.TinggiBadan,
+			&riwayat.StatusGizi,
+			&riwayat.Keterangan,
+			&riwayat.CreatedDate,
+			&updatedDate,
+			&riwayat.NamaBalita,
+			&riwayat.JenisKelamin,
+			&riwayat.UmurBalita,
+			&riwayat.NomorKk,
+			&riwayat.NamaAyah,
+			&riwayat.NamaIbu,
+			&riwayat.Kelurahan,
+			&riwayat.Kecamatan,
+			&riwayat.JenisIntervensi,
+			&riwayat.TanggalIntervensi,
+			&idMasyarakatLaporan,
+			&riwayat.StatusLaporan,
+			&riwayat.TanggalLaporan,
+			&createdBy,
+			&updatedBy,
+		)
+
+		if err != nil {
+			return nil, 0, err
+		}
+
+		// Format umur balita
+		riwayat.UmurBalita = formatUmurBalita(riwayat.UmurBalita)
+
+		// Determine jenis laporan
+		if idMasyarakatLaporan.Valid {
+			riwayat.JenisLaporan = "masyarakat"
+		} else {
+			riwayat.JenisLaporan = "admin"
+		}
+
+		// Handle nullable fields
+		if updatedDate.Valid {
+			riwayat.UpdatedDate = updatedDate.String
+		}
+		if createdBy.Valid {
+			riwayat.CreatedBy = createdBy.String
+		}
+		if updatedBy.Valid {
+			riwayat.UpdatedBy = updatedBy.String
+		}
+
+		riwayatList = append(riwayatList, riwayat)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	return riwayatList, len(riwayatList), nil
+}
+
+// Helper function to get riwayat pemeriksaan by intervensi ID
+func getRiwayatPemeriksaanByIntervensi(db *sql.DB, idIntervensi string) ([]riwayatPemeriksaanResponse, int, error) {
+	var riwayatList []riwayatPemeriksaanResponse
+
+	query := `
+        SELECT 
+            rp.id, rp.id_balita, rp.id_intervensi, rp.id_laporan_masyarakat, rp.tanggal,
+            rp.berat_badan, rp.tinggi_badan, rp.status_gizi, rp.keterangan,
+            rp.created_date, rp.updated_date,
+            b.nama as nama_balita, b.jenis_kelamin,
+            TIMESTAMPDIFF(MONTH, b.tanggal_lahir, CURDATE()) as umur_bulan,
+            k.nomor_kk, k.nama_ayah, k.nama_ibu,
+            kel.kelurahan, kec.kecamatan,
+            i.jenis as jenis_intervensi, i.tanggal as tanggal_intervensi,
+            lm.id_masyarakat, sl.status as status_laporan, lm.tanggal_laporan,
+            pc.email as created_by,
+            pu.email as updated_by
+        FROM riwayat_pemeriksaan rp
+        LEFT JOIN balita b ON rp.id_balita = b.id AND b.deleted_date IS NULL
+        LEFT JOIN keluarga k ON b.id_keluarga = k.id AND k.deleted_date IS NULL
+        LEFT JOIN kelurahan kel ON k.id_kelurahan = kel.id
+        LEFT JOIN kecamatan kec ON kel.id_kecamatan = kec.id
+        LEFT JOIN intervensi i ON rp.id_intervensi = i.id AND i.deleted_date IS NULL
+        LEFT JOIN laporan_masyarakat lm ON rp.id_laporan_masyarakat = lm.id AND lm.deleted_date IS NULL
+        LEFT JOIN status_laporan sl ON lm.id_status_laporan = sl.id
+        LEFT JOIN pengguna pc ON rp.created_id = pc.id
+        LEFT JOIN pengguna pu ON rp.updated_id = pu.id
+        WHERE rp.id_intervensi = ? AND rp.deleted_date IS NULL
+        ORDER BY rp.tanggal DESC, rp.created_date DESC
+    `
+
+	rows, err := db.Query(query, idIntervensi)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var riwayat riwayatPemeriksaanResponse
+		var updatedDate sql.NullString
+		var createdBy, updatedBy sql.NullString
+		var idMasyarakatLaporan sql.NullString
+
+		err := rows.Scan(
+			&riwayat.Id,
+			&riwayat.IdBalita,
+			&riwayat.IdIntervensi,
+			&riwayat.IdLaporanMasyarakat,
+			&riwayat.Tanggal,
+			&riwayat.BeratBadan,
+			&riwayat.TinggiBadan,
+			&riwayat.StatusGizi,
+			&riwayat.Keterangan,
+			&riwayat.CreatedDate,
+			&updatedDate,
+			&riwayat.NamaBalita,
+			&riwayat.JenisKelamin,
+			&riwayat.UmurBalita,
+			&riwayat.NomorKk,
+			&riwayat.NamaAyah,
+			&riwayat.NamaIbu,
+			&riwayat.Kelurahan,
+			&riwayat.Kecamatan,
+			&riwayat.JenisIntervensi,
+			&riwayat.TanggalIntervensi,
+			&idMasyarakatLaporan,
+			&riwayat.StatusLaporan,
+			&riwayat.TanggalLaporan,
+			&createdBy,
+			&updatedBy,
+		)
+
+		if err != nil {
+			return nil, 0, err
+		}
+
+		// Format umur balita
+		riwayat.UmurBalita = formatUmurBalita(riwayat.UmurBalita)
+
+		// Determine jenis laporan
+		if idMasyarakatLaporan.Valid {
+			riwayat.JenisLaporan = "masyarakat"
+		} else {
+			riwayat.JenisLaporan = "admin"
+		}
+
+		// Handle nullable fields
+		if updatedDate.Valid {
+			riwayat.UpdatedDate = updatedDate.String
+		}
+		if createdBy.Valid {
+			riwayat.CreatedBy = createdBy.String
+		}
+		if updatedBy.Valid {
+			riwayat.UpdatedBy = updatedBy.String
+		}
+
+		riwayatList = append(riwayatList, riwayat)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, 0, err
+	}
+
+	return riwayatList, len(riwayatList), nil
 }

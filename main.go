@@ -87,10 +87,16 @@ func main() {
 	http.HandleFunc("/api/admin/intervensi-petugas/remove", admin.IntervensiPetugasRemove)
 
 	// Master Data Management
-	// http.HandleFunc("/api/admin/status-laporan/get", admin.StatusLaporanGet)
-	// http.HandleFunc("/api/admin/masyarakat/get", admin.MasyarakatGet)
-	// http.HandleFunc("/api/admin/kecamatan/get", admin.KecamatanGet)
-	// http.HandleFunc("/api/admin/kelurahan/get", admin.KelurahanGet)
+	http.HandleFunc("/api/admin/master-status-laporan", admin.StatusLaporanGet)
+	http.HandleFunc("/api/admin/master-masyarakat", admin.MasyarakatGet)
+	http.HandleFunc("/api/admin/master-kecamatan", admin.KecamatanGet)
+	http.HandleFunc("/api/admin/master-kelurahan", admin.KelurahanGet)
+	http.HandleFunc("/api/admin/master-skpd", admin.SkpdMasterGet)
+
+	// GeoJSON Data Management
+	http.HandleFunc("/api/admin/geojson-kecamatan", admin.KecamatanGeoJSONGet)
+	http.HandleFunc("/api/admin/geojson-kelurahan", admin.KelurahanGeoJSONGet)
+	http.HandleFunc("/api/admin/geojson-balita-points", admin.BalitaPointsGeoJSONGet)
 
 	/* ========================
 	   Masyarakat API Endpoints

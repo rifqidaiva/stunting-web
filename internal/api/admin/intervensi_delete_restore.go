@@ -122,12 +122,13 @@ func IntervensiDelete(w http.ResponseWriter, r *http.Request) {
 	// Check if intervensi exists and not already soft deleted
 	var exists int
 	var deletedDate sql.NullString
-	var jenis, tanggal, deskripsi string
-	checkQuery := `SELECT COUNT(*), deleted_date, jenis, tanggal, deskripsi 
-        FROM intervensi 
-        WHERE id = ? 
-        GROUP BY deleted_date, jenis, tanggal, deskripsi`
-	err = db.QueryRow(checkQuery, req.Id).Scan(&exists, &deletedDate, &jenis, &tanggal, &deskripsi)
+	var jenis, tanggal, deskripsi, namaBalita string
+	checkQuery := `SELECT COUNT(*), i.deleted_date, i.jenis, i.tanggal, i.deskripsi, b.nama as nama_balita
+        FROM intervensi i
+        LEFT JOIN balita b ON i.id_balita = b.id
+        WHERE i.id = ? 
+        GROUP BY i.deleted_date, i.jenis, i.tanggal, i.deskripsi, b.nama`
+	err = db.QueryRow(checkQuery, req.Id).Scan(&exists, &deletedDate, &jenis, &tanggal, &deskripsi, &namaBalita)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			response := object.NewResponse(http.StatusNotFound, "Intervensi not found", nil)
@@ -260,7 +261,8 @@ func IntervensiDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Prepare response message with additional information
-	message := fmt.Sprintf("Intervensi %s tanggal %s berhasil dihapus", jenis, tanggal)
+	message := fmt.Sprintf("Intervensi %s untuk balita '%s' tanggal %s berhasil dihapus",
+		jenis, namaBalita, tanggal)
 
 	response := object.NewResponse(http.StatusOK, "Intervensi deleted successfully", deleteIntervensiResponse{
 		Id:      req.Id,
@@ -359,12 +361,13 @@ func IntervensiRestore(w http.ResponseWriter, r *http.Request) {
 
 	// Check if intervensi exists and is soft deleted
 	var exists int
-	var jenis, tanggal, deskripsi string
-	checkQuery := `SELECT COUNT(*), jenis, tanggal, deskripsi 
-        FROM intervensi 
-        WHERE id = ? AND deleted_date IS NOT NULL
-        GROUP BY jenis, tanggal, deskripsi`
-	err = db.QueryRow(checkQuery, req.Id).Scan(&exists, &jenis, &tanggal, &deskripsi)
+	var jenis, tanggal, deskripsi, idBalita, namaBalita string
+	checkQuery := `SELECT COUNT(*), i.jenis, i.tanggal, i.deskripsi, i.id_balita, b.nama as nama_balita
+        FROM intervensi i
+        LEFT JOIN balita b ON i.id_balita = b.id
+        WHERE i.id = ? AND i.deleted_date IS NOT NULL
+        GROUP BY i.jenis, i.tanggal, i.deskripsi, i.id_balita, b.nama`
+	err = db.QueryRow(checkQuery, req.Id).Scan(&exists, &jenis, &tanggal, &deskripsi, &idBalita, &namaBalita)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			response := object.NewResponse(http.StatusNotFound, "Intervensi not found or not deleted", nil)
@@ -388,11 +391,11 @@ func IntervensiRestore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check for duplicates before restore (same jenis, tanggal, and deskripsi, not soft deleted)
+	// Check for duplicates before restore (same balita, jenis, tanggal, and deskripsi, not soft deleted)
 	var duplicateExists int
 	duplicateQuery := `SELECT COUNT(*) FROM intervensi 
-        WHERE jenis = ? AND tanggal = ? AND deskripsi = ? AND id != ? AND deleted_date IS NULL`
-	err = db.QueryRow(duplicateQuery, jenis, tanggal, deskripsi, req.Id).Scan(&duplicateExists)
+        WHERE id_balita = ? AND jenis = ? AND tanggal = ? AND deskripsi = ? AND id != ? AND deleted_date IS NULL`
+	err = db.QueryRow(duplicateQuery, idBalita, jenis, tanggal, deskripsi, req.Id).Scan(&duplicateExists)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to check duplicate intervensi", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -403,7 +406,8 @@ func IntervensiRestore(w http.ResponseWriter, r *http.Request) {
 
 	if duplicateExists > 0 {
 		response := object.NewResponse(http.StatusBadRequest,
-			fmt.Sprintf("Cannot restore intervensi. Another active intervensi with type '%s', date '%s', and similar description already exists", jenis, tanggal), nil)
+			fmt.Sprintf("Cannot restore intervensi. Another active intervensi for balita '%s' with type '%s', date '%s', and similar description already exists",
+				namaBalita, jenis, tanggal), nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -448,8 +452,29 @@ func IntervensiRestore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if related balita still exists and is not soft deleted
+	var balitaExists int
+	checkBalitaQuery := "SELECT COUNT(*) FROM balita WHERE id = ? AND deleted_date IS NULL"
+	err = db.QueryRow(checkBalitaQuery, idBalita).Scan(&balitaExists)
+	if err != nil {
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check related balita", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	if balitaExists == 0 {
+		response := object.NewResponse(http.StatusBadRequest, "Cannot restore intervensi. Related balita does not exist or is deleted", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
 	// Prepare response message with additional information
-	message := fmt.Sprintf("Intervensi %s tanggal %s berhasil dipulihkan", jenis, tanggal)
+	message := fmt.Sprintf("Intervensi %s untuk balita '%s' tanggal %s berhasil dipulihkan",
+		jenis, namaBalita, tanggal)
 
 	response := object.NewResponse(http.StatusOK, "Intervensi restored successfully", deleteIntervensiResponse{
 		Id:      req.Id,

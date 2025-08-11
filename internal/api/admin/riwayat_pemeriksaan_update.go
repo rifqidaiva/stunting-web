@@ -13,14 +13,15 @@ import (
 )
 
 type updateRiwayatPemeriksaanRequest struct {
-	Id           string `json:"id"`
-	IdBalita     string `json:"id_balita"`
-	IdIntervensi string `json:"id_intervensi"`
-	Tanggal      string `json:"tanggal"`      // Format: YYYY-MM-DD
-	BeratBadan   string `json:"berat_badan"`  // in kg (decimal)
-	TinggiBadan  string `json:"tinggi_badan"` // in cm (decimal)
-	StatusGizi   string `json:"status_gizi"`  // "normal", "stunting", "gizi buruk"
-	Keterangan   string `json:"keterangan"`
+	Id                  string `json:"id"`
+	IdBalita            string `json:"id_balita"`
+	IdIntervensi        string `json:"id_intervensi"`
+	IdLaporanMasyarakat string `json:"id_laporan_masyarakat"` // <- Field baru wajib
+	Tanggal             string `json:"tanggal"`               // Format: YYYY-MM-DD
+	BeratBadan          string `json:"berat_badan"`           // in kg (decimal)
+	TinggiBadan         string `json:"tinggi_badan"`          // in cm (decimal)
+	StatusGizi          string `json:"status_gizi"`           // "normal", "stunting", "gizi buruk"
+	Keterangan          string `json:"keterangan"`
 }
 
 func (r *updateRiwayatPemeriksaanRequest) validate() error {
@@ -37,6 +38,11 @@ func (r *updateRiwayatPemeriksaanRequest) validate() error {
 	// ID Intervensi validation (wajib)
 	if r.IdIntervensi == "" {
 		return fmt.Errorf("id intervensi is required")
+	}
+
+	// ID Laporan Masyarakat validation (wajib) <- Tambahan validasi baru
+	if r.IdLaporanMasyarakat == "" {
+		return fmt.Errorf("id laporan masyarakat is required")
 	}
 
 	// Tanggal validation: YYYY-MM-DD format
@@ -124,6 +130,7 @@ type updateRiwayatPemeriksaanResponse struct {
 // @Description Updates riwayat pemeriksaan record with new data including:
 // @Description - id_balita: balita being examined
 // @Description - id_intervensi: related intervention program
+// @Description - id_laporan_masyarakat: related masyarakat report
 // @Description - tanggal: examination date (YYYY-MM-DD format)
 // @Description - berat_badan: weight in kg (decimal)
 // @Description - tinggi_badan: height in cm (decimal)
@@ -214,12 +221,12 @@ func RiwayatPemeriksaanUpdate(w http.ResponseWriter, r *http.Request) {
 
 	// Check if riwayat pemeriksaan exists and not soft deleted, also get current data
 	var exists int
-	var currentBalitaId, currentIntervensiId, currentTanggal, currentStatusGizi string
-	checkExistQuery := `SELECT COUNT(*), id_balita, id_intervensi, tanggal, status_gizi 
+	var currentBalitaId, currentIntervensiId, currentLaporanId, currentTanggal, currentStatusGizi string
+	checkExistQuery := `SELECT COUNT(*), id_balita, id_intervensi, id_laporan_masyarakat, tanggal, status_gizi 
         FROM riwayat_pemeriksaan 
         WHERE id = ? AND deleted_date IS NULL 
-        GROUP BY id_balita, id_intervensi, tanggal, status_gizi`
-	err = db.QueryRow(checkExistQuery, req.Id).Scan(&exists, &currentBalitaId, &currentIntervensiId, &currentTanggal, &currentStatusGizi)
+        GROUP BY id_balita, id_intervensi, id_laporan_masyarakat, tanggal, status_gizi`
+	err = db.QueryRow(checkExistQuery, req.Id).Scan(&exists, &currentBalitaId, &currentIntervensiId, &currentLaporanId, &currentTanggal, &currentStatusGizi)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			response := object.NewResponse(http.StatusNotFound, "Riwayat pemeriksaan not found", nil)
@@ -242,12 +249,45 @@ func RiwayatPemeriksaanUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if balita exists and not soft deleted
+	// Check if laporan masyarakat exists and validate relationship
+	var laporanExists int
+	var statusLaporan, tanggalLaporan string
+	var idMasyarakatLaporan sql.NullString
+	var laporanBalitaId string
+	checkLaporanQuery := `SELECT COUNT(*), lm.id_masyarakat, sl.status, lm.tanggal_laporan, lm.id_balita
+    FROM laporan_masyarakat lm
+    LEFT JOIN status_laporan sl ON lm.id_status_laporan = sl.id
+    WHERE lm.id = ? AND lm.deleted_date IS NULL
+    GROUP BY lm.id_masyarakat, sl.status, lm.tanggal_laporan, lm.id_balita`
+	err = db.QueryRow(checkLaporanQuery, req.IdLaporanMasyarakat).Scan(&laporanExists, &idMasyarakatLaporan, &statusLaporan, &tanggalLaporan, &laporanBalitaId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			response := object.NewResponse(http.StatusBadRequest, "Laporan masyarakat not found", nil)
+			if err := response.WriteJson(w); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check laporan masyarakat existence", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	if laporanExists == 0 {
+		response := object.NewResponse(http.StatusBadRequest, "Laporan masyarakat not found", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Check if balita exists and not soft deleted (moved before laporan validation)
 	var balitaExists int
 	var namaBalita string
 	checkBalitaQuery := `SELECT COUNT(*), b.nama 
-        FROM balita b WHERE b.id = ? AND b.deleted_date IS NULL 
-        GROUP BY b.nama`
+    FROM balita b WHERE b.id = ? AND b.deleted_date IS NULL 
+    GROUP BY b.nama`
 	err = db.QueryRow(checkBalitaQuery, req.IdBalita).Scan(&balitaExists, &namaBalita)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -271,12 +311,22 @@ func RiwayatPemeriksaanUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Now validate that laporan is related to the same balita (namaBalita sudah didefinisikan)
+	if laporanBalitaId != req.IdBalita {
+		response := object.NewResponse(http.StatusBadRequest,
+			fmt.Sprintf("Laporan masyarakat is not related to balita '%s'. Please select the correct laporan.", namaBalita), nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
 	// Check if intervensi exists and not soft deleted
 	var intervensiExists int
 	var jenisIntervensi, tanggalIntervensi string
 	checkIntervensiQuery := `SELECT COUNT(*), jenis, tanggal 
-        FROM intervensi WHERE id = ? AND deleted_date IS NULL 
-        GROUP BY jenis, tanggal`
+    FROM intervensi WHERE id = ? AND deleted_date IS NULL 
+    GROUP BY jenis, tanggal`
 	err = db.QueryRow(checkIntervensiQuery, req.IdIntervensi).Scan(&intervensiExists, &jenisIntervensi, &tanggalIntervensi)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -300,11 +350,11 @@ func RiwayatPemeriksaanUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check for duplicate riwayat pemeriksaan (same balita, intervensi, and tanggal, excluding current record)
+	// Check for duplicate riwayat pemeriksaan (including laporan, excluding current record)
 	var duplicateExists int
 	checkDuplicateQuery := `SELECT COUNT(*) FROM riwayat_pemeriksaan 
-        WHERE id_balita = ? AND id_intervensi = ? AND tanggal = ? AND id != ? AND deleted_date IS NULL`
-	err = db.QueryRow(checkDuplicateQuery, req.IdBalita, req.IdIntervensi, req.Tanggal, req.Id).Scan(&duplicateExists)
+        WHERE id_balita = ? AND id_intervensi = ? AND id_laporan_masyarakat = ? AND tanggal = ? AND id != ? AND deleted_date IS NULL`
+	err = db.QueryRow(checkDuplicateQuery, req.IdBalita, req.IdIntervensi, req.IdLaporanMasyarakat, req.Tanggal, req.Id).Scan(&duplicateExists)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to check duplicate riwayat pemeriksaan", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -314,7 +364,7 @@ func RiwayatPemeriksaanUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	if duplicateExists > 0 {
 		response := object.NewResponse(http.StatusBadRequest,
-			fmt.Sprintf("Riwayat pemeriksaan for balita '%s' on date '%s' in intervensi '%s' already exists",
+			fmt.Sprintf("Riwayat pemeriksaan for balita '%s' on date '%s' in intervensi '%s' with this laporan already exists",
 				namaBalita, req.Tanggal, jenisIntervensi), nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -337,15 +387,16 @@ func RiwayatPemeriksaanUpdate(w http.ResponseWriter, r *http.Request) {
 	// Current timestamp
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
-	// Update riwayat pemeriksaan
+	// Update riwayat pemeriksaan dengan id_laporan_masyarakat
 	updateQuery := `UPDATE riwayat_pemeriksaan SET 
-        id_balita = ?, id_intervensi = ?, tanggal = ?, berat_badan = ?, tinggi_badan = ?, 
+        id_balita = ?, id_intervensi = ?, id_laporan_masyarakat = ?, tanggal = ?, berat_badan = ?, tinggi_badan = ?, 
         status_gizi = ?, keterangan = ?, updated_id = ?, updated_date = ?
         WHERE id = ? AND deleted_date IS NULL`
 
 	result, err := db.Exec(updateQuery,
 		req.IdBalita,
 		req.IdIntervensi,
+		req.IdLaporanMasyarakat, // <- Parameter baru
 		req.Tanggal,
 		req.BeratBadan,
 		req.TinggiBadan,
@@ -385,13 +436,16 @@ func RiwayatPemeriksaanUpdate(w http.ResponseWriter, r *http.Request) {
 	message := fmt.Sprintf("Riwayat pemeriksaan balita '%s' berhasil diperbarui untuk intervensi %s pada tanggal %s",
 		namaBalita, jenisIntervensi, req.Tanggal)
 
-	// Add information about significant changes
+	// Add information about significant changes including laporan
 	var changes []string
 	if currentBalitaId != req.IdBalita {
 		changes = append(changes, "balita changed")
 	}
 	if currentIntervensiId != req.IdIntervensi {
 		changes = append(changes, "intervensi changed")
+	}
+	if currentLaporanId != req.IdLaporanMasyarakat {
+		changes = append(changes, "laporan changed")
 	}
 	if currentTanggal != req.Tanggal {
 		changes = append(changes, fmt.Sprintf("tanggal: %s → %s", currentTanggal, req.Tanggal))

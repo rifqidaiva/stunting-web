@@ -9,6 +9,8 @@ import (
 
 type intervensiResponse struct {
 	Id           string `json:"id"`
+	IdBalita     string `json:"id_balita"`     // <- Field baru
+	NamaBalita   string `json:"nama_balita"`   // <- Field baru untuk display
 	Jenis        string `json:"jenis"`
 	Tanggal      string `json:"tanggal"`
 	Deskripsi    string `json:"deskripsi"`
@@ -156,30 +158,34 @@ func getIntervensiById(db *sql.DB, id string) (intervensiResponse, error) {
 
 	query := `
         SELECT 
-            i.id, i.jenis, i.tanggal, i.deskripsi, i.hasil,
+            i.id, i.id_balita, i.jenis, i.tanggal, i.deskripsi, i.hasil,
             i.created_date, i.updated_date,
+            b.nama as nama_balita,
             COALESCE(COUNT(DISTINCT ip.id), 0) as petugas_count,
             COALESCE(COUNT(DISTINCT rp.id), 0) as riwayat_count,
             pc.email as created_by,
             pu.email as updated_by
         FROM intervensi i
+        LEFT JOIN balita b ON i.id_balita = b.id AND b.deleted_date IS NULL
         LEFT JOIN intervensi_petugas ip ON i.id = ip.id_intervensi
         LEFT JOIN riwayat_pemeriksaan rp ON i.id = rp.id_intervensi AND rp.deleted_date IS NULL
         LEFT JOIN pengguna pc ON i.created_id = pc.id
         LEFT JOIN pengguna pu ON i.updated_id = pu.id
         WHERE i.id = ? AND i.deleted_date IS NULL
-        GROUP BY i.id, i.jenis, i.tanggal, i.deskripsi, i.hasil,
-                 i.created_date, i.updated_date, pc.email, pu.email
+        GROUP BY i.id, i.id_balita, i.jenis, i.tanggal, i.deskripsi, i.hasil,
+                 i.created_date, i.updated_date, b.nama, pc.email, pu.email
     `
 
 	err := db.QueryRow(query, id).Scan(
 		&intervensi.Id,
+		&intervensi.IdBalita,      // <- Field baru
 		&intervensi.Jenis,
 		&intervensi.Tanggal,
 		&intervensi.Deskripsi,
 		&intervensi.Hasil,
 		&intervensi.CreatedDate,
 		&updatedDate,
+		&intervensi.NamaBalita,    // <- Field baru
 		&intervensi.PetugasCount,
 		&intervensi.RiwayatCount,
 		&createdBy,
@@ -210,20 +216,22 @@ func getAllIntervensi(db *sql.DB) ([]intervensiResponse, int, error) {
 
 	query := `
         SELECT 
-            i.id, i.jenis, i.tanggal, i.deskripsi, i.hasil,
+            i.id, i.id_balita, i.jenis, i.tanggal, i.deskripsi, i.hasil,
             i.created_date, i.updated_date,
+            b.nama as nama_balita,
             COALESCE(COUNT(DISTINCT ip.id), 0) as petugas_count,
             COALESCE(COUNT(DISTINCT rp.id), 0) as riwayat_count,
             pc.email as created_by,
             pu.email as updated_by
         FROM intervensi i
+        LEFT JOIN balita b ON i.id_balita = b.id AND b.deleted_date IS NULL
         LEFT JOIN intervensi_petugas ip ON i.id = ip.id_intervensi
         LEFT JOIN riwayat_pemeriksaan rp ON i.id = rp.id_intervensi AND rp.deleted_date IS NULL
         LEFT JOIN pengguna pc ON i.created_id = pc.id
         LEFT JOIN pengguna pu ON i.updated_id = pu.id
         WHERE i.deleted_date IS NULL
-        GROUP BY i.id, i.jenis, i.tanggal, i.deskripsi, i.hasil,
-                 i.created_date, i.updated_date, pc.email, pu.email
+        GROUP BY i.id, i.id_balita, i.jenis, i.tanggal, i.deskripsi, i.hasil,
+                 i.created_date, i.updated_date, b.nama, pc.email, pu.email
         ORDER BY i.tanggal DESC, i.created_date DESC
     `
 
@@ -240,12 +248,14 @@ func getAllIntervensi(db *sql.DB) ([]intervensiResponse, int, error) {
 
 		err := rows.Scan(
 			&intervensi.Id,
+			&intervensi.IdBalita,      // <- Field baru
 			&intervensi.Jenis,
 			&intervensi.Tanggal,
 			&intervensi.Deskripsi,
 			&intervensi.Hasil,
 			&intervensi.CreatedDate,
 			&updatedDate,
+			&intervensi.NamaBalita,    // <- Field baru
 			&intervensi.PetugasCount,
 			&intervensi.RiwayatCount,
 			&createdBy,

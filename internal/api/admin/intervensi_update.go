@@ -14,8 +14,9 @@ import (
 
 type updateIntervensiRequest struct {
 	Id        string `json:"id"`
-	Jenis     string `json:"jenis"`   // "gizi", "kesehatan", "sosial"
-	Tanggal   string `json:"tanggal"` // Format: YYYY-MM-DD
+	IdBalita  string `json:"id_balita"`   // <- Field baru
+	Jenis     string `json:"jenis"`       // "gizi", "kesehatan", "sosial"
+	Tanggal   string `json:"tanggal"`     // Format: YYYY-MM-DD
 	Deskripsi string `json:"deskripsi"`
 	Hasil     string `json:"hasil"`
 }
@@ -24,6 +25,11 @@ func (r *updateIntervensiRequest) validate() error {
 	// ID validation
 	if r.Id == "" {
 		return fmt.Errorf("intervensi ID is required")
+	}
+
+	// ID Balita validation (wajib)
+	if r.IdBalita == "" {
+		return fmt.Errorf("id balita is required")
 	}
 
 	// Jenis validation: must be one of the allowed types
@@ -87,6 +93,7 @@ type updateIntervensiResponse struct {
 // @Description Update existing intervensi data (Admin only)
 // @Description
 // @Description Updates intervensi record including:
+// @Description - id_balita: ID of the balita being intervened
 // @Description - jenis: type of intervention (gizi, kesehatan, sosial)
 // @Description - tanggal: intervention date (YYYY-MM-DD format)
 // @Description - deskripsi: detailed description of the intervention
@@ -177,12 +184,12 @@ func IntervensiUpdate(w http.ResponseWriter, r *http.Request) {
 
 	// Check if intervensi exists and not soft deleted, also get current data
 	var exists int
-	var currentJenis, currentTanggal, currentDeskripsi, currentHasil string
-	checkExistQuery := `SELECT COUNT(*), jenis, tanggal, deskripsi, hasil 
+	var currentIdBalita, currentJenis, currentTanggal, currentDeskripsi, currentHasil string
+	checkExistQuery := `SELECT COUNT(*), id_balita, jenis, tanggal, deskripsi, hasil 
         FROM intervensi 
         WHERE id = ? AND deleted_date IS NULL 
-        GROUP BY jenis, tanggal, deskripsi, hasil`
-	err = db.QueryRow(checkExistQuery, req.Id).Scan(&exists, &currentJenis, &currentTanggal, &currentDeskripsi, &currentHasil)
+        GROUP BY id_balita, jenis, tanggal, deskripsi, hasil`
+	err = db.QueryRow(checkExistQuery, req.Id).Scan(&exists, &currentIdBalita, &currentJenis, &currentTanggal, &currentDeskripsi, &currentHasil)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			response := object.NewResponse(http.StatusNotFound, "Intervensi not found", nil)
@@ -205,11 +212,40 @@ func IntervensiUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check for duplicate intervensi (same jenis, tanggal, and similar deskripsi, excluding current record)
+	// Check if balita exists and not soft deleted
+	var balitaExists int
+	var namaBalita string
+	checkBalitaQuery := `SELECT COUNT(*), b.nama 
+        FROM balita b WHERE b.id = ? AND b.deleted_date IS NULL 
+        GROUP BY b.nama`
+	err = db.QueryRow(checkBalitaQuery, req.IdBalita).Scan(&balitaExists, &namaBalita)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			response := object.NewResponse(http.StatusBadRequest, "Balita not found", nil)
+			if err := response.WriteJson(w); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+		response := object.NewResponse(http.StatusInternalServerError, "Failed to check balita existence", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	if balitaExists == 0 {
+		response := object.NewResponse(http.StatusBadRequest, "Balita not found", nil)
+		if err := response.WriteJson(w); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	// Check for duplicate intervensi (same balita, jenis, tanggal, and similar deskripsi, excluding current record)
 	var duplicateExists int
 	checkDuplicateQuery := `SELECT COUNT(*) FROM intervensi 
-        WHERE jenis = ? AND tanggal = ? AND deskripsi = ? AND id != ? AND deleted_date IS NULL`
-	err = db.QueryRow(checkDuplicateQuery, req.Jenis, req.Tanggal, req.Deskripsi, req.Id).Scan(&duplicateExists)
+        WHERE id_balita = ? AND jenis = ? AND tanggal = ? AND deskripsi = ? AND id != ? AND deleted_date IS NULL`
+	err = db.QueryRow(checkDuplicateQuery, req.IdBalita, req.Jenis, req.Tanggal, req.Deskripsi, req.Id).Scan(&duplicateExists)
 	if err != nil {
 		response := object.NewResponse(http.StatusInternalServerError, "Failed to check duplicate intervensi", nil)
 		if err := response.WriteJson(w); err != nil {
@@ -218,7 +254,8 @@ func IntervensiUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if duplicateExists > 0 {
-		response := object.NewResponse(http.StatusBadRequest, "Intervensi with same type, date, and description already exists", nil)
+		response := object.NewResponse(http.StatusBadRequest, 
+			fmt.Sprintf("Intervensi with same balita '%s', type, date, and description already exists", namaBalita), nil)
 		if err := response.WriteJson(w); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -254,10 +291,11 @@ func IntervensiUpdate(w http.ResponseWriter, r *http.Request) {
 
 	// Update intervensi
 	updateQuery := `UPDATE intervensi SET 
-        jenis = ?, tanggal = ?, deskripsi = ?, hasil = ?, updated_id = ?, updated_date = ?
+        id_balita = ?, jenis = ?, tanggal = ?, deskripsi = ?, hasil = ?, updated_id = ?, updated_date = ?
         WHERE id = ? AND deleted_date IS NULL`
 
 	result, err := db.Exec(updateQuery,
+		req.IdBalita,    // <- Parameter baru
 		req.Jenis,
 		req.Tanggal,
 		req.Deskripsi,
@@ -293,10 +331,14 @@ func IntervensiUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Prepare response message with additional information
-	message := fmt.Sprintf("Intervensi %s berhasil diperbarui untuk tanggal %s", req.Jenis, req.Tanggal)
+	message := fmt.Sprintf("Intervensi %s untuk balita '%s' berhasil diperbarui untuk tanggal %s", 
+        req.Jenis, namaBalita, req.Tanggal)
 
 	// Add information about changes made
 	var changes []string
+	if currentIdBalita != req.IdBalita {
+		changes = append(changes, "balita changed")
+	}
 	if currentJenis != req.Jenis {
 		changes = append(changes, fmt.Sprintf("jenis: %s → %s", currentJenis, req.Jenis))
 	}
