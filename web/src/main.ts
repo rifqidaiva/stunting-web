@@ -5,8 +5,12 @@ import "./style.css"
 import App from "./App.vue"
 
 import Home from "./components/Home.vue"
+import Auth from "./components/auth/Auth.vue"
 import Admin from "./components/admin/Admin.vue"
 import Community from "./components/community/Community.vue"
+
+import Login from "./components/auth/Login.vue"
+import Register from "./components/auth/Register.vue"
 
 import Keluarga from "./components/admin/menu/keluarga/Keluarga.vue"
 import Balita from "./components/admin/menu/balita/Balita.vue"
@@ -19,6 +23,26 @@ const routes = [
   {
     path: "/",
     component: Home,
+  },
+  {
+    path: "/auth",
+    component: Auth,
+    children: [
+      {
+        path: "",
+        redirect: "/auth/login",
+      },
+      {
+        path: "login",
+        component: Login,
+        meta: { title: "Login" },
+      },
+      {
+        path: "register",
+        component: Register,
+        meta: { title: "Register" },
+      },
+    ],
   },
   {
     path: "/admin",
@@ -63,6 +87,7 @@ const routes = [
   {
     path: "/community",
     component: Community,
+    meta: { title: "Community" },
   },
 ]
 
@@ -71,4 +96,11 @@ const router = createRouter({
   routes,
 })
 
-createApp(App).use(router).mount("#app")
+// ✅ Title handling
+router.beforeEach((to) => {
+  document.title = to.meta.title as string || "Stunting Web"
+})
+
+const app = createApp(App)
+app.use(router)
+app.mount("#app")
