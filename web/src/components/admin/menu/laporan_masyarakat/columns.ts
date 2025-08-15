@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/vue-table"
-import { ArrowUpDown, MoreHorizontal, Pencil, Trash2, Eye } from "lucide-vue-next"
+import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from "lucide-vue-next"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
