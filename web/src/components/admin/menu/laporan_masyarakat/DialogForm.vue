@@ -235,8 +235,133 @@ watch(
         <!-- Content dengan scroll -->
         <div class="flex-1 overflow-y-auto p-4 sm:p-6">
           <div class="space-y-6">
+            <!-- Balita -->
+            <div>
+              <Label for="id_balita">Balita <span class="text-red-500">*</span></Label>
+              <Select v-model="formData.id_balita">
+                <SelectTrigger :class="{'border-red-500': errors.id_balita}">
+                  <SelectValue placeholder="Pilih Balita" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    v-for="balita in balitaOptions"
+                    :key="balita.id"
+                    :value="balita.id"
+                  >
+                    {{ balita.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <div v-if="errors.id_balita" class="text-red-500 text-xs mt-1">{{ errors.id_balita }}</div>
+            </div>
 
-            tes
+            <!-- Masyarakat -->
+            <div>
+              <Label for="id_masyarakat">Pelapor <span class="text-red-500">*</span></Label>
+              <Select v-model="formData.id_masyarakat">
+                <SelectTrigger :class="{'border-red-500': errors.id_masyarakat}">
+                  <SelectValue placeholder="Pilih Pelapor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    v-for="masyarakat in masyarakatOptions"
+                    :key="masyarakat.id"
+                    :value="masyarakat.id"
+                  >
+                    {{ masyarakat.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <div v-if="errors.id_masyarakat" class="text-red-500 text-xs mt-1">{{ errors.id_masyarakat }}</div>
+            </div>
+
+            <!-- Status Laporan -->
+            <div>
+              <Label for="id_status_laporan">Status Laporan <span class="text-red-500">*</span></Label>
+              <Select v-model="formData.id_status_laporan">
+                <SelectTrigger :class="{'border-red-500': errors.id_status_laporan}">
+                  <SelectValue placeholder="Pilih Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    v-for="status in statusLaporanOptions"
+                    :key="status.id"
+                    :value="status.id"
+                  >
+                    {{ status.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <div v-if="errors.id_status_laporan" class="text-red-500 text-xs mt-1">{{ errors.id_status_laporan }}</div>
+            </div>
+
+            <!-- Hubungan dengan Balita -->
+            <div>
+              <Label for="hubungan_dengan_balita">Hubungan dengan Balita <span class="text-red-500">*</span></Label>
+              <Input
+                id="hubungan_dengan_balita"
+                v-model="formData.hubungan_dengan_balita"
+                :class="{'border-red-500': errors.hubungan_dengan_balita}"
+                placeholder="Contoh: Ibu, Ayah, Tetangga"
+              />
+              <div v-if="errors.hubungan_dengan_balita" class="text-red-500 text-xs mt-1">{{ errors.hubungan_dengan_balita }}</div>
+            </div>
+
+            <!-- Nomor HP Keluarga Balita -->
+            <div>
+              <Label for="nomor_hp_keluarga_balita">Nomor HP Keluarga Balita <span class="text-red-500">*</span></Label>
+              <Input
+                id="nomor_hp_keluarga_balita"
+                v-model="formData.nomor_hp_keluarga_balita"
+                :class="{'border-red-500': errors.nomor_hp_keluarga_balita}"
+                placeholder="081234567890"
+                type="tel"
+              />
+              <div v-if="errors.nomor_hp_keluarga_balita" class="text-red-500 text-xs mt-1">{{ errors.nomor_hp_keluarga_balita }}</div>
+            </div>
+
+            <!-- Nomor HP Pelapor -->
+            <div>
+              <Label for="nomor_hp_pelapor">Nomor HP Pelapor <span class="text-red-500">*</span></Label>
+              <Input
+                id="nomor_hp_pelapor"
+                v-model="formData.nomor_hp_pelapor"
+                :class="{'border-red-500': errors.nomor_hp_pelapor}"
+                placeholder="081234567890"
+                type="tel"
+              />
+              <div v-if="errors.nomor_hp_pelapor" class="text-red-500 text-xs mt-1">{{ errors.nomor_hp_pelapor }}</div>
+            </div>
+
+            <!-- Tanggal Laporan -->
+            <div>
+              <Label for="tanggal_laporan">Tanggal Laporan <span class="text-red-500">*</span></Label>
+              <Popover v-model:open="isCalendarOpen">
+                <PopoverTrigger as-child>
+                  <Button
+                    variant="outline"
+                    class="w-full justify-start text-left font-normal"
+                    :class="{'border-red-500': errors.tanggal_laporan}"
+                  >
+                    <CalendarIcon class="mr-2 h-4 w-4" />
+                    <span>
+                      {{
+                        formData.tanggal_laporan
+                          ? format(new Date(formData.tanggal_laporan), "dd MMMM yyyy", { locale: id })
+                          : "Pilih tanggal"
+                      }}
+                    </span>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent class="w-auto p-0">
+                  <Calendar
+                    v-model="selectedDate"
+                    @update:modelValue="handleDateSelect"
+                  />
+                </PopoverContent>
+              </Popover>
+              <div v-if="errors.tanggal_laporan" class="text-red-500 text-xs mt-1">{{ errors.tanggal_laporan }}</div>
+            </div>
           </div>
         </div>
 
