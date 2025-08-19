@@ -4,7 +4,6 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
-  Eye,
   Users,
   FileText,
   Stethoscope,
@@ -204,7 +203,7 @@ export const riwayatPemeriksaanColumns: ColumnDef<RiwayatPemeriksaan>[] = [
     accessorFn: (row) => `${row.nama_balita} ${row.umur_balita} ${row.nomor_kk}`,
   },
   {
-    id: "tanggal_pemeriksaan",
+    id: "tanggal",
     accessorKey: "tanggal",
     header: ({ column }) => {
       return h(
@@ -333,7 +332,7 @@ export const riwayatPemeriksaanColumns: ColumnDef<RiwayatPemeriksaan>[] = [
     accessorFn: (row) => `${row.kelurahan} ${row.kecamatan}`,
   },
   {
-    id: "created_info",
+    id: "created_date",
     accessorKey: "created_date",
     header: ({ column }) => {
       return h(
@@ -410,16 +409,6 @@ export const riwayatPemeriksaanColumns: ColumnDef<RiwayatPemeriksaan>[] = [
                         },
                       },
                       { default: () => "Copy Riwayat ID" }
-                    ),
-                    h(
-                      DropdownMenuItem,
-                      {
-                        onClick: () => {
-                          // Navigate to detailed view
-                          console.log("View details for:", riwayat.nama_balita)
-                        },
-                      },
-                      { default: () => [h(Eye, { class: "mr-2 h-4 w-4" }), "View Details"] }
                     ),
                     h(DropdownMenuSeparator),
                     h(
@@ -697,7 +686,9 @@ export const intervensiColumns: ColumnDef<Intervensi>[] = [
                       {
                         onClick: () => {
                           // View riwayat pemeriksaan
-                          console.log("View riwayat for:", intervensi.id)
+                          document.dispatchEvent(
+                            new CustomEvent("view-riwayat-intervensi", { detail: intervensi })
+                          )
                         },
                       },
                       { default: () => [h(FileText, { class: "mr-2 h-4 w-4" }), "Lihat Riwayat"] }

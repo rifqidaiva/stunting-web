@@ -93,12 +93,19 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ left: 0, top: 0 })
+      }, 150)
+    })
+  },
   routes,
 })
 
-// ✅ Title handling
+// Title handling
 router.beforeEach((to) => {
-  document.title = to.meta.title as string || "Stunting Web"
+  document.title = (to.meta.title as string) || "Stunting Web"
 })
 
 const app = createApp(App)

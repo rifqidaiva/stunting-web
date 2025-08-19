@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue"
 import type { Intervensi, RiwayatPemeriksaan } from "./columns"
-import { Activity, Plus } from "lucide-vue-next";
-import Button from "@/components/ui/button/Button.vue";
-import Card from "@/components/ui/card/Card.vue";
-import CardHeader from "@/components/ui/card/CardHeader.vue";
-import CardTitle from "@/components/ui/card/CardTitle.vue";
-import CardContent from "@/components/ui/card/CardContent.vue";
-import CardDescription from "@/components/ui/card/CardDescription.vue";
-import DataTableIntervensi from "./DataTableIntervensi.vue";
+import { Activity, Plus } from "lucide-vue-next"
+import Button from "@/components/ui/button/Button.vue"
+import Card from "@/components/ui/card/Card.vue"
+import CardHeader from "@/components/ui/card/CardHeader.vue"
+import CardTitle from "@/components/ui/card/CardTitle.vue"
+import CardContent from "@/components/ui/card/CardContent.vue"
+import CardDescription from "@/components/ui/card/CardDescription.vue"
+import DataTableIntervensi from "./DataTableIntervensi.vue"
+import { toast } from "vue-sonner"
+import DialogFormIntervensi from "./DialogFormIntervensi.vue"
+import SheetRiwayatPemeriksaan from "./SheetRiwayatPemeriksaan.vue"
 
 // Dummy data
 const intervensiData = ref<Intervensi[]>([
@@ -24,7 +27,7 @@ const intervensiData = ref<Intervensi[]>([
     riwayat_count: 1,
     created_date: "2024-01-19",
     updated_date: "2024-01-20",
-    created_by: "admin"
+    created_by: "admin",
   },
   {
     id: "2",
@@ -99,6 +102,19 @@ const riwayatPemeriksaanData = ref<RiwayatPemeriksaan[]>([
   },
 ])
 
+// Dialog states
+const showDialogIntervensi = ref(false)
+const dialogModeIntervensi = ref<"create" | "edit">("create")
+const selectedIntervensi = ref<Intervensi | null>(null)
+
+const showDialogRiwayat = ref(false)
+const dialogModeRiwayat = ref<"create" | "edit">("create")
+const selectedRiwayat = ref<RiwayatPemeriksaan | null>(null)
+
+// Sheet states
+const showRiwayatSheet = ref(false)
+const selectedIntervensiForSheet = ref<Intervensi | null>(null)
+
 const totalIntervensi = ref(intervensiData.value.length)
 const totalRiwayatPemeriksaan = ref(riwayatPemeriksaanData.value.length)
 
@@ -106,6 +122,76 @@ const updateStatistics = () => {
   totalIntervensi.value = intervensiData.value.length
   totalRiwayatPemeriksaan.value = riwayatPemeriksaanData.value.length
 }
+
+const handleCreateIntervensi = () => {
+  dialogModeIntervensi.value = "create"
+  selectedIntervensi.value = null
+  showDialogIntervensi.value = true
+}
+
+const handleEditIntervensi = (intervensi: Intervensi) => {
+  dialogModeIntervensi.value = "edit"
+  selectedIntervensi.value = { ...intervensi }
+  showDialogIntervensi.value = true
+}
+
+const handleDeleteIntervensi = (intervensi: Intervensi) => {
+  if (confirm("Apakah Anda yakin ingin menghapus intervensi ini?")) {
+    toast.success("Intervensi berhasil dihapus.")
+  }
+}
+
+const handleSaveIntervensi = (intervensi: Intervensi) => {
+  if (dialogModeIntervensi.value === "create") {
+    toast.success("Intervensi berhasil ditambahkan.")
+  } else if (dialogModeIntervensi.value === "edit" && selectedIntervensi.value) {
+    toast.success("Intervensi berhasil diperbarui.")
+  }
+  updateStatistics()
+  showDialogIntervensi.value = false
+}
+
+const handleViewRiwayat = (intervensi: Intervensi) => {
+  selectedIntervensiForSheet.value = intervensi
+  showRiwayatSheet.value = true
+}
+
+// Handle add riwayat from sheet
+const handleAddRiwayat = (intervensiId: string) => {
+  
+}
+
+// Handle edit riwayat from sheet
+const handleEditRiwayat = (riwayat: RiwayatPemeriksaan) => {
+  selectedRiwayat.value = { ...riwayat }
+  dialogModeRiwayat.value = "edit"
+  showDialogRiwayat.value = true
+}
+
+const handleCustomEvents = (event: Event) => {
+  const customEvent = event as CustomEvent
+
+  if (event.type === "edit-intervensi") {
+    handleEditIntervensi(customEvent.detail)
+  } else if (event.type === "delete-intervensi") {
+    handleDeleteIntervensi(customEvent.detail)
+  } else if (event.type === "view-riwayat-intervensi") {
+    // Add this new event type to your columns action
+    handleViewRiwayat(customEvent.detail)
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("edit-intervensi", handleCustomEvents)
+  document.addEventListener("delete-intervensi", handleCustomEvents)
+  document.addEventListener("view-riwayat-intervensi", handleCustomEvents)
+})
+
+onUnmounted(() => {
+  document.removeEventListener("edit-intervensi", handleCustomEvents)
+  document.removeEventListener("delete-intervensi", handleCustomEvents)
+  document.removeEventListener("view-riwayat-intervensi", handleCustomEvents)
+})
 </script>
 
 <template>
@@ -119,7 +205,9 @@ const updateStatistics = () => {
         </h1>
         <p class="text-gray-600">Kelola data riwayat dan intervensi balita stunting</p>
       </div>
-      <Button @click="" class="gap-2">
+      <Button
+        @click="handleCreateIntervensi"
+        class="gap-2">
         <Plus class="h-4 w-4" />
         Tambah Intervensi
       </Button>
@@ -165,5 +253,11 @@ const updateStatistics = () => {
       </CardContent>
     </Card>
 
+    <DialogFormIntervensi
+      :show="showDialogIntervensi"
+      :mode="dialogModeIntervensi"
+      :intervensi="selectedIntervensi"
+      @close="showDialogIntervensi = false"
+      @save="handleSaveIntervensi" />
   </div>
 </template>
