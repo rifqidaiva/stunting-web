@@ -19,6 +19,11 @@ import RiwayatAndIntervensi from "./components/admin/menu/riwayat_&_intervensi/R
 import PetugasKesehatan from "./components/admin/menu/petugas_kesehatan/PetugasKesehatan.vue"
 import Skpd from "./components/admin/menu/skpd/Skpd.vue"
 
+import CommunityKeluarga from "./components/community/menu/keluarga/Keluarga.vue"
+import CommunityBalita from "./components/community/menu/balita/Balita.vue"
+import CommunityLaporanMasyarakat from "./components/community/menu/laporan_masyarakat/LaporanMasyarakat.vue"
+
+
 const routes = [
   {
     path: "/",
@@ -87,7 +92,23 @@ const routes = [
   {
     path: "/community",
     component: Community,
-    meta: { title: "Community" },
+    children: [
+      {
+        path: "keluarga",
+        component: CommunityKeluarga,
+        meta: { title: "Community - Keluarga" },
+      },
+      {
+        path: "balita",
+        component: CommunityBalita,
+        meta: { title: "Community - Balita" },
+      },
+      {
+        path: "laporan-masyarakat",
+        component: CommunityLaporanMasyarakat,
+        meta: { title: "Community - Laporan Masyarakat" },
+      },
+    ]
   },
 ]
 
