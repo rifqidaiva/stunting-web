@@ -226,7 +226,7 @@ const totalColumnsCount = computed(() => {
             <TableCell
               :colspan="columns.length"
               class="h-24 text-center">
-              Tidak ada data balita.
+              Tidak ada data laporan.
             </TableCell>
           </TableRow>
         </TableBody>

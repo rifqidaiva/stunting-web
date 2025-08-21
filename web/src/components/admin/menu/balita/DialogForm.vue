@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue"
+import { ref, watch, computed, onMounted } from "vue"
 import { toast } from "vue-sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,26 +21,45 @@ import {
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { CalendarIcon, Save, X, Baby, Users } from "lucide-vue-next"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CalendarIcon, Save, X, Baby, Users, Loader2 } from "lucide-vue-next"
 import { format } from "date-fns"
 import { id } from "date-fns/locale"
 import { CalendarDate, type DateValue } from "@internationalized/date"
+import { authUtils } from "@/lib/utils"
 import type { Balita } from "./columns"
 
 interface Props {
   show: boolean
   mode: "create" | "edit"
   balita: Balita | null
+  loading?: boolean
 }
 
 interface Emits {
   (e: "close"): void
   (e: "save", balita: Balita): void
+}
+
+// API Types
+interface ApiResponse<T> {
+  data: T
+  message: string
+  status_code: number
+}
+
+interface KeluargaOption {
+  id: string
+  nomor_kk: string
+  nama_ayah: string
+  nama_ibu: string
+  kelurahan: string
+  kecamatan: string
+}
+
+interface GetAllKeluargaResponse {
+  data: KeluargaOption[]
+  total: number
 }
 
 const props = defineProps<Props>()
@@ -63,15 +82,83 @@ const isCalendarOpen = ref(false)
 // Validation errors
 const errors = ref<Record<string, string>>({})
 
-// Dummy keluarga options (untuk dropdown)
-const keluargaOptions = [
-  { id: "1", label: "3209012345678901 - Budi Santoso & Siti Rahayu" },
-  { id: "2", label: "3209012345678903 - Ahmad Wijaya & Dewi Sartika" },
-  { id: "3", label: "3209012345678905 - Rizki Pratama & Maya Sari" },
-  { id: "4", label: "3209012345678907 - Dedi Kurniawan & Rina Melati" },
-  { id: "5", label: "3209012345678909 - Eko Prasetyo & Lilis Suryani" },
-  { id: "6", label: "3209012345678911 - Fajar Setiawan & Sari Wulandari" },
-]
+// Keluarga options from API
+const keluargaOptions = ref<KeluargaOption[]>([])
+const keluargaLoading = ref(false)
+
+// API request function
+const apiRequest = async <T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> => {
+  const token = authUtils.getToken()
+  if (!token) {
+    throw new Error("No authentication token found")
+  }
+
+  const defaultOptions: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const config = { ...defaultOptions, ...options }
+  config.headers = { ...defaultOptions.headers, ...options.headers }
+
+  try {
+    const response = await fetch(`/api${endpoint}`, config)
+    const data = await response.json()
+
+    if (!response.ok || data.status_code !== 200) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`)
+    }
+
+    return data
+  } catch (error) {
+    console.error(`API request failed for ${endpoint}:`, error)
+    throw error
+  }
+}
+
+// Fetch keluarga master data
+const fetchKeluargaOptions = async () => {
+  keluargaLoading.value = true
+  try {
+    console.log("Fetching keluarga master data from API...")
+
+    const response = await apiRequest<GetAllKeluargaResponse>("/admin/keluarga/get")
+
+    keluargaOptions.value = response.data.data.map((k) => ({
+      id: k.id,
+      nomor_kk: k.nomor_kk,
+      nama_ayah: k.nama_ayah,
+      nama_ibu: k.nama_ibu,
+      kelurahan: k.kelurahan,
+      kecamatan: k.kecamatan,
+    }))
+
+    console.log("Keluarga options loaded:", keluargaOptions.value.length, "items")
+  } catch (error) {
+    console.error("Error fetching keluarga options:", error)
+    toast.error("Gagal memuat data keluarga. Menggunakan data default.")
+
+    // Fallback to empty array if API fails
+    keluargaOptions.value = []
+  } finally {
+    keluargaLoading.value = false
+  }
+}
+
+// Get formatted keluarga label for display
+const getKeluargaLabel = (keluarga: KeluargaOption): string => {
+  return `${keluarga.nomor_kk} - ${keluarga.nama_ayah} & ${keluarga.nama_ibu}`
+}
+
+// Get selected keluarga object
+const getSelectedKeluarga = (id: string): KeluargaOption | undefined => {
+  return keluargaOptions.value.find((k) => k.id === id)
+}
 
 // Helper functions untuk input restriction
 const restrictToNumbers = (value: string) => value.replace(/\D/g, "")
@@ -186,6 +273,7 @@ const resetForm = () => {
     tinggi_lahir: "",
   }
   errors.value = {}
+  selectedDate.value = undefined
 }
 
 // Load form data for edit mode
@@ -208,6 +296,16 @@ const loadFormData = (balita: Balita) => {
     updated_date: balita.updated_date,
   }
   errors.value = {}
+
+  // Initialize date for calendar
+  if (balita.tanggal_lahir) {
+    const jsDate = new Date(balita.tanggal_lahir)
+    selectedDate.value = new CalendarDate(
+      jsDate.getFullYear(),
+      jsDate.getMonth() + 1,
+      jsDate.getDate()
+    )
+  }
 }
 
 // Handle save
@@ -224,17 +322,14 @@ const handleSave = () => {
     return
   }
 
-  // Auto-populate data keluarga berdasarkan id_keluarga
-  const selectedKeluarga = keluargaOptions.find((k) => k.id === formData.value.id_keluarga)
+  // Auto-populate data keluarga berdasarkan id_keluarga dari API data
+  const selectedKeluarga = getSelectedKeluarga(formData.value.id_keluarga!)
   if (selectedKeluarga) {
-    const [nomorKk, namaOrangTua] = selectedKeluarga.label.split(" - ")
-    const [namaAyah, namaIbu] = namaOrangTua.split(" & ")
-
-    formData.value.nomor_kk = nomorKk
-    formData.value.nama_ayah = namaAyah
-    formData.value.nama_ibu = namaIbu
-    formData.value.kelurahan = "Kesambi" // Default, in real app get from keluarga data
-    formData.value.kecamatan = "Kesambi"
+    formData.value.nomor_kk = selectedKeluarga.nomor_kk
+    formData.value.nama_ayah = selectedKeluarga.nama_ayah
+    formData.value.nama_ibu = selectedKeluarga.nama_ibu
+    formData.value.kelurahan = selectedKeluarga.kelurahan
+    formData.value.kecamatan = selectedKeluarga.kecamatan
   }
 
   // Calculate umur
@@ -258,14 +353,29 @@ const handleDateSelect = (date: DateValue | undefined) => {
     const jsDate = new Date(date.year, date.month - 1, date.day)
     formData.value.tanggal_lahir = format(jsDate, "yyyy-MM-dd")
     isCalendarOpen.value = false
+
+    // Clear tanggal_lahir error if date is valid
+    const birthDate = jsDate
+    const today = new Date()
+    const fiveYearsAgo = new Date()
+    fiveYearsAgo.setFullYear(today.getFullYear() - 5)
+
+    if (birthDate <= today && birthDate >= fiveYearsAgo) {
+      delete errors.value.tanggal_lahir
+    }
   }
 }
 
 // Watch for dialog visibility and mode changes
 watch(
   () => props.show,
-  (newVal) => {
+  async (newVal) => {
+    console.log("👀 Dialog visibility changed:", newVal)
+
     if (newVal) {
+      // Load keluarga options first
+      await fetchKeluargaOptions()
+
       if (props.balita && props.mode === "edit") {
         loadFormData(props.balita)
       } else {
@@ -281,18 +391,6 @@ watch(
   (newBalita) => {
     if (newBalita && props.mode === "edit" && props.show) {
       loadFormData(newBalita)
-      // Initialize date for calendar
-      if (newBalita.tanggal_lahir) {
-        const jsDate = new Date(newBalita.tanggal_lahir)
-        selectedDate.value = new CalendarDate(
-          jsDate.getFullYear(),
-          jsDate.getMonth() + 1,
-          jsDate.getDate()
-        )
-      }
-    } else {
-      // Reset calendar when not editing
-      selectedDate.value = undefined
     }
   },
   { deep: true }
@@ -331,6 +429,11 @@ watch(
     }
   }
 )
+
+// Load keluarga options on component mount
+onMounted(async () => {
+  await fetchKeluargaOptions()
+})
 </script>
 
 <template>
@@ -365,19 +468,30 @@ watch(
                 <CardTitle class="flex items-center gap-2 text-base">
                   <Users class="h-4 w-4" />
                   Pilih Keluarga *
+                  <Loader2
+                    v-if="keluargaLoading"
+                    class="h-3 w-3 animate-spin" />
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Select v-model="formData.id_keluarga">
-                  <SelectTrigger :class="errors.id_keluarga ? 'border-red-500' : ''">
-                    <SelectValue placeholder="Pilih keluarga (Nomor KK - Nama Orang Tua)" />
+                <Select
+                  v-model="formData.id_keluarga"
+                  :disabled="keluargaLoading">
+                  <SelectTrigger class="w-full" :class="errors.id_keluarga ? 'border-red-500' : ''">
+                    <SelectValue>
+                      {{
+                        formData.id_keluarga
+                          ? getSelectedKeluarga(formData.id_keluarga)?.nomor_kk
+                          : "Pilih Keluarga"
+                      }}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem
                       v-for="keluarga in keluargaOptions"
                       :key="keluarga.id"
                       :value="keluarga.id">
-                      {{ keluarga.label }}
+                      {{ getKeluargaLabel(keluarga) }}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -386,6 +500,17 @@ watch(
                   class="text-sm text-red-500 mt-2">
                   {{ errors.id_keluarga }}
                 </p>
+
+                <!-- Show selected keluarga info -->
+                <div
+                  v-if="formData.id_keluarga && !keluargaLoading"
+                  class="mt-2 text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                  <strong>Dipilih:</strong>
+                  {{ getSelectedKeluarga(formData.id_keluarga)?.nama_ayah }} &
+                  {{ getSelectedKeluarga(formData.id_keluarga)?.nama_ibu }} -
+                  {{ getSelectedKeluarga(formData.id_keluarga)?.kelurahan }},
+                  {{ getSelectedKeluarga(formData.id_keluarga)?.kecamatan }}
+                </div>
               </CardContent>
             </Card>
 
@@ -427,7 +552,9 @@ watch(
                     Tanggal Lahir *
                     <span class="text-xs text-muted-foreground">(balita < 5 tahun)</span>
                   </Label>
-                  <Popover :open="isCalendarOpen" @update:open="isCalendarOpen = $event">
+                  <Popover
+                    :open="isCalendarOpen"
+                    @update:open="isCalendarOpen = $event">
                     <PopoverTrigger as-child>
                       <Button
                         variant="outline"
@@ -435,13 +562,27 @@ watch(
                         :class="[
                           'w-full justify-start text-left font-normal',
                           !selectedDate && 'text-muted-foreground',
-                          errors.tanggal_lahir && 'border-red-500'
+                          errors.tanggal_lahir && 'border-red-500',
                         ]">
                         <CalendarIcon class="mr-2 h-4 w-4" />
-                        {{ selectedDate ? format(new Date(selectedDate.year, selectedDate.month - 1, selectedDate.day), "PPP", { locale: id }) : "Pilih tanggal lahir" }}
+                        {{
+                          selectedDate
+                            ? format(
+                                new Date(
+                                  selectedDate.year,
+                                  selectedDate.month - 1,
+                                  selectedDate.day
+                                ),
+                                "PPP",
+                                { locale: id }
+                              )
+                            : "Pilih tanggal lahir"
+                        }}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent class="w-auto p-0" align="start">
+                    <PopoverContent
+                      class="w-auto p-0"
+                      align="start">
                       <Calendar
                         :model-value="selectedDate"
                         @update:model-value="handleDateSelect"
@@ -565,13 +706,15 @@ watch(
               </p>
             </div>
 
-            <!-- Debug Info (untuk development) -->
+            <!-- Development Info -->
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs">
               <strong>🐛 Debug Info:</strong><br />
               Mode: {{ mode }}<br />
               Has Data: {{ !!props.balita }}<br />
               Form ID: {{ formData.id || "New" }}<br />
-              Umur: {{ currentAge }}
+              Umur: {{ currentAge }}<br />
+              Keluarga Options: {{ keluargaOptions.length }} loaded<br />
+              Loading: {{ keluargaLoading }}
             </div>
           </div>
         </div>
@@ -588,9 +731,15 @@ watch(
             </Button>
             <Button
               @click="handleSave"
+              :disabled="loading || keluargaLoading"
               class="w-full sm:w-auto">
-              <Save class="h-4 w-4 mr-2" />
-              {{ mode === "create" ? "Simpan" : "Perbarui" }}
+              <Loader2
+                v-if="loading"
+                class="h-4 w-4 mr-2 animate-spin" />
+              <Save
+                v-else
+                class="h-4 w-4 mr-2" />
+              {{ loading ? "Menyimpan..." : mode === "create" ? "Simpan" : "Perbarui" }}
             </Button>
           </DialogFooter>
         </div>

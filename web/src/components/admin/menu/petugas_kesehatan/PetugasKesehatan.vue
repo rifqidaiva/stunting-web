@@ -1,23 +1,26 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue"
 import type { PetugasKesehatan } from "./columns"
-import { toast } from "vue-sonner";
-import { Plus, Stethoscope } from "lucide-vue-next";
-import Button from "@/components/ui/button/Button.vue";
-import Card from "@/components/ui/card/Card.vue";
-import CardHeader from "@/components/ui/card/CardHeader.vue";
-import CardTitle from "@/components/ui/card/CardTitle.vue";
-import CardContent from "@/components/ui/card/CardContent.vue";
-import CardDescription from "@/components/ui/card/CardDescription.vue";
-import DataTable from "./DataTable.vue";
+import { toast } from "vue-sonner"
+import { Plus, Stethoscope } from "lucide-vue-next"
+import Button from "@/components/ui/button/Button.vue"
+import Card from "@/components/ui/card/Card.vue"
+import CardHeader from "@/components/ui/card/CardHeader.vue"
+import CardTitle from "@/components/ui/card/CardTitle.vue"
+import CardContent from "@/components/ui/card/CardContent.vue"
+import CardDescription from "@/components/ui/card/CardDescription.vue"
+import DataTable from "./DataTable.vue"
+import DialogForm from "./DialogForm.vue"
+import DialogAssign from "./DialogAssign.vue" // Tambahkan import ini
 
 const petugasData = ref<PetugasKesehatan[]>([
   {
     id: "1",
     id_pengguna: "1",
-    id_skpd: "1",
+    id_skpd: "S001",
     email: "petugas1@example.com",
     nama: "Petugas 1",
+    password: "password1",
     skpd: "Puskesmas 1",
     jenis_skpd: "puskesmas",
     intervensi_count: 3,
@@ -27,9 +30,10 @@ const petugasData = ref<PetugasKesehatan[]>([
   {
     id: "2",
     id_pengguna: "2",
-    id_skpd: "2",
+    id_skpd: "S002",
     email: "petugas2@example.com",
     nama: "Petugas 2",
+    password: "password2",
     skpd: "Kelurahan 1",
     jenis_skpd: "kelurahan",
     intervensi_count: 0,
@@ -39,9 +43,10 @@ const petugasData = ref<PetugasKesehatan[]>([
   {
     id: "3",
     id_pengguna: "3",
-    id_skpd: "3",
+    id_skpd: "S003",
     email: "petugas3@example.com",
     nama: "Petugas 3",
+    password: "password3",
     skpd: "SKPD 1",
     jenis_skpd: "skpd",
     intervensi_count: 5,
@@ -51,8 +56,10 @@ const petugasData = ref<PetugasKesehatan[]>([
 ])
 
 const showDialog = ref(false)
+const showAssignDialog = ref(false) // Tambahkan state untuk assign dialog
 const dialogMode = ref<"create" | "edit">("create")
 const selectedPetugas = ref<PetugasKesehatan | null>(null)
+const selectedPetugasForAssign = ref<PetugasKesehatan | null>(null) // Tambahkan state untuk petugas yang akan di-assign
 
 const totalPetugas = ref(petugasData.value.length)
 
@@ -83,6 +90,32 @@ const handleDelete = (petugas: PetugasKesehatan) => {
   }
 }
 
+const handleAssign = (petugas: PetugasKesehatan) => {
+  selectedPetugasForAssign.value = { ...petugas }
+  showAssignDialog.value = true
+}
+
+// Handle assignment events
+const handleAssignPetugas = (assignment: { id_intervensi: string; id_petugas_kesehatan: string }) => {
+  // Implementasi API call untuk assign petugas
+  console.log("Assign petugas:", assignment)
+  
+  // Simulasi update data lokal
+  // Dalam implementasi nyata, ini akan memanggil API dan update state
+  toast.success(`Petugas berhasil ditugaskan ke intervensi`)
+  showAssignDialog.value = false
+}
+
+const handleRemoveAssignment = (assignmentId: string) => {
+  // Implementasi API call untuk remove assignment
+  console.log("Remove assignment:", assignmentId)
+  
+  // Simulasi update data lokal
+  // Dalam implementasi nyata, ini akan memanggil API dan update state
+  toast.success("Penugasan petugas berhasil dihapus")
+  showAssignDialog.value = false
+}
+
 const handleSave = (petugas: PetugasKesehatan) => {
   if (dialogMode.value === "create") {
     // Generate new ID
@@ -109,6 +142,32 @@ const handleSave = (petugas: PetugasKesehatan) => {
   updateStatistics()
   showDialog.value = false
 }
+
+// Event handlers untuk custom events dari DataTable
+const handleCustomEvents = (event: Event) => {
+  const customEvent = event as CustomEvent
+  
+  if (event.type === "edit-petugas") {
+    handleEdit(customEvent.detail)
+  } else if (event.type === "delete-petugas") {
+    handleDelete(customEvent.detail)
+  } else if (event.type === "assign-petugas") {
+    handleAssign(customEvent.detail)
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener("edit-petugas", handleCustomEvents)
+  document.addEventListener("delete-petugas", handleCustomEvents)
+  document.addEventListener("assign-petugas", handleCustomEvents)
+})
+
+onUnmounted(() => {
+  document.removeEventListener("edit-petugas", handleCustomEvents)
+  document.removeEventListener("delete-petugas", handleCustomEvents)
+  document.removeEventListener("assign-petugas", handleCustomEvents)
+})
 </script>
 
 <template>
@@ -157,5 +216,21 @@ const handleSave = (petugas: PetugasKesehatan) => {
         <DataTable :data="petugasData" />
       </CardContent>
     </Card>
+
+    <!-- Dialog Forms -->
+    <DialogForm
+      :show="showDialog"
+      :mode="dialogMode"
+      :petugas="selectedPetugas"
+      @close="showDialog = false"
+      @save="handleSave" />
+      
+    <!-- Tambahkan DialogAssign -->
+    <DialogAssign
+      :show="showAssignDialog"
+      :petugas="selectedPetugasForAssign"
+      @close="showAssignDialog = false"
+      @assign="handleAssignPetugas"
+      @remove="handleRemoveAssignment" />
   </div>
 </template>

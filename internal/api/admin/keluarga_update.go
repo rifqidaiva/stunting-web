@@ -105,12 +105,12 @@ func (r *updateKeluargaRequest) validate() error {
 	}
 
 	// Koordinat validation
-	if r.Koordinat[0] < -180 || r.Koordinat[0] > 180 {
-		return fmt.Errorf("longitude must be between -180 and 180")
-	}
-	if r.Koordinat[1] < -90 || r.Koordinat[1] > 90 {
-		return fmt.Errorf("latitude must be between -90 and 90")
-	}
+	// if r.Koordinat[0] < -180 || r.Koordinat[0] > 180 {
+	// 	return fmt.Errorf("longitude must be between -180 and 180")
+	// }
+	// if r.Koordinat[1] < -90 || r.Koordinat[1] > 90 {
+	// 	return fmt.Errorf("latitude must be between -90 and 90")
+	// }
 
 	return nil
 }

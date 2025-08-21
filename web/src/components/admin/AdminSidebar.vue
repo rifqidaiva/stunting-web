@@ -1,15 +1,6 @@
 <script setup lang="ts">
-import {
-  Users,
-  Baby,
-  FileText,
-  MapPin,
-  Activity,
-  Stethoscope,
-  Building,
-  Map,
-  BarChart3,
-} from "lucide-vue-next"
+import { ref, onMounted } from "vue"
+import { Users, Baby, FileText, Activity, Stethoscope, Building } from "lucide-vue-next"
 
 import {
   Sidebar,
@@ -25,6 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import AdminSidebarUser from "@/components/admin/AdminSidebarUser.vue"
+import { authUtils } from "@/lib/utils"
 
 const menuItems = [
   {
@@ -46,24 +38,14 @@ const menuItems = [
         route: "/admin/laporan-masyarakat",
       },
       {
-        title: "Riwayat & Intervensi",
+        title: "Intervensi",
         icon: Activity,
-        route: "/admin/riwayat-dan-intervensi",
-      },
-    ],
-  },
-  {
-    category: "Data Geografis",
-    items: [
-      {
-        title: "Peta Stunting",
-        icon: Map,
-        route: "/admin/peta-stunting",
+        route: "/admin/intervensi",
       },
       {
-        title: "Area Wilayah",
-        icon: MapPin,
-        route: "/admin/area-wilayah",
+        title: "Riwayat Pemeriksaan",
+        icon: FileText,
+        route: "/admin/riwayat-pemeriksaan",
       },
     ],
   },
@@ -82,17 +64,40 @@ const menuItems = [
       },
     ],
   },
-  {
-    category: "Analisis",
-    items: [
-      {
-        title: "Statistik & Laporan",
-        icon: BarChart3,
-        route: "/admin/statistik",
-      },
-    ],
-  },
 ]
+
+// User data state
+const currentUser = ref({
+  name: "Admin DKIS",
+  email: "admin@dkis-cirebon.go.id",
+  avatar: "/api/placeholder/32/32",
+  role: "admin",
+})
+
+// Load user data from localStorage using authUtils
+const loadUserData = () => {
+  try {
+    const userData = authUtils.getUserData()
+    if (userData) {
+      currentUser.value = {
+        name: userData.data?.nama || userData.nama || "Admin DKIS",
+        email: userData.email || "admin@dkis-cirebon.go.id",
+        avatar: "/api/placeholder/32/32", // Default avatar
+        role: userData.role || "admin",
+      }
+      console.log("User data loaded from authUtils:", currentUser.value)
+    } else {
+      console.log("No user data found in authUtils, using defaults")
+    }
+  } catch (error) {
+    console.error("Error loading user data from authUtils:", error)
+  }
+}
+
+// Load user data on component mount
+onMounted(() => {
+  loadUserData()
+})
 </script>
 
 <template>
@@ -152,12 +157,7 @@ const menuItems = [
 
     <SidebarFooter>
       <div class="p-2 border-t">
-        <AdminSidebarUser
-          :user="{
-            name: 'Admin DKIS',
-            email: 'admin@dkis-cirebon.go.id',
-            avatar: '/api/placeholder/32/32',
-          }" />
+        <AdminSidebarUser :user="currentUser" />
       </div>
     </SidebarFooter>
   </Sidebar>

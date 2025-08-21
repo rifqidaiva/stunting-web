@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, onMounted, onUnmounted } from "vue"
 import type { Skpd } from "./columns"
 import { toast } from "vue-sonner"
 import { Building, Plus } from "lucide-vue-next"
@@ -10,6 +10,7 @@ import CardTitle from "@/components/ui/card/CardTitle.vue"
 import CardContent from "@/components/ui/card/CardContent.vue"
 import CardDescription from "@/components/ui/card/CardDescription.vue"
 import DataTable from "./DataTable.vue"
+import DialogForm from "./DialogForm.vue" // Tambahkan import ini
 
 // Dummy data
 const skpdData = ref<Skpd[]>([
@@ -90,6 +91,28 @@ const handleSave = (skpd: Skpd) => {
   updateStatistics()
   showDialog.value = false
 }
+
+// Event handlers untuk custom events dari DataTable
+const handleCustomEvents = (event: Event) => {
+  const customEvent = event as CustomEvent
+  
+  if (event.type === "edit-skpd") {
+    handleEdit(customEvent.detail)
+  } else if (event.type === "delete-skpd") {
+    handleDelete(customEvent.detail)
+  }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  document.addEventListener("edit-skpd", handleCustomEvents)
+  document.addEventListener("delete-skpd", handleCustomEvents)
+})
+
+onUnmounted(() => {
+  document.removeEventListener("edit-skpd", handleCustomEvents)
+  document.removeEventListener("delete-skpd", handleCustomEvents)
+})
 </script>
 
 <template>
@@ -138,5 +161,13 @@ const handleSave = (skpd: Skpd) => {
         <DataTable :data="skpdData" />
       </CardContent>
     </Card>
+
+    <!-- Tambahkan DialogForm di bagian bawah template -->
+    <DialogForm
+      :show="showDialog"
+      :mode="dialogMode"
+      :skpd="selectedSkpd"
+      @close="showDialog = false"
+      @save="handleSave" />
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onUnmounted } from "vue"
+import { ref, watch, nextTick, onUnmounted, onMounted } from "vue"
 import { toast } from "vue-sonner"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
@@ -24,7 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Save, X, MapPin, Navigation } from "lucide-vue-next"
+import { Save, X, MapPin, Navigation, Loader2 } from "lucide-vue-next"
+import { authUtils } from "@/lib/utils"
 import type { Keluarga } from "./columns"
 
 // ✅ Fix Leaflet default marker icons
@@ -39,11 +40,31 @@ interface Props {
   show: boolean
   mode: "create" | "edit"
   keluarga: Keluarga | null
+  loading?: boolean
 }
 
 interface Emits {
   (e: "close"): void
   (e: "save", keluarga: Keluarga): void
+}
+
+// API Types
+interface ApiResponse<T> {
+  data: T
+  message: string
+  status_code: number
+}
+
+interface KelurahanResponse {
+  id: string
+  id_kecamatan: string
+  kelurahan: string
+  kecamatan: string
+}
+
+interface GetAllKelurahanResponse {
+  data: KelurahanResponse[]
+  total: number
 }
 
 const props = defineProps<Props>()
@@ -72,15 +93,83 @@ let map: L.Map | null = null
 let marker: L.Marker | null = null
 const mapInitialized = ref(false)
 
-// Dummy kelurahan options (sesuai dengan data yang ada di main.go)
-const kelurahanOptions = [
-  { id: "1", label: "Kesambi - Kesambi" },
-  { id: "2", label: "Tuparev - Kedawung" },
-  { id: "3", label: "Perjuangan - Kejaksan" },
-  { id: "4", label: "Argasunya - Harjamukti" },
-  { id: "5", label: "Lemahwungkuk - Lemahwungkuk" },
-  { id: "6", label: "Kesenden - Kesenden" },
-]
+// ✅ Kelurahan options from API
+const kelurahanOptions = ref<KelurahanResponse[]>([])
+const kelurahanLoading = ref(false)
+
+// API request function
+const apiRequest = async <T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> => {
+  const token = authUtils.getToken()
+  if (!token) {
+    throw new Error("No authentication token found")
+  }
+
+  const defaultOptions: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+  }
+
+  const config = { ...defaultOptions, ...options }
+  config.headers = { ...defaultOptions.headers, ...options.headers }
+
+  try {
+    const response = await fetch(`/api${endpoint}`, config)
+    const data = await response.json()
+
+    if (!response.ok || data.status_code !== 200) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`)
+    }
+
+    return data
+  } catch (error) {
+    console.error(`API request failed for ${endpoint}:`, error)
+    throw error
+  }
+}
+
+// ✅ Fetch kelurahan master data
+const fetchKelurahanOptions = async () => {
+  kelurahanLoading.value = true
+  try {
+    console.log("Fetching kelurahan master data from API...")
+    
+    const response = await apiRequest<GetAllKelurahanResponse>("/admin/master-kelurahan")
+    
+    kelurahanOptions.value = response.data.data
+    console.log("Kelurahan options loaded:", kelurahanOptions.value.length, "items")
+    
+  } catch (error) {
+    console.error("Error fetching kelurahan options:", error)
+    toast.error("Gagal memuat data kelurahan. Menggunakan data default.")
+    
+    // Fallback to static data if API fails
+    kelurahanOptions.value = [
+      { id: "1", id_kecamatan: "1", kelurahan: "Kesambi", kecamatan: "Kesambi" },
+      { id: "2", id_kecamatan: "2", kelurahan: "Tuparev", kecamatan: "Kedawung" },
+      { id: "3", id_kecamatan: "3", kelurahan: "Perjuangan", kecamatan: "Kejaksan" },
+      { id: "4", id_kecamatan: "4", kelurahan: "Argasunya", kecamatan: "Harjamukti" },
+      { id: "5", id_kecamatan: "5", kelurahan: "Lemahwungkuk", kecamatan: "Lemahwungkuk" },
+      { id: "6", id_kecamatan: "6", kelurahan: "Kesenden", kecamatan: "Kesenden" },
+    ]
+  } finally {
+    kelurahanLoading.value = false
+  }
+}
+
+// ✅ Get formatted kelurahan label for display
+const getKelurahanLabel = (kelurahan: KelurahanResponse): string => {
+  return `${kelurahan.kelurahan} - Kec. ${kelurahan.kecamatan}`
+}
+
+// ✅ Get selected kelurahan object
+const getSelectedKelurahan = (id: string): KelurahanResponse | undefined => {
+  return kelurahanOptions.value.find(k => k.id === id)
+}
 
 // Helper functions untuk input restriction
 const restrictToNumbers = (value: string) => value.replace(/\D/g, "")
@@ -375,12 +464,11 @@ const handleSave = () => {
     return
   }
 
-  // Auto-populate kelurahan dan kecamatan berdasarkan id_kelurahan
-  const selectedKelurahan = kelurahanOptions.find((k) => k.id === formData.value.id_kelurahan)
+  // ✅ Auto-populate kelurahan dan kecamatan berdasarkan id_kelurahan dari API data
+  const selectedKelurahan = getSelectedKelurahan(formData.value.id_kelurahan!)
   if (selectedKelurahan) {
-    const [kelurahan, kecamatan] = selectedKelurahan.label.split(" - ")
-    formData.value.kelurahan = kelurahan
-    formData.value.kecamatan = kecamatan
+    formData.value.kelurahan = selectedKelurahan.kelurahan
+    formData.value.kecamatan = selectedKelurahan.kecamatan
   }
 
   emit("save", formData.value as Keluarga)
@@ -401,6 +489,9 @@ watch(
     console.log("👀 Dialog visibility changed:", newVal)
 
     if (newVal) {
+      // Load kelurahan options first
+      await fetchKelurahanOptions()
+      
       if (props.keluarga && props.mode === "edit") {
         loadFormData(props.keluarga)
       } else {
@@ -483,6 +574,11 @@ watch(
     }
   }
 )
+
+// ✅ Load kelurahan options on component mount
+onMounted(async () => {
+  await fetchKelurahanOptions()
+})
 
 // ✅ Cleanup on unmount
 onUnmounted(() => {
@@ -716,25 +812,31 @@ onUnmounted(() => {
                   </div>
                 </div>
 
-                <!-- Kelurahan -->
+                <!-- ✅ Kelurahan from API -->
                 <div class="space-y-2">
                   <Label
                     for="kelurahan"
-                    class="text-sm font-medium"
-                    >Kelurahan *</Label
-                  >
-                  <Select v-model="formData.id_kelurahan">
+                    class="text-sm font-medium flex items-center gap-2">
+                    Kelurahan *
+                    <Loader2 
+                      v-if="kelurahanLoading" 
+                      class="h-3 w-3 animate-spin" />
+                  </Label>
+                  <Select 
+                    v-model="formData.id_kelurahan"
+                    :disabled="kelurahanLoading">
                     <SelectTrigger
                       id="kelurahan"
                       :class="errors.id_kelurahan ? 'border-red-500' : ''">
-                      <SelectValue placeholder="Pilih kelurahan" />
+                      <SelectValue 
+                        :placeholder="kelurahanLoading ? 'Memuat data kelurahan...' : 'Pilih kelurahan'" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem
                         v-for="kelurahan in kelurahanOptions"
                         :key="kelurahan.id"
                         :value="kelurahan.id">
-                        {{ kelurahan.label }}
+                        {{ getKelurahanLabel(kelurahan) }}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -743,6 +845,15 @@ onUnmounted(() => {
                     class="text-sm text-red-500">
                     {{ errors.id_kelurahan }}
                   </p>
+                  
+                  <!-- ✅ Show selected kelurahan info -->
+                  <div 
+                    v-if="formData.id_kelurahan && !kelurahanLoading"
+                    class="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+                    <strong>Dipilih:</strong> 
+                    {{ getSelectedKelurahan(formData.id_kelurahan)?.kelurahan }} - 
+                    Kecamatan {{ getSelectedKelurahan(formData.id_kelurahan)?.kecamatan }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -862,9 +973,15 @@ onUnmounted(() => {
             </Button>
             <Button
               @click="handleSave"
+              :disabled="loading || kelurahanLoading"
               class="w-full sm:w-auto">
-              <Save class="h-4 w-4 mr-2" />
-              {{ mode === "create" ? "Simpan" : "Perbarui" }}
+              <Loader2 
+                v-if="loading" 
+                class="h-4 w-4 mr-2 animate-spin" />
+              <Save 
+                v-else 
+                class="h-4 w-4 mr-2" />
+              {{ loading ? "Menyimpan..." : (mode === "create" ? "Simpan" : "Perbarui") }}
             </Button>
           </DialogFooter>
         </div>

@@ -14,7 +14,7 @@ import { h } from "vue"
 
 export interface LaporanMasyarakat {
   id: string
-  id_masyarakat: string
+  id_masyarakat: string | null
   id_balita: string
   id_status_laporan: string
   tanggal_laporan: string
@@ -128,8 +128,20 @@ export const columns: ColumnDef<LaporanMasyarakat>[] = [
 
       return h("div", { class: "space-y-1" }, [
         h("div", { class: "font-medium text-sm" }, namaBalita),
-        h("div", { class: "text-xs text-muted-foreground" }, `Ayah: ${namaAyah}`),
-        h("div", { class: "text-xs text-muted-foreground" }, `Ibu: ${namaIbu}`),
+        h(
+          "div",
+          {
+            class: "text-xs text-muted-foreground",
+          },
+          namaAyah?.length > 20 ? namaAyah.substring(0, 20) + "..." : namaAyah
+        ),
+        h(
+          "div",
+          {
+            class: "text-xs text-muted-foreground",
+          },
+          namaIbu?.length > 20 ? namaIbu.substring(0, 20) + "..." : namaIbu
+        ),
       ])
     },
     meta: {
@@ -147,7 +159,14 @@ export const columns: ColumnDef<LaporanMasyarakat>[] = [
 
       return h("div", { class: "space-y-1 max-w-[200px]" }, [
         h("div", { class: "font-mono text-xs" }, nomorKk),
-        h("div", { class: "text-xs text-muted-foreground truncate" }, alamat),
+        h(
+          "div",
+          {
+            class: "text-xs text-muted-foreground",
+            title: alamat, // Show full address on hover
+          },
+          alamat?.length > 20 ? alamat.substring(0, 20) + "..." : alamat
+        ),
         h("div", { class: "text-xs text-blue-600" }, nomorHpKeluarga),
       ])
     },

@@ -27,6 +27,7 @@ export interface PetugasKesehatan {
   id_skpd: string
   email: string
   nama: string
+  password: string
   skpd: string
   jenis_skpd: string // "puskesmas", "kelurahan", "skpd"
   intervensi_count: number
@@ -335,11 +336,12 @@ export const columns: ColumnDef<PetugasKesehatan>[] = [
                       DropdownMenuItem,
                       {
                         onClick: () => {
-                          // Navigate to detail view atau show detail modal
-                          console.log("View details for:", petugas.nama)
+                          document.dispatchEvent(
+                            new CustomEvent("assign-petugas", { detail: petugas })
+                          )
                         },
                       },
-                      { default: () => [h(Users, { class: "mr-2 h-4 w-4" }), "View Details"] }
+                      { default: () => [h(Users, { class: "mr-2 h-4 w-4" }), "Tugaskan"] }
                     ),
                     h(
                       DropdownMenuItem,

@@ -5,141 +5,35 @@ import DataTable from "./DataTable.vue"
 import DialogForm from "./DialogForm.vue"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Baby, Users, Calendar } from "lucide-vue-next"
+import { Plus, Baby, Users, Calendar, Loader2, RefreshCcw } from "lucide-vue-next"
+import { authUtils } from "@/lib/utils"
 import type { Balita } from "./columns"
 
-// Dummy data
-const balitaData = ref<Balita[]>([
-  {
-    id: "1",
-    id_keluarga: "1",
-    nomor_kk: "3209012345678901",
-    nama_ayah: "Budi Santoso",
-    nama_ibu: "Siti Rahayu",
-    nama: "Andi Pratama",
-    tanggal_lahir: "2022-03-15",
-    jenis_kelamin: "L",
-    berat_lahir: "3200",
-    tinggi_lahir: "48",
-    umur: "2 tahun 5 bulan",
-    kelurahan: "Kesambi",
-    kecamatan: "Kesambi",
-    created_date: "2024-01-15",
-    updated_date: "2024-01-20",
-  },
-  {
-    id: "2",
-    id_keluarga: "1",
-    nomor_kk: "3209012345678901",
-    nama_ayah: "Budi Santoso",
-    nama_ibu: "Siti Rahayu",
-    nama: "Sari Cantika",
-    tanggal_lahir: "2021-06-20",
-    jenis_kelamin: "P",
-    berat_lahir: "2800",
-    tinggi_lahir: "46",
-    umur: "3 tahun 2 bulan",
-    kelurahan: "Kesambi",
-    kecamatan: "Kesambi",
-    created_date: "2024-01-15",
-  },
-  {
-    id: "3",
-    id_keluarga: "2",
-    nomor_kk: "3209012345678903",
-    nama_ayah: "Ahmad Wijaya",
-    nama_ibu: "Dewi Sartika",
-    nama: "Rafi Ahmad",
-    tanggal_lahir: "2023-01-10",
-    jenis_kelamin: "L",
-    berat_lahir: "3500",
-    tinggi_lahir: "50",
-    umur: "1 tahun 7 bulan",
-    kelurahan: "Tuparev",
-    kecamatan: "Kedawung",
-    created_date: "2024-01-16",
-  },
-  {
-    id: "4",
-    id_keluarga: "3",
-    nomor_kk: "3209012345678905",
-    nama_ayah: "Rizki Pratama",
-    nama_ibu: "Maya Sari",
-    nama: "Dinda Permata",
-    tanggal_lahir: "2022-11-05",
-    jenis_kelamin: "P",
-    berat_lahir: "3100",
-    tinggi_lahir: "47",
-    umur: "2 tahun 1 bulan",
-    kelurahan: "Perjuangan",
-    kecamatan: "Kejaksan",
-    created_date: "2024-01-17",
-  },
-  {
-    id: "5",
-    id_keluarga: "4",
-    nomor_kk: "3209012345678907",
-    nama_ayah: "Dedi Kurniawan",
-    nama_ibu: "Rina Melati",
-    nama: "Bayu Saputra",
-    tanggal_lahir: "2020-08-25",
-    jenis_kelamin: "L",
-    berat_lahir: "3800",
-    tinggi_lahir: "52",
-    umur: "4 tahun 0 bulan",
-    kelurahan: "Argasunya",
-    kecamatan: "Harjamukti",
-    created_date: "2024-01-18",
-  },
-  {
-    id: "6",
-    id_keluarga: "5",
-    nomor_kk: "3209012345678909",
-    nama_ayah: "Eko Prasetyo",
-    nama_ibu: "Lilis Suryani",
-    nama: "Citra Dewi",
-    tanggal_lahir: "2023-04-12",
-    jenis_kelamin: "P",
-    berat_lahir: "2900",
-    tinggi_lahir: "45",
-    umur: "1 tahun 4 bulan",
-    kelurahan: "Lemahwungkuk",
-    kecamatan: "Lemahwungkuk",
-    created_date: "2024-01-19",
-  },
-  {
-    id: "7",
-    id_keluarga: "6",
-    nomor_kk: "3209012345678911",
-    nama_ayah: "Fajar Setiawan",
-    nama_ibu: "Sari Wulandari",
-    nama: "Kevin Ardiansyah",
-    tanggal_lahir: "2022-12-08",
-    jenis_kelamin: "L",
-    berat_lahir: "3400",
-    tinggi_lahir: "49",
-    umur: "1 tahun 8 bulan",
-    kelurahan: "Kesenden",
-    kecamatan: "Kesenden",
-    created_date: "2024-01-20",
-  },
-  {
-    id: "8",
-    id_keluarga: "2",
-    nomor_kk: "3209012345678903",
-    nama_ayah: "Ahmad Wijaya",
-    nama_ibu: "Dewi Sartika",
-    nama: "Luna Safira",
-    tanggal_lahir: "2021-09-14",
-    jenis_kelamin: "P",
-    berat_lahir: "3000",
-    tinggi_lahir: "47",
-    umur: "2 tahun 11 bulan",
-    kelurahan: "Tuparev",
-    kecamatan: "Kedawung",
-    created_date: "2024-01-21",
-  },
-])
+// API Response Types
+interface ApiResponse<T> {
+  data: T
+  message: string
+  status_code: number
+}
+
+interface GetAllBalitaResponse {
+  data: Balita[]
+  total: number
+}
+
+interface InsertBalitaResponse {
+  id: string
+}
+
+interface UpdateDeleteBalitaResponse {
+  id: string
+  message: string
+}
+
+// State management
+const balitaData = ref<Balita[]>([])
+const isLoading = ref(false)
+const isDialogLoading = ref(false)
 
 // Dialog states
 const showDialog = ref(false)
@@ -147,15 +41,248 @@ const dialogMode = ref<"create" | "edit">("create")
 const selectedBalita = ref<Balita | null>(null)
 
 // Statistics
-const totalBalita = ref(balitaData.value.length)
-const totalLakiLaki = ref(balitaData.value.filter((b) => b.jenis_kelamin === "L").length)
-const totalPerempuan = ref(balitaData.value.filter((b) => b.jenis_kelamin === "P").length)
+const totalBalita = ref(0)
+const totalLakiLaki = ref(0)
+const totalPerempuan = ref(0)
+const averageAge = ref(0)
 
-// Helper function untuk update statistics
+// API request function
+const apiRequest = async <T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> => {
+  const token = authUtils.getToken()
+  if (!token) {
+    throw new Error("No authentication token found")
+  }
+
+  const defaultOptions: RequestInit = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  }
+
+  const config = { ...defaultOptions, ...options }
+  config.headers = { ...defaultOptions.headers, ...options.headers }
+
+  try {
+    const response = await fetch(`/api${endpoint}`, config)
+    const data = await response.json()
+
+    if (!response.ok || data.status_code !== 200) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`)
+    }
+
+    return data
+  } catch (error) {
+    console.error(`API request failed for ${endpoint}:`, error)
+    throw error
+  }
+}
+
+// Get all balita from API
+const fetchBalitaData = async () => {
+  isLoading.value = true
+  try {
+    console.log("Fetching balita data from API...")
+
+    const response = await apiRequest<GetAllBalitaResponse>("/admin/balita/get")
+
+    balitaData.value = response.data.data
+    totalBalita.value = response.data.total
+
+    // Calculate statistics
+    updateStatistics()
+
+    console.log("Balita data fetched successfully:", {
+      total: totalBalita.value,
+      lakiLaki: totalLakiLaki.value,
+      perempuan: totalPerempuan.value,
+    })
+
+    toast.success(`Data balita berhasil dimuat (${totalBalita.value} data)`)
+  } catch (error) {
+    console.error("Error fetching balita data:", error)
+    toast.error("Gagal memuat data balita. Silakan coba lagi.")
+
+    // Fallback to empty data
+    balitaData.value = []
+    totalBalita.value = 0
+    updateStatistics()
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Calculate statistics
 const updateStatistics = () => {
   totalBalita.value = balitaData.value.length
   totalLakiLaki.value = balitaData.value.filter((b) => b.jenis_kelamin === "L").length
   totalPerempuan.value = balitaData.value.filter((b) => b.jenis_kelamin === "P").length
+
+  // Calculate average age in months
+  if (balitaData.value.length > 0) {
+    const totalMonths = balitaData.value.reduce((sum, balita) => {
+      const ageText = balita.umur || "0 bulan"
+      const months = parseAgeToMonths(ageText)
+      return sum + months
+    }, 0)
+    averageAge.value = Math.round(totalMonths / balitaData.value.length)
+  } else {
+    averageAge.value = 0
+  }
+}
+
+// Helper function to parse age text to months
+const parseAgeToMonths = (ageText: string): number => {
+  const tahunMatch = ageText.match(/(\d+)\s*tahun/)
+  const bulanMatch = ageText.match(/(\d+)\s*bulan/)
+
+  const years = tahunMatch ? parseInt(tahunMatch[1]) : 0
+  const months = bulanMatch ? parseInt(bulanMatch[1]) : 0
+
+  return years * 12 + months
+}
+
+// Format average age for display
+const formatAverageAge = (months: number): string => {
+  if (months < 12) {
+    return `${months} bulan`
+  } else {
+    const years = Math.floor(months / 12)
+    const remainingMonths = months % 12
+    if (remainingMonths === 0) {
+      return `${years} tahun`
+    }
+    return `${years}.${Math.round((remainingMonths / 12) * 10)} tahun`
+  }
+}
+
+// Create new balita
+const createBalita = async (balitaPayload: Partial<Balita>) => {
+  try {
+    console.log("Creating new balita:", balitaPayload)
+
+    const payload = {
+      id_keluarga: balitaPayload.id_keluarga,
+      nama: balitaPayload.nama,
+      tanggal_lahir: balitaPayload.tanggal_lahir,
+      jenis_kelamin: balitaPayload.jenis_kelamin,
+      berat_lahir: balitaPayload.berat_lahir,
+      tinggi_lahir: balitaPayload.tinggi_lahir,
+    }
+
+    const response = await apiRequest<InsertBalitaResponse>("/admin/balita/insert", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    })
+
+    console.log("Balita created successfully:", response)
+    toast.success("Data balita berhasil ditambahkan")
+
+    // Refresh data
+    await fetchBalitaData()
+
+    return response.data
+  } catch (error) {
+    console.error("Error creating balita:", error)
+    if (error instanceof Error) {
+      if (error.message.includes("already exists")) {
+        toast.error("Data balita sudah ada. Periksa nama dan tanggal lahir.")
+      } else if (error.message.includes("Keluarga not found")) {
+        toast.error("Keluarga tidak ditemukan. Pastikan data keluarga masih aktif.")
+      } else if (error.message.includes("under 5 years old")) {
+        toast.error("Anak harus berusia di bawah 5 tahun (kriteria balita).")
+      } else {
+        toast.error(`Gagal menambah data balita: ${error.message}`)
+      }
+    } else {
+      toast.error("Gagal menambah data balita. Silakan coba lagi.")
+    }
+    throw error
+  }
+}
+
+// Update existing balita
+const updateBalita = async (balitaPayload: Balita) => {
+  try {
+    console.log("Updating balita:", balitaPayload)
+
+    const payload = {
+      id: balitaPayload.id,
+      id_keluarga: balitaPayload.id_keluarga,
+      nama: balitaPayload.nama,
+      tanggal_lahir: balitaPayload.tanggal_lahir,
+      jenis_kelamin: balitaPayload.jenis_kelamin,
+      berat_lahir: balitaPayload.berat_lahir,
+      tinggi_lahir: balitaPayload.tinggi_lahir,
+    }
+
+    const response = await apiRequest<UpdateDeleteBalitaResponse>("/admin/balita/update", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    })
+
+    console.log("Balita updated successfully:", response)
+    toast.success("Data balita berhasil diperbarui")
+
+    // Refresh data
+    await fetchBalitaData()
+
+    return response.data
+  } catch (error) {
+    console.error("Error updating balita:", error)
+    if (error instanceof Error) {
+      if (error.message.includes("already exists")) {
+        toast.error("Data balita sudah ada. Periksa nama dan tanggal lahir.")
+      } else if (error.message.includes("Keluarga not found")) {
+        toast.error("Keluarga tidak ditemukan. Pastikan data keluarga masih aktif.")
+      } else if (error.message.includes("under 5 years old")) {
+        toast.error("Anak harus berusia di bawah 5 tahun (kriteria balita).")
+      } else {
+        toast.error(`Gagal memperbarui data balita: ${error.message}`)
+        showDialog.value = false
+      }
+    } else {
+      toast.error("Gagal memperbarui data balita. Silakan coba lagi.")
+    }
+    throw error
+  }
+}
+
+// Delete balita (soft delete)
+const deleteBalita = async (balitaId: string) => {
+  try {
+    console.log("Deleting balita:", balitaId)
+
+    const response = await apiRequest<UpdateDeleteBalitaResponse>("/admin/balita/delete", {
+      method: "DELETE",
+      body: JSON.stringify({ id: balitaId }),
+    })
+
+    console.log("Balita deleted successfully:", response)
+    toast.success("Data balita berhasil dihapus")
+
+    // Refresh data
+    await fetchBalitaData()
+
+    return response.data
+  } catch (error) {
+    console.error("Error deleting balita:", error)
+    if (error instanceof Error) {
+      if (error.message.includes("active laporan")) {
+        toast.error("Tidak dapat menghapus balita yang masih memiliki laporan aktif.")
+      } else if (error.message.includes("active riwayat pemeriksaan")) {
+        toast.error("Tidak dapat menghapus balita yang masih memiliki riwayat pemeriksaan aktif.")
+      } else {
+        toast.error(`Gagal menghapus data balita: ${error.message}`)
+      }
+    } else {
+      toast.error("Gagal menghapus data balita. Silakan coba lagi.")
+    }
+    throw error
+  }
 }
 
 // Event handlers
@@ -171,63 +298,85 @@ const handleEdit = (balita: Balita) => {
   showDialog.value = true
 }
 
-const handleDelete = (balita: Balita) => {
-  if (confirm(`Apakah Anda yakin ingin menghapus data balita ${balita.nama}?`)) {
-    const index = balitaData.value.findIndex((b) => b.id === balita.id)
-    if (index > -1) {
-      balitaData.value.splice(index, 1)
-      updateStatistics()
-      toast.success("Data balita berhasil dihapus")
-    }
+const handleDelete = async (balita: Balita) => {
+  // Show confirmation dialog
+  const isConfirmed = confirm(
+    `Apakah Anda yakin ingin menghapus data balita ${balita.nama}?\n\n` +
+      `Detail:\n` +
+      `• Nama: ${balita.nama}\n` +
+      `• Jenis Kelamin: ${balita.jenis_kelamin === "L" ? "Laki-laki" : "Perempuan"}\n` +
+      `• Umur: ${balita.umur}\n` +
+      `• Orang Tua: ${balita.nama_ayah} & ${balita.nama_ibu}\n\n` +
+      `Data akan dihapus secara permanen dari sistem.`
+  )
+
+  if (!isConfirmed) return
+
+  isLoading.value = true
+  try {
+    await deleteBalita(balita.id)
+  } catch (error) {
+    // Error handling already done in deleteBalita function
+  } finally {
+    isLoading.value = false
   }
 }
 
-const handleSave = (balita: Balita) => {
-  if (dialogMode.value === "create") {
-    // Generate new ID
-    const newId = (Math.max(...balitaData.value.map((b) => parseInt(b.id))) + 1).toString()
-    const newBalita = {
-      ...balita,
-      id: newId,
-      created_date: new Date().toISOString().split("T")[0],
-    }
-    balitaData.value.unshift(newBalita)
-    toast.success("Data balita berhasil ditambahkan")
-  } else {
-    // Update existing
-    const index = balitaData.value.findIndex((b) => b.id === balita.id)
-    if (index > -1) {
-      balitaData.value[index] = {
-        ...balita,
-        updated_date: new Date().toISOString().split("T")[0],
-      }
-      toast.success("Data balita berhasil diperbarui")
-    }
-  }
+const handleSave = async (balita: Balita | Partial<Balita>) => {
+  isDialogLoading.value = true
 
-  updateStatistics()
-  showDialog.value = false
+  try {
+    if (dialogMode.value === "create") {
+      await createBalita(balita)
+    } else {
+      await updateBalita(balita as Balita)
+    }
+
+    showDialog.value = false
+  } catch (error) {
+    // Error handling already done in create/update functions
+    // Keep dialog open so user can fix issues
+  } finally {
+    isDialogLoading.value = false
+  }
 }
 
-const handleCustomEvents = (event: Event) => {
+// Custom event handlers (for DataTable component events)
+const handleCustomEvents = async (event: Event) => {
   const customEvent = event as CustomEvent
 
   if (event.type === "edit-balita") {
     handleEdit(customEvent.detail)
   } else if (event.type === "delete-balita") {
-    handleDelete(customEvent.detail)
+    await handleDelete(customEvent.detail)
   }
 }
 
-onMounted(() => {
+// Lifecycle hooks
+onMounted(async () => {
+  // Add event listeners for custom events from DataTable
   document.addEventListener("edit-balita", handleCustomEvents)
   document.addEventListener("delete-balita", handleCustomEvents)
+
+  // Fetch initial data
+  await fetchBalitaData()
 })
 
 onUnmounted(() => {
   document.removeEventListener("edit-balita", handleCustomEvents)
   document.removeEventListener("delete-balita", handleCustomEvents)
 })
+
+// Refresh data function (can be called manually)
+const refreshData = async () => {
+  await fetchBalitaData()
+}
+
+// Error retry function
+const retryFetchData = async () => {
+  toast.info("Mencoba mengambil data ulang...")
+  await fetchBalitaData()
+}
 </script>
 
 <template>
@@ -241,10 +390,31 @@ onUnmounted(() => {
         </h1>
         <p class="text-gray-600">Kelola data balita (anak usia di bawah 5 tahun) di Kota Cirebon</p>
       </div>
-      <Button @click="handleCreate" class="gap-2">
-        <Plus class="h-4 w-4" />
-        Tambah Balita
-      </Button>
+      <div class="flex gap-2">
+        <!-- Refresh Button -->
+        <Button
+          @click="refreshData"
+          :disabled="isLoading"
+          variant="outline"
+          size="sm">
+          <Loader2
+            v-if="isLoading"
+            class="h-4 w-4 mr-2 animate-spin" />
+          <RefreshCcw
+            v-else
+            class="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
+
+        <!-- Add Button -->
+        <Button
+          @click="handleCreate"
+          :disabled="isLoading"
+          class="gap-2">
+          <Plus class="h-4 w-4" />
+          Tambah Balita
+        </Button>
+      </div>
     </div>
 
     <!-- Statistics Cards -->
@@ -255,7 +425,9 @@ onUnmounted(() => {
           <Baby class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div class="text-2xl font-bold">{{ totalBalita }}</div>
+          <div class="text-2xl font-bold">
+            {{ isLoading ? "..." : totalBalita }}
+          </div>
           <p class="text-xs text-muted-foreground">Balita terdaftar</p>
         </CardContent>
       </Card>
@@ -266,7 +438,9 @@ onUnmounted(() => {
           <Users class="h-4 w-4 text-blue-500" />
         </CardHeader>
         <CardContent>
-          <div class="text-2xl font-bold text-blue-600">{{ totalLakiLaki }}</div>
+          <div class="text-2xl font-bold text-blue-600">
+            {{ isLoading ? "..." : totalLakiLaki }}
+          </div>
           <p class="text-xs text-muted-foreground">
             {{ totalBalita > 0 ? Math.round((totalLakiLaki / totalBalita) * 100) : 0 }}% dari total
           </p>
@@ -279,7 +453,9 @@ onUnmounted(() => {
           <Users class="h-4 w-4 text-pink-500" />
         </CardHeader>
         <CardContent>
-          <div class="text-2xl font-bold text-pink-600">{{ totalPerempuan }}</div>
+          <div class="text-2xl font-bold text-pink-600">
+            {{ isLoading ? "..." : totalPerempuan }}
+          </div>
           <p class="text-xs text-muted-foreground">
             {{ totalBalita > 0 ? Math.round((totalPerempuan / totalBalita) * 100) : 0 }}% dari total
           </p>
@@ -292,22 +468,68 @@ onUnmounted(() => {
           <Calendar class="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div class="text-2xl font-bold">2.1</div>
-          <p class="text-xs text-muted-foreground">Tahun (estimasi)</p>
+          <div class="text-2xl font-bold">
+            {{ isLoading ? "..." : formatAverageAge(averageAge) }}
+          </div>
+          <p class="text-xs text-muted-foreground">Rata-rata balita</p>
         </CardContent>
       </Card>
     </div>
 
+    <!-- Loading State -->
+    <div
+      v-if="isLoading && balitaData.length === 0"
+      class="flex items-center justify-center py-12">
+      <div class="text-center">
+        <Loader2 class="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Memuat Data Balita</h3>
+        <p class="text-gray-600">Sedang mengambil data dari server...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div
+      v-else-if="!isLoading && balitaData.length === 0"
+      class="text-center py-12">
+      <div class="mx-auto mb-4 w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+        <Baby class="h-8 w-8 text-gray-400" />
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Tidak Ada Data Balita</h3>
+      <p class="text-gray-600 mb-4">Belum ada data balita yang terdaftar dalam sistem.</p>
+      <div class="flex gap-2 justify-center">
+        <Button
+          @click="retryFetchData"
+          variant="outline">
+          Coba Lagi
+        </Button>
+        <Button @click="handleCreate">
+          <Plus class="h-4 w-4 mr-2" />
+          Tambah Balita Pertama
+        </Button>
+      </div>
+    </div>
+
     <!-- Data Table -->
-    <Card>
+    <Card v-else>
       <CardHeader>
-        <CardTitle class="flex items-center gap-2">
-          <Baby class="h-5 w-5" />
-          Daftar Balita
-        </CardTitle>
-        <CardDescription>
-          Data balita yang terdaftar dalam sistem pemantauan stunting. Termasuk informasi orang tua, data lahir, dan lokasi.
-        </CardDescription>
+        <div class="flex items-center justify-between">
+          <div>
+            <CardTitle class="flex items-center gap-2">
+              <Baby class="h-5 w-5" />
+              Daftar Balita
+            </CardTitle>
+            <CardDescription>
+              Data balita yang terdaftar dalam sistem pemantauan stunting. Termasuk informasi orang
+              tua, data lahir, dan lokasi.
+            </CardDescription>
+          </div>
+          <div
+            v-if="isLoading"
+            class="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 class="h-4 w-4 animate-spin" />
+            Memperbarui...
+          </div>
+        </div>
       </CardHeader>
       <CardContent class="overflow-auto">
         <DataTable :data="balitaData" />
@@ -319,7 +541,27 @@ onUnmounted(() => {
       :show="showDialog"
       :mode="dialogMode"
       :balita="selectedBalita"
+      :loading="isDialogLoading"
       @close="showDialog = false"
       @save="handleSave" />
+
+    <!-- Development Info -->
+    <Card class="border-yellow-200 bg-yellow-50">
+      <CardHeader>
+        <CardTitle class="text-sm text-yellow-800">🔧 Development Info</CardTitle>
+      </CardHeader>
+      <CardContent class="text-xs text-yellow-700 space-y-1">
+        <div><strong>API Endpoints:</strong></div>
+        <div>• GET /api/admin/balita/get - Fetch all data</div>
+        <div>• POST /api/admin/balita/insert - Create new</div>
+        <div>• PUT /api/admin/balita/update - Update existing</div>
+        <div>• DELETE /api/admin/balita/delete - Soft delete</div>
+        <div class="pt-2"><strong>Current Status:</strong></div>
+        <div>• Loading: {{ isLoading }}</div>
+        <div>• Total Data: {{ balitaData.length }}</div>
+        <div>• Auth Token: {{ authUtils.getToken() ? "✅ Valid" : "❌ Missing" }}</div>
+        <div>• Average Age: {{ formatAverageAge(averageAge) }}</div>
+      </CardContent>
+    </Card>
   </div>
 </template>

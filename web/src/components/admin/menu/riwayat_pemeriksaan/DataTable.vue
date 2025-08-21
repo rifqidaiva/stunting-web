@@ -11,7 +11,7 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@tanstack/vue-table"
-import { ChevronDown, Check, Eye, EyeOff } from "lucide-vue-next"
+import { ChevronDown, Check, Eye, EyeOff, Search } from "lucide-vue-next"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/table"
 
 import { riwayatPemeriksaanColumns, type RiwayatPemeriksaan } from "./columns"
+import Input from "@/components/ui/input/Input.vue"
 
 interface Props {
   data: RiwayatPemeriksaan[]
@@ -83,6 +84,11 @@ const table = useVueTable({
   },
 })
 
+const searchValue = computed({
+  get: () => (table.getColumn("balita_info")?.getFilterValue() as string) ?? "",
+  set: (value) => table.getColumn("balita_info")?.setFilterValue(value),
+})
+
 // Helper function to get display name
 const getColumnDisplayName = (columnId: string) => {
   const column = table.getColumn(columnId)
@@ -118,6 +124,14 @@ const totalColumnsCount = computed(() => {
 <template>
   <div class="w-full">
     <div class="flex items-center py-4 gap-4">
+      <div class="relative flex-1 max-w-sm">
+        <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          v-model="searchValue"
+          placeholder="Cari nama balita..."
+          class="pl-10" />
+      </div>
+
       <!-- Column Visibility -->
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
