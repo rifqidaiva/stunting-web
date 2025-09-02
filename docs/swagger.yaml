@@ -922,12 +922,439 @@ definitions:
       role:
         type: string
     type: object
+  community.balitaResponse:
+    properties:
+      berat_lahir:
+        type: string
+      can_edit:
+        type: boolean
+      can_report:
+        type: boolean
+      created_date:
+        type: string
+      id:
+        type: string
+      id_keluarga:
+        type: string
+      jenis_kelamin:
+        type: string
+      jumlah_laporan:
+        description: Status untuk masyarakat
+        type: integer
+      kecamatan:
+        type: string
+      kelurahan:
+        type: string
+      nama:
+        type: string
+      nama_ayah:
+        type: string
+      nama_ibu:
+        type: string
+      nomor_kk:
+        type: string
+      status_gizi_terakhir:
+        type: string
+      status_laporan_aktif:
+        type: string
+      tanggal_lahir:
+        type: string
+      tanggal_pemeriksaan_terakhir:
+        type: string
+      tinggi_lahir:
+        type: string
+      umur:
+        description: calculated field in months
+        type: string
+      updated_date:
+        type: string
+    type: object
+  community.getAllBalitaResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/community.balitaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  community.getAllKecamatanResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/community.kecamatanResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  community.getAllKeluargaResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/community.keluargaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  community.getAllKelurahanResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/community.kelurahanResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  community.getAllLaporanResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/community.laporanResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  community.getAllStatusLaporanResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/community.statusLaporanResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  community.insertBalitaRequest:
+    properties:
+      berat_lahir:
+        description: in grams
+        type: string
+      id_keluarga:
+        type: string
+      jenis_kelamin:
+        description: '"L" or "P"'
+        type: string
+      nama:
+        type: string
+      tanggal_lahir:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+      tinggi_lahir:
+        description: in cm
+        type: string
+    type: object
+  community.insertBalitaResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  community.insertKeluargaRequest:
+    properties:
+      alamat:
+        type: string
+      id_kelurahan:
+        type: string
+      koordinat:
+        description: '[longitude, latitude]'
+        items:
+          type: number
+        type: array
+      nama_ayah:
+        type: string
+      nama_ibu:
+        type: string
+      nik_ayah:
+        type: string
+      nik_ibu:
+        type: string
+      nomor_kk:
+        type: string
+      rt:
+        type: string
+      rw:
+        type: string
+    type: object
+  community.insertKeluargaResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  community.insertLaporanRequest:
+    properties:
+      hubungan_dengan_balita:
+        type: string
+      id_balita:
+        type: string
+      nomor_hp_keluarga_balita:
+        type: string
+      nomor_hp_pelapor:
+        type: string
+      tanggal_laporan:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+    type: object
+  community.insertLaporanResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  community.kecamatanResponse:
+    properties:
+      id:
+        type: string
+      kecamatan:
+        type: string
+    type: object
+  community.keluargaResponse:
+    properties:
+      alamat:
+        type: string
+      can_edit:
+        type: boolean
+      created_date:
+        type: string
+      id:
+        type: string
+      id_kelurahan:
+        type: string
+      jumlah_balita:
+        description: Status untuk masyarakat
+        type: integer
+      jumlah_laporan:
+        type: integer
+      kecamatan:
+        type: string
+      kelurahan:
+        type: string
+      koordinat:
+        items:
+          type: number
+        type: array
+      nama_ayah:
+        type: string
+      nama_ibu:
+        type: string
+      nik_ayah:
+        type: string
+      nik_ibu:
+        type: string
+      nomor_kk:
+        type: string
+      rt:
+        type: string
+      rw:
+        type: string
+      status_laporan_aktif:
+        type: string
+      updated_date:
+        type: string
+    type: object
+  community.kelurahanResponse:
+    properties:
+      id:
+        type: string
+      id_kecamatan:
+        type: string
+      kecamatan:
+        type: string
+      kelurahan:
+        type: string
+    type: object
+  community.laporanResponse:
+    properties:
+      alamat:
+        type: string
+      can_edit:
+        description: Status untuk masyarakat
+        type: boolean
+      created_date:
+        type: string
+      hubungan_dengan_balita:
+        type: string
+      id:
+        type: string
+      id_balita:
+        type: string
+      id_status_laporan:
+        type: string
+      intervensi_terkait:
+        type: integer
+      kecamatan:
+        type: string
+      kelurahan:
+        type: string
+      nama_ayah:
+        type: string
+      nama_balita:
+        type: string
+      nama_ibu:
+        type: string
+      nomor_hp_keluarga_balita:
+        type: string
+      nomor_hp_pelapor:
+        type: string
+      nomor_kk:
+        type: string
+      riwayat_pemeriksaan:
+        type: integer
+      status_keterangan:
+        type: string
+      status_laporan:
+        type: string
+      tanggal_laporan:
+        type: string
+      tanggal_terakhir_diproses:
+        type: string
+      updated_date:
+        type: string
+    type: object
+  community.statusLaporanResponse:
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+    type: object
+  community.updateBalitaRequest:
+    properties:
+      berat_lahir:
+        description: in grams
+        type: string
+      id:
+        type: string
+      id_keluarga:
+        type: string
+      jenis_kelamin:
+        description: '"L" or "P"'
+        type: string
+      nama:
+        type: string
+      tanggal_lahir:
+        description: 'Format: YYYY-MM-DD'
+        type: string
+      tinggi_lahir:
+        description: in cm
+        type: string
+    type: object
+  community.updateBalitaResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  community.updateKeluargaRequest:
+    properties:
+      alamat:
+        type: string
+      id:
+        type: string
+      id_kelurahan:
+        type: string
+      koordinat:
+        description: '[longitude, latitude]'
+        items:
+          type: number
+        type: array
+      nama_ayah:
+        type: string
+      nama_ibu:
+        type: string
+      nik_ayah:
+        type: string
+      nik_ibu:
+        type: string
+      nomor_kk:
+        type: string
+      rt:
+        type: string
+      rw:
+        type: string
+    type: object
+  community.updateKeluargaResponse:
+    properties:
+      id:
+        type: string
+      message:
+        type: string
+    type: object
+  healthworker.assignedIntervensiResponse:
+    properties:
+      alamat:
+        type: string
+      berat_badan_terakhir:
+        type: string
+      can_add_medical_record:
+        description: Actions
+        type: boolean
+      can_update_status:
+        type: boolean
+      deskripsi_intervensi:
+        type: string
+      hasil_intervensi:
+        type: string
+      id:
+        type: string
+      id_balita:
+        type: string
+      id_intervensi:
+        type: string
+      jenis_intervensi:
+        description: Intervensi Info
+        type: string
+      jenis_kelamin_balita:
+        type: string
+      jumlah_laporan_terkait:
+        description: Related Reports
+        type: integer
+      kecamatan:
+        type: string
+      kelurahan:
+        type: string
+      nama_ayah:
+        type: string
+      nama_balita:
+        type: string
+      nama_ibu:
+        type: string
+      nomor_kk:
+        description: Keluarga Info
+        type: string
+      status_gizi_terakhir:
+        description: Latest Medical Info
+        type: string
+      status_intervensi:
+        type: string
+      status_laporan_aktif:
+        type: string
+      tanggal_intervensi:
+        type: string
+      tanggal_lahir_balita:
+        type: string
+      tanggal_pemeriksaan_terakhir:
+        type: string
+      tanggal_penugasan:
+        description: Assignment Info
+        type: string
+      tinggi_badan_terakhir:
+        type: string
+      umur_balita:
+        type: string
+    type: object
+  healthworker.getAllAssignedIntervensiResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/healthworker.assignedIntervensiResponse'
+        type: array
+      total:
+        type: integer
+    type: object
   object.GeoJSONFeature:
     properties:
       geometry:
         $ref: '#/definitions/object.GeoJSONGeometry'
       properties:
-        additionalProperties: {}
+        additionalProperties: true
         type: object
       type:
         type: string
@@ -4536,4 +4963,914 @@ paths:
       summary: User registration
       tags:
       - auth
+  /api/community/balita/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get balita data for community/masyarakat users (own data only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all balita from user's keluarga
+        - With id parameter: Returns specific balita data (if owned by user)
+
+        Data includes balita information, laporan status, medical history summary,
+        and action permissions (edit/report capabilities).
+        Users can only access balita from keluarga they have created themselves.
+      parameters:
+      - description: Balita ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.getAllBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Balita not found or not owned by user
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get balita data (Community)
+      tags:
+      - community
+  /api/community/balita/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new balita data for community/masyarakat users
+
+        This endpoint allows masyarakat users to register balita data
+        for families they have created. The balita will be linked to the
+        specified keluarga and can later be reported for stunting assessment.
+
+        Validation includes:
+        - Keluarga ownership verification (user can only add balita to their own keluarga)
+        - Age criteria check (must be under 5 years old for balita classification)
+        - Birth data validation (weight, height within reasonable ranges)
+        - Duplicate prevention (same name and birth date in same keluarga)
+        - Format validation for all fields
+      parameters:
+      - description: Balita data
+        in: body
+        name: balita
+        required: true
+        schema:
+          $ref: '#/definitions/community.insertBalitaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.insertBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required or not owner of keluarga
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new balita (Community)
+      tags:
+      - community
+  /api/community/balita/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Update existing balita data for community/masyarakat users
+
+        This endpoint allows masyarakat users to update balita data
+        that they have previously created. Users can only update balita
+        from keluarga they own and only if there are no active reports.
+
+        Validation includes:
+        - Balita ownership verification (through keluarga ownership)
+        - Age criteria check (must be under 5 years old for balita classification)
+        - Birth data validation (weight, height within reasonable ranges)
+        - Duplicate prevention (same name and birth date in same keluarga)
+        - Business rule checks (no active reports constraint)
+        - Format validation for all fields
+      parameters:
+      - description: Updated balita data
+        in: body
+        name: balita
+        required: true
+        schema:
+          $ref: '#/definitions/community.updateBalitaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balita updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.updateBalitaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required or not owner
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Balita not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "409":
+          description: Conflict - Cannot update due to active reports
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update balita data (Community)
+      tags:
+      - community
+  /api/community/keluarga/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get keluarga data for community/masyarakat users (own data only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all keluarga created by the user
+        - With id parameter: Returns specific keluarga data (if owned by user)
+
+        Data includes family information, balita count, laporan status, and edit permissions.
+        Users can only access keluarga data they have created themselves.
+      parameters:
+      - description: Keluarga ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Keluarga data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.getAllKeluargaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Keluarga not found or not owned by user
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get keluarga data (Community)
+      tags:
+      - community
+  /api/community/keluarga/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new keluarga data for community/masyarakat users
+
+        This endpoint allows masyarakat users to register family data
+        when reporting balita. The data will be linked to the reporting user.
+
+        Validation includes:
+        - Nomor KK and NIK uniqueness check
+        - Format validation for all fields
+        - Kelurahan existence validation
+        - Coordinate bounds validation
+      parameters:
+      - description: Keluarga data
+        in: body
+        name: keluarga
+        required: true
+        schema:
+          $ref: '#/definitions/community.insertKeluargaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Keluarga inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.insertKeluargaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new keluarga (Community)
+      tags:
+      - community
+  /api/community/keluarga/update:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Update existing keluarga data for community/masyarakat users
+
+        This endpoint allows masyarakat users to update family data
+        that they have previously created. Users can only update their own data.
+
+        Validation includes:
+        - Ownership verification (user can only update their own data)
+        - Nomor KK and NIK uniqueness check (excluding current record)
+        - Format validation for all fields
+        - Kelurahan existence validation
+        - Coordinate bounds validation
+        - Business rule checks (no active reports constraint)
+      parameters:
+      - description: Keluarga data to update
+        in: body
+        name: keluarga
+        required: true
+        schema:
+          $ref: '#/definitions/community.updateKeluargaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Keluarga updated successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.updateKeluargaResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required or not owner
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Keluarga not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "409":
+          description: Conflict - Cannot update due to active reports
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update keluarga data (Community)
+      tags:
+      - community
+  /api/community/laporan/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get laporan data for community/masyarakat users (own reports only)
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all laporan created by the user
+        - With id parameter: Returns specific laporan data (if owned by user)
+
+        Data includes laporan information, balita details, keluarga info, status tracking,
+        related medical records count, and action permissions.
+        Users can only access laporan they have created themselves.
+      parameters:
+      - description: Laporan ID
+        in: query
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Laporan data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.getAllLaporanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Laporan not found or not owned by user
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get laporan data (Community)
+      tags:
+      - community
+  /api/community/laporan/insert:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Insert new laporan for community/masyarakat users
+
+        This endpoint allows masyarakat users to report balita for stunting assessment.
+        The laporan will be automatically set with "Belum diproses" status and linked
+        to the reporting masyarakat user.
+
+        Validation includes:
+        - Balita ownership verification (user can only report balita from their own keluarga)
+        - Duplicate prevention (same balita and date)
+        - Business rule checks (no pending reports for same balita)
+        - Date validation (not future, not older than 1 year)
+        - Contact information validation
+      parameters:
+      - description: Laporan data
+        in: body
+        name: laporan
+        required: true
+        schema:
+          $ref: '#/definitions/community.insertLaporanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Laporan inserted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.insertLaporanResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required or not owner of balita
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "409":
+          description: Conflict - Pending report exists for this balita
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Insert new laporan (Community)
+      tags:
+      - community
+  /api/community/master-kecamatan:
+    get:
+      consumes:
+      - application/json
+      description: Get all kecamatan for dropdown/reference (Masyarakat only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Kecamatan data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.getAllKecamatanResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get kecamatan master data (Community)
+      tags:
+      - community
+  /api/community/master-kelurahan:
+    get:
+      consumes:
+      - application/json
+      description: Get kelurahan data with optional kecamatan filter (Masyarakat only)
+      parameters:
+      - description: Filter by Kecamatan ID
+        in: query
+        name: id_kecamatan
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Kelurahan data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.getAllKelurahanResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get kelurahan master data (Community)
+      tags:
+      - community
+  /api/community/master-status-laporan:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get all status laporan for reference/display (Masyarakat only)
+        This is primarily for display purposes to show status meanings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Status laporan data retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/community.getAllStatusLaporanResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Masyarakat role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get status laporan master data (Community)
+      tags:
+      - community
+  /api/health-worker/assignment/get:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Get all interventions assigned to the authenticated health worker
+
+        Response data varies by parameter:
+        - Without id parameter: Returns all assigned interventions
+        - With id parameter: Returns specific intervention details (if assigned to user)
+
+        Data includes intervention information, balita details, family info, medical history,
+        related reports, and action permissions based on intervention status.
+        Health workers can only access interventions assigned to them.
+      parameters:
+      - description: Intervention ID
+        in: query
+        name: id
+        type: string
+      - description: Filter by intervention status (pending, in_progress, completed)
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Assigned interventions retrieved successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/healthworker.getAllAssignedIntervensiResponse'
+              type: object
+        "400":
+          description: Invalid request
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "403":
+          description: Forbidden - Health worker role required
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Intervention not found or not assigned to user
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            allOf:
+            - $ref: '#/definitions/object.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get assigned interventions (Health Worker)
+      tags:
+      - health-worker
 swagger: "2.0"

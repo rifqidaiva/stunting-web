@@ -6340,6 +6340,1559 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/community/balita/get": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get balita data for community/masyarakat users (own data only)\n\nResponse data varies by parameter:\n- Without id parameter: Returns all balita from user's keluarga\n- With id parameter: Returns specific balita data (if owned by user)\n\nData includes balita information, laporan status, medical history summary,\nand action permissions (edit/report capabilities).\nUsers can only access balita from keluarga they have created themselves.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Get balita data (Community)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Balita ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Balita data retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.getAllBalitaResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Balita not found or not owned by user",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/balita/insert": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Insert new balita data for community/masyarakat users\n\nThis endpoint allows masyarakat users to register balita data\nfor families they have created. The balita will be linked to the\nspecified keluarga and can later be reported for stunting assessment.\n\nValidation includes:\n- Keluarga ownership verification (user can only add balita to their own keluarga)\n- Age criteria check (must be under 5 years old for balita classification)\n- Birth data validation (weight, height within reasonable ranges)\n- Duplicate prevention (same name and birth date in same keluarga)\n- Format validation for all fields",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Insert new balita (Community)",
+                "parameters": [
+                    {
+                        "description": "Balita data",
+                        "name": "balita",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/community.insertBalitaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Balita inserted successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.insertBalitaResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required or not owner of keluarga",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/balita/update": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update existing balita data for community/masyarakat users\n\nThis endpoint allows masyarakat users to update balita data\nthat they have previously created. Users can only update balita\nfrom keluarga they own and only if there are no active reports.\n\nValidation includes:\n- Balita ownership verification (through keluarga ownership)\n- Age criteria check (must be under 5 years old for balita classification)\n- Birth data validation (weight, height within reasonable ranges)\n- Duplicate prevention (same name and birth date in same keluarga)\n- Business rule checks (no active reports constraint)\n- Format validation for all fields",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Update balita data (Community)",
+                "parameters": [
+                    {
+                        "description": "Updated balita data",
+                        "name": "balita",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/community.updateBalitaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Balita updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.updateBalitaResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required or not owner",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Balita not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - Cannot update due to active reports",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/keluarga/get": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get keluarga data for community/masyarakat users (own data only)\n\nResponse data varies by parameter:\n- Without id parameter: Returns all keluarga created by the user\n- With id parameter: Returns specific keluarga data (if owned by user)\n\nData includes family information, balita count, laporan status, and edit permissions.\nUsers can only access keluarga data they have created themselves.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Get keluarga data (Community)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Keluarga ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Keluarga data retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.getAllKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Keluarga not found or not owned by user",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/keluarga/insert": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Insert new keluarga data for community/masyarakat users\n\nThis endpoint allows masyarakat users to register family data\nwhen reporting balita. The data will be linked to the reporting user.\n\nValidation includes:\n- Nomor KK and NIK uniqueness check\n- Format validation for all fields\n- Kelurahan existence validation\n- Coordinate bounds validation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Insert new keluarga (Community)",
+                "parameters": [
+                    {
+                        "description": "Keluarga data",
+                        "name": "keluarga",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/community.insertKeluargaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Keluarga inserted successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.insertKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/keluarga/update": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update existing keluarga data for community/masyarakat users\n\nThis endpoint allows masyarakat users to update family data\nthat they have previously created. Users can only update their own data.\n\nValidation includes:\n- Ownership verification (user can only update their own data)\n- Nomor KK and NIK uniqueness check (excluding current record)\n- Format validation for all fields\n- Kelurahan existence validation\n- Coordinate bounds validation\n- Business rule checks (no active reports constraint)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Update keluarga data (Community)",
+                "parameters": [
+                    {
+                        "description": "Keluarga data to update",
+                        "name": "keluarga",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/community.updateKeluargaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Keluarga updated successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.updateKeluargaResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required or not owner",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Keluarga not found",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - Cannot update due to active reports",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/laporan/get": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get laporan data for community/masyarakat users (own reports only)\n\nResponse data varies by parameter:\n- Without id parameter: Returns all laporan created by the user\n- With id parameter: Returns specific laporan data (if owned by user)\n\nData includes laporan information, balita details, keluarga info, status tracking,\nrelated medical records count, and action permissions.\nUsers can only access laporan they have created themselves.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Get laporan data (Community)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Laporan ID",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan data retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.getAllLaporanResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Laporan not found or not owned by user",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/laporan/insert": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Insert new laporan for community/masyarakat users\n\nThis endpoint allows masyarakat users to report balita for stunting assessment.\nThe laporan will be automatically set with \"Belum diproses\" status and linked\nto the reporting masyarakat user.\n\nValidation includes:\n- Balita ownership verification (user can only report balita from their own keluarga)\n- Duplicate prevention (same balita and date)\n- Business rule checks (no pending reports for same balita)\n- Date validation (not future, not older than 1 year)\n- Contact information validation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Insert new laporan (Community)",
+                "parameters": [
+                    {
+                        "description": "Laporan data",
+                        "name": "laporan",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/community.insertLaporanRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laporan inserted successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.insertLaporanResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required or not owner of balita",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - Pending report exists for this balita",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/master-kecamatan": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all kecamatan for dropdown/reference (Masyarakat only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Get kecamatan master data (Community)",
+                "responses": {
+                    "200": {
+                        "description": "Kecamatan data retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.getAllKecamatanResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/master-kelurahan": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get kelurahan data with optional kecamatan filter (Masyarakat only)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Get kelurahan master data (Community)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by Kecamatan ID",
+                        "name": "id_kecamatan",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Kelurahan data retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.getAllKelurahanResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/community/master-status-laporan": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all status laporan for reference/display (Masyarakat only)\nThis is primarily for display purposes to show status meanings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "community"
+                ],
+                "summary": "Get status laporan master data (Community)",
+                "responses": {
+                    "200": {
+                        "description": "Status laporan data retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/community.getAllStatusLaporanResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Masyarakat role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/health-worker/assignment/get": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all interventions assigned to the authenticated health worker\n\nResponse data varies by parameter:\n- Without id parameter: Returns all assigned interventions\n- With id parameter: Returns specific intervention details (if assigned to user)\n\nData includes intervention information, balita details, family info, medical history,\nrelated reports, and action permissions based on intervention status.\nHealth workers can only access interventions assigned to them.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health-worker"
+                ],
+                "summary": "Get assigned interventions (Health Worker)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Intervention ID",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by intervention status (pending, in_progress, completed)",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Assigned interventions retrieved successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/healthworker.getAllAssignedIntervensiResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Health worker role required",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Intervention not found or not assigned to user",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/object.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -7741,6 +9294,648 @@ const docTemplate = `{
                 }
             }
         },
+        "community.balitaResponse": {
+            "type": "object",
+            "properties": {
+                "berat_lahir": {
+                    "type": "string"
+                },
+                "can_edit": {
+                    "type": "boolean"
+                },
+                "can_report": {
+                    "type": "boolean"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_keluarga": {
+                    "type": "string"
+                },
+                "jenis_kelamin": {
+                    "type": "string"
+                },
+                "jumlah_laporan": {
+                    "description": "Status untuk masyarakat",
+                    "type": "integer"
+                },
+                "kecamatan": {
+                    "type": "string"
+                },
+                "kelurahan": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "nama_ayah": {
+                    "type": "string"
+                },
+                "nama_ibu": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "type": "string"
+                },
+                "status_gizi_terakhir": {
+                    "type": "string"
+                },
+                "status_laporan_aktif": {
+                    "type": "string"
+                },
+                "tanggal_lahir": {
+                    "type": "string"
+                },
+                "tanggal_pemeriksaan_terakhir": {
+                    "type": "string"
+                },
+                "tinggi_lahir": {
+                    "type": "string"
+                },
+                "umur": {
+                    "description": "calculated field in months",
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.getAllBalitaResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/community.balitaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "community.getAllKecamatanResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/community.kecamatanResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "community.getAllKeluargaResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/community.keluargaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "community.getAllKelurahanResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/community.kelurahanResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "community.getAllLaporanResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/community.laporanResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "community.getAllStatusLaporanResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/community.statusLaporanResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "community.insertBalitaRequest": {
+            "type": "object",
+            "properties": {
+                "berat_lahir": {
+                    "description": "in grams",
+                    "type": "string"
+                },
+                "id_keluarga": {
+                    "type": "string"
+                },
+                "jenis_kelamin": {
+                    "description": "\"L\" or \"P\"",
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tanggal_lahir": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                },
+                "tinggi_lahir": {
+                    "description": "in cm",
+                    "type": "string"
+                }
+            }
+        },
+        "community.insertBalitaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.insertKeluargaRequest": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "id_kelurahan": {
+                    "type": "string"
+                },
+                "koordinat": {
+                    "description": "[longitude, latitude]",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "nama_ayah": {
+                    "type": "string"
+                },
+                "nama_ibu": {
+                    "type": "string"
+                },
+                "nik_ayah": {
+                    "type": "string"
+                },
+                "nik_ibu": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "type": "string"
+                },
+                "rt": {
+                    "type": "string"
+                },
+                "rw": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.insertKeluargaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.insertLaporanRequest": {
+            "type": "object",
+            "properties": {
+                "hubungan_dengan_balita": {
+                    "type": "string"
+                },
+                "id_balita": {
+                    "type": "string"
+                },
+                "nomor_hp_keluarga_balita": {
+                    "type": "string"
+                },
+                "nomor_hp_pelapor": {
+                    "type": "string"
+                },
+                "tanggal_laporan": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                }
+            }
+        },
+        "community.insertLaporanResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.kecamatanResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "kecamatan": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.keluargaResponse": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "can_edit": {
+                    "type": "boolean"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_kelurahan": {
+                    "type": "string"
+                },
+                "jumlah_balita": {
+                    "description": "Status untuk masyarakat",
+                    "type": "integer"
+                },
+                "jumlah_laporan": {
+                    "type": "integer"
+                },
+                "kecamatan": {
+                    "type": "string"
+                },
+                "kelurahan": {
+                    "type": "string"
+                },
+                "koordinat": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "nama_ayah": {
+                    "type": "string"
+                },
+                "nama_ibu": {
+                    "type": "string"
+                },
+                "nik_ayah": {
+                    "type": "string"
+                },
+                "nik_ibu": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "type": "string"
+                },
+                "rt": {
+                    "type": "string"
+                },
+                "rw": {
+                    "type": "string"
+                },
+                "status_laporan_aktif": {
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.kelurahanResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "id_kecamatan": {
+                    "type": "string"
+                },
+                "kecamatan": {
+                    "type": "string"
+                },
+                "kelurahan": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.laporanResponse": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "can_edit": {
+                    "description": "Status untuk masyarakat",
+                    "type": "boolean"
+                },
+                "created_date": {
+                    "type": "string"
+                },
+                "hubungan_dengan_balita": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_balita": {
+                    "type": "string"
+                },
+                "id_status_laporan": {
+                    "type": "string"
+                },
+                "intervensi_terkait": {
+                    "type": "integer"
+                },
+                "kecamatan": {
+                    "type": "string"
+                },
+                "kelurahan": {
+                    "type": "string"
+                },
+                "nama_ayah": {
+                    "type": "string"
+                },
+                "nama_balita": {
+                    "type": "string"
+                },
+                "nama_ibu": {
+                    "type": "string"
+                },
+                "nomor_hp_keluarga_balita": {
+                    "type": "string"
+                },
+                "nomor_hp_pelapor": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "type": "string"
+                },
+                "riwayat_pemeriksaan": {
+                    "type": "integer"
+                },
+                "status_keterangan": {
+                    "type": "string"
+                },
+                "status_laporan": {
+                    "type": "string"
+                },
+                "tanggal_laporan": {
+                    "type": "string"
+                },
+                "tanggal_terakhir_diproses": {
+                    "type": "string"
+                },
+                "updated_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.statusLaporanResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.updateBalitaRequest": {
+            "type": "object",
+            "properties": {
+                "berat_lahir": {
+                    "description": "in grams",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_keluarga": {
+                    "type": "string"
+                },
+                "jenis_kelamin": {
+                    "description": "\"L\" or \"P\"",
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tanggal_lahir": {
+                    "description": "Format: YYYY-MM-DD",
+                    "type": "string"
+                },
+                "tinggi_lahir": {
+                    "description": "in cm",
+                    "type": "string"
+                }
+            }
+        },
+        "community.updateBalitaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.updateKeluargaRequest": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_kelurahan": {
+                    "type": "string"
+                },
+                "koordinat": {
+                    "description": "[longitude, latitude]",
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
+                },
+                "nama_ayah": {
+                    "type": "string"
+                },
+                "nama_ibu": {
+                    "type": "string"
+                },
+                "nik_ayah": {
+                    "type": "string"
+                },
+                "nik_ibu": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "type": "string"
+                },
+                "rt": {
+                    "type": "string"
+                },
+                "rw": {
+                    "type": "string"
+                }
+            }
+        },
+        "community.updateKeluargaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "healthworker.assignedIntervensiResponse": {
+            "type": "object",
+            "properties": {
+                "alamat": {
+                    "type": "string"
+                },
+                "berat_badan_terakhir": {
+                    "type": "string"
+                },
+                "can_add_medical_record": {
+                    "description": "Actions",
+                    "type": "boolean"
+                },
+                "can_update_status": {
+                    "type": "boolean"
+                },
+                "deskripsi_intervensi": {
+                    "type": "string"
+                },
+                "hasil_intervensi": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "id_balita": {
+                    "type": "string"
+                },
+                "id_intervensi": {
+                    "type": "string"
+                },
+                "jenis_intervensi": {
+                    "description": "Intervensi Info",
+                    "type": "string"
+                },
+                "jenis_kelamin_balita": {
+                    "type": "string"
+                },
+                "jumlah_laporan_terkait": {
+                    "description": "Related Reports",
+                    "type": "integer"
+                },
+                "kecamatan": {
+                    "type": "string"
+                },
+                "kelurahan": {
+                    "type": "string"
+                },
+                "nama_ayah": {
+                    "type": "string"
+                },
+                "nama_balita": {
+                    "type": "string"
+                },
+                "nama_ibu": {
+                    "type": "string"
+                },
+                "nomor_kk": {
+                    "description": "Keluarga Info",
+                    "type": "string"
+                },
+                "status_gizi_terakhir": {
+                    "description": "Latest Medical Info",
+                    "type": "string"
+                },
+                "status_intervensi": {
+                    "type": "string"
+                },
+                "status_laporan_aktif": {
+                    "type": "string"
+                },
+                "tanggal_intervensi": {
+                    "type": "string"
+                },
+                "tanggal_lahir_balita": {
+                    "type": "string"
+                },
+                "tanggal_pemeriksaan_terakhir": {
+                    "type": "string"
+                },
+                "tanggal_penugasan": {
+                    "description": "Assignment Info",
+                    "type": "string"
+                },
+                "tinggi_badan_terakhir": {
+                    "type": "string"
+                },
+                "umur_balita": {
+                    "type": "string"
+                }
+            }
+        },
+        "healthworker.getAllAssignedIntervensiResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/healthworker.assignedIntervensiResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "object.GeoJSONFeature": {
             "type": "object",
             "properties": {
@@ -7749,7 +9944,7 @@ const docTemplate = `{
                 },
                 "properties": {
                     "type": "object",
-                    "additionalProperties": {}
+                    "additionalProperties": true
                 },
                 "type": {
                     "type": "string"

@@ -7,6 +7,8 @@ import (
 	_ "github.com/rifqidaiva/stunting-web/docs" // Import for Swagger documentation
 	"github.com/rifqidaiva/stunting-web/internal/api/admin"
 	"github.com/rifqidaiva/stunting-web/internal/api/auth"
+	"github.com/rifqidaiva/stunting-web/internal/api/community"
+	healthworker "github.com/rifqidaiva/stunting-web/internal/api/health_worker"
 	"github.com/rifqidaiva/stunting-web/internal/object"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -102,24 +104,31 @@ func main() {
 	   Masyarakat API Endpoints
 	=========================== */
 
-	// // Masyarakat - Keluarga Management (untuk input data keluarga balita yang dilaporkan)
-	// http.HandleFunc("/api/masyarakat/keluarga/insert", admin.MasyarakatKeluargaInsert)
-	// http.HandleFunc("/api/masyarakat/keluarga/get", admin.MasyarakatKeluargaGet)
-	// http.HandleFunc("/api/masyarakat/keluarga/update", admin.MasyarakatKeluargaUpdate)
+	// Masyarakat - Keluarga Management (untuk input data keluarga balita yang dilaporkan)
+	http.HandleFunc("/api/community/keluarga/insert", community.KeluargaInsert)
+	http.HandleFunc("/api/community/keluarga/get", community.KeluargaGet)
+	http.HandleFunc("/api/community/keluarga/update", community.KeluargaUpdate)
 
-	// // Masyarakat - Balita Management (untuk input data balita yang dilaporkan)
-	// http.HandleFunc("/api/masyarakat/balita/insert", admin.MasyarakatBalitaInsert)
-	// http.HandleFunc("/api/masyarakat/balita/get", admin.MasyarakatBalitaGet)
-	// http.HandleFunc("/api/masyarakat/balita/update", admin.MasyarakatBalitaUpdate)
+	// Masyarakat - Balita Management (untuk input data balita yang dilaporkan)
+	http.HandleFunc("/api/community/balita/insert", community.BalitaInsert)
+	http.HandleFunc("/api/community/balita/get", community.BalitaGet)
+	http.HandleFunc("/api/community/balita/update", community.BalitaUpdate)
 
-	// // Masyarakat - Laporan Management (untuk melaporkan balita)
-	// http.HandleFunc("/api/masyarakat/laporan/insert", admin.MasyarakatLaporanInsert)
-	// http.HandleFunc("/api/masyarakat/laporan/get", admin.MasyarakatLaporanGet)
+	// Masyarakat - Laporan Management (untuk melaporkan balita)
+	http.HandleFunc("/api/community/laporan/insert", community.LaporanInsert)
+	http.HandleFunc("/api/community/laporan/get", community.LaporanGet)
 
-	// // Masyarakat - Master Data (untuk dropdown/reference)
-	// http.HandleFunc("/api/masyarakat/kelurahan/get", admin.MasyarakatKelurahanGet)
-	// http.HandleFunc("/api/masyarakat/kecamatan/get", admin.MasyarakatKecamatanGet)
-	// http.HandleFunc("/api/masyarakat/status-laporan/get", admin.MasyarakatStatusLaporanGet)
+	// Masyarakat - Master Data (untuk dropdown/reference)
+	http.HandleFunc("/api/community/kelurahan/get", community.KelurahanGet)
+	http.HandleFunc("/api/community/kecamatan/get", community.KecamatanGet)
+	http.HandleFunc("/api/community/status-laporan/get", community.StatusLaporanGet)
+
+	/* ===============================
+	   Petugas Kesehatan API Endpoints
+	================================== */
+
+	// Petugas Kesehatan - Mengambil Penugasan
+	http.HandleFunc("/api/health-worker/assignment/get", healthworker.AssignmentGet)
 
 	// API test endpoint
 	http.HandleFunc("/api/test", func(w http.ResponseWriter, r *http.Request) {

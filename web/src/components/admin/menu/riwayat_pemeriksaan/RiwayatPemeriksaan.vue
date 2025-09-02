@@ -117,10 +117,10 @@ const formData = ref({
   tinggi_badan: "",
   status_gizi: "",
   keterangan: "",
-  
+
   // Fields tambahan untuk edit mode
   id: "",
-  
+
   // Fields untuk response (tidak dikirim ke backend)
   nama_balita: "",
   umur_balita: "",
@@ -220,7 +220,7 @@ const fetchBalitaOptions = async () => {
   balitaLoading.value = true
   try {
     const response = await apiRequest<GetAllBalitaResponse>("/admin/balita/get")
-    balitaOptions.value = response.data.data.map(b => ({
+    balitaOptions.value = response.data.data.map((b) => ({
       id: b.id,
       nama: b.nama,
       umur: b.umur,
@@ -229,7 +229,7 @@ const fetchBalitaOptions = async () => {
       nama_ibu: b.nama_ibu,
       nomor_kk: b.nomor_kk,
       kelurahan: b.kelurahan,
-      kecamatan: b.kecamatan
+      kecamatan: b.kecamatan,
     }))
     console.log("Balita options loaded:", balitaOptions.value.length, "items")
   } catch (error) {
@@ -244,13 +244,13 @@ const fetchIntervensiOptions = async () => {
   intervensiLoading.value = true
   try {
     const response = await apiRequest<GetAllIntervensiResponse>("/admin/intervensi/get")
-    intervensiOptions.value = response.data.data.map(i => ({
+    intervensiOptions.value = response.data.data.map((i) => ({
       id: i.id,
       id_balita: i.id_balita,
       nama_balita: i.nama_balita,
       jenis: i.jenis,
       tanggal: i.tanggal,
-      deskripsi: i.deskripsi
+      deskripsi: i.deskripsi,
     }))
     console.log("Intervensi options loaded:", intervensiOptions.value.length, "items")
   } catch (error) {
@@ -265,13 +265,13 @@ const fetchLaporanOptions = async () => {
   laporanLoading.value = true
   try {
     const response = await apiRequest<GetAllLaporanResponse>("/admin/laporan-masyarakat/get")
-    laporanOptions.value = response.data.data.map(l => ({
+    laporanOptions.value = response.data.data.map((l) => ({
       id: l.id,
       id_balita: l.id_balita,
       nama_balita: l.nama_balita,
       status_laporan: l.status_laporan,
       tanggal_laporan: l.tanggal_laporan,
-      jenis_laporan: l.jenis_laporan
+      jenis_laporan: l.jenis_laporan,
     }))
     console.log("Laporan options loaded:", laporanOptions.value.length, "items")
   } catch (error) {
@@ -317,7 +317,7 @@ const filteredLaporanOptions = computed(() => {
 // Form validation dengan pengecekan lebih ketat
 const validateForm = (): boolean => {
   errors.value = {}
-  
+
   console.log("Validating form data:", formData.value) // Debug log
 
   // Balita validation
@@ -441,7 +441,7 @@ const loadFormData = (riwayat: RiwayatPemeriksaan) => {
     tinggi_badan: riwayat.tinggi_badan,
     status_gizi: riwayat.status_gizi,
     keterangan: riwayat.keterangan,
-    
+
     // Extended fields untuk display
     nama_balita: riwayat.nama_balita || "",
     umur_balita: riwayat.umur_balita || "",
@@ -511,7 +511,7 @@ const handleSave = () => {
     tinggi_badan: formData.value.tinggi_badan.toString(),
     status_gizi: formData.value.status_gizi,
     keterangan: formData.value.keterangan.trim(),
-    
+
     // Extended fields untuk komponen parent
     nama_balita: selectedBalitaInfo.value?.nama || "",
     umur_balita: selectedBalitaInfo.value?.umur || "",
@@ -991,9 +991,7 @@ onMounted(async () => {
             </Card>
 
             <!-- Debug Info -->
-            <Card
-              v-if="import.meta.env.DEV"
-              class="border-yellow-200 bg-yellow-50">
+            <Card class="border-yellow-200 bg-yellow-50">
               <CardHeader>
                 <CardTitle class="text-sm text-yellow-800">🐛 Form Debug Info</CardTitle>
               </CardHeader>
@@ -1009,7 +1007,9 @@ onMounted(async () => {
                 <div>• Keterangan: {{ formData.keterangan?.length || 0 }} chars</div>
                 <div class="pt-2"><strong>Validation:</strong></div>
                 <div>• Errors: {{ Object.keys(errors).length }}</div>
-                <div v-if="Object.keys(errors).length > 0">• {{ Object.keys(errors).join(", ") }}</div>
+                <div v-if="Object.keys(errors).length > 0">
+                  • {{ Object.keys(errors).join(", ") }}
+                </div>
                 <div class="pt-2"><strong>Master Data:</strong></div>
                 <div>• Balita: {{ balitaOptions.length }} loaded</div>
                 <div>• Intervensi: {{ intervensiOptions.length }} loaded</div>

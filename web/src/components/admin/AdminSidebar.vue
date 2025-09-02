@@ -33,6 +33,11 @@ const menuItems = [
         route: "/admin/balita",
       },
       {
+        title: "Data Pelapor (Masyarakat)",
+        icon: FileText,
+        route: "/admin/pelapor"
+      },
+      {
         title: "Laporan Masyarakat",
         icon: FileText,
         route: "/admin/laporan-masyarakat",
