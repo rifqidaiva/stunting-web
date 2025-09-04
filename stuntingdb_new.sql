@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 04, 2025 at 06:45 AM
+-- Generation Time: Sep 04, 2025 at 03:34 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -33,8 +33,8 @@ CREATE TABLE `balita` (
   `nama` varchar(100) NOT NULL,
   `tanggal_lahir` date NOT NULL,
   `jenis_kelamin` enum('L','P') NOT NULL,
-  `berat_lahir` decimal(5,2) DEFAULT NULL,
-  `tinggi_lahir` decimal(5,2) DEFAULT NULL,
+  `berat_lahir` int(7) DEFAULT NULL,
+  `tinggi_lahir` int(7) DEFAULT NULL,
   `created_id` int(11) DEFAULT NULL,
   `created_date` date DEFAULT NULL,
   `updated_id` int(11) DEFAULT NULL,
@@ -42,6 +42,18 @@ CREATE TABLE `balita` (
   `deleted_id` int(11) DEFAULT NULL,
   `deleted_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `balita`
+--
+
+INSERT INTO `balita` (`id`, `id_keluarga`, `nama`, `tanggal_lahir`, `jenis_kelamin`, `berat_lahir`, `tinggi_lahir`, `created_id`, `created_date`, `updated_id`, `updated_date`, `deleted_id`, `deleted_date`) VALUES
+(1, 1, 'Balita diedit pertama', '2024-05-10', 'P', 5000, 25, 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(2, 4, 'Balita kedua', '2024-05-10', 'P', 5000, 25, 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(3, 5, 'Balita sakit sedikit', '2021-08-17', 'L', 3000, 60, 6, '2025-08-21', 6, '2025-08-21', NULL, NULL),
+(4, 1, 'Balita Sangat Sakit', '2024-04-07', 'P', 2000, 40, 6, '2025-08-21', 6, '2025-08-21', 6, '2025-08-21'),
+(5, 7, 'Ahmad', '2024-05-10', 'P', 800, 30, 3, '2025-08-22', 6, '2025-08-22', NULL, NULL),
+(6, 8, 'Adit', '2024-10-09', 'L', 3500, 50, 6, '2025-08-22', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -51,17 +63,39 @@ CREATE TABLE `balita` (
 
 CREATE TABLE `intervensi` (
   `id` int(11) NOT NULL,
+  `id_balita` int(11) DEFAULT NULL,
   `jenis` enum('gizi','kesehatan','sosial') NOT NULL,
   `tanggal` date NOT NULL,
   `deskripsi` text DEFAULT NULL,
   `hasil` text DEFAULT NULL,
-  `id_petugas_kesehatan` int(11) NOT NULL,
   `created_id` int(11) DEFAULT NULL,
   `created_date` date DEFAULT NULL,
   `updated_id` int(11) DEFAULT NULL,
   `updated_date` date DEFAULT NULL,
   `deleted_id` int(11) DEFAULT NULL,
   `deleted_date` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `intervensi`
+--
+
+INSERT INTO `intervensi` (`id`, `id_balita`, `jenis`, `tanggal`, `deskripsi`, `hasil`, `created_id`, `created_date`, `updated_id`, `updated_date`, `deleted_id`, `deleted_date`) VALUES
+(1, 2, 'gizi', '2024-05-10', 'Deskripsi pertama', 'hasil Updated', 4, '2025-08-11', 6, '2025-08-21', NULL, NULL),
+(2, 3, 'sosial', '2025-08-01', 'Dianalisa dan diberi pengarahan.', 'Sedikit membaik.', 7, '2025-08-21', 7, '2025-08-21', 7, '2025-08-21'),
+(3, 3, 'kesehatan', '2025-08-21', 'Memeriksa penyakit yang dialami balita.', 'Penurunan gejala penyakit.', 7, '2025-08-21', 6, '2025-08-22', NULL, NULL),
+(4, 5, 'kesehatan', '2025-08-22', 'Deskripsi dari intervensi', 'Hasil dari intervensi', 6, '2025-08-22', NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intervensi_petugas`
+--
+
+CREATE TABLE `intervensi_petugas` (
+  `id` int(11) NOT NULL,
+  `id_intervensi` int(11) NOT NULL,
+  `id_petugas_kesehatan` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -113,6 +147,20 @@ CREATE TABLE `keluarga` (
   `deleted_id` int(11) DEFAULT NULL,
   `deleted_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `keluarga`
+--
+
+INSERT INTO `keluarga` (`id`, `nomor_kk`, `nama_ayah`, `nama_ibu`, `nik_ayah`, `nik_ibu`, `alamat`, `rt`, `rw`, `id_kelurahan`, `koordinat`, `created_id`, `created_date`, `updated_id`, `updated_date`, `deleted_id`, `deleted_date`) VALUES
+(1, '1234568789101115', 'Nama ayah diupdate', 'nama ibu diupdate', '1234568789101115', '1234568789101115', 'Alamat update tes alamat yang sangat panjang', '001', '001', 2, 0x00000000010100000000000000000028400000000000002840, 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(2, '1234568789101112', 'Nama ayah kedua', 'nama ibu kedua', '1234568789101112', '1234568789101112', 'Alamat alamat alamat kedua', '001', '001', 1, 0x00000000010100000000000000000028400000000000002840, 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(3, '1234568789101113', 'Nama ayah ketiga', 'nama ibu ketiga', '1234568789101113', '1234568789101113', 'Alamat alamat alamat ketiga', '001', '001', 3, 0x00000000010100000000000000000028400000000000002840, 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(4, '1234568789101114', 'Nama ayah keempat diedit', 'nama ibu keempat', '1234568789101114', '1234568789101114', 'Alamat alamat alamat keempat', '001', '001', 18, 0x00000000010100000000000000000028400000000000002840, 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(5, '3209012345678999', 'Ayah Paling Baru', 'Ibu baru', '1234134134132413', '1234134134134134', 'Alamat paling baru', '007', '001', 6, 0x000000000101000000e0e64306a8e71ac0b2d2495b81225b40, 6, '2025-08-21', 6, '2025-08-21', NULL, NULL),
+(6, '1234567890987654', 'BapakBapakedit', 'IbuIbu', '1234567890123456', '1234567890654321', 'Jl. Mekar Arum 15', '011', '006', 16, 0x000000000101000000377cf1c76ee41ac09896ef6f7e245b40, 6, '2025-08-21', 6, '2025-08-21', 6, '2025-08-21'),
+(7, '1234567891234567', 'Nama diedit', 'Nama ibu', '1234567891234567', '1234567654321234', 'Jalan Soedirman 13', '009', '002', 2, 0x00000000010100000000000000008066400000000000805640, 3, '2025-08-22', 3, '2025-08-22', NULL, NULL),
+(8, '0999999999999999', 'Yudi edit', 'Sri Rayahu', '0912498129384189', '1345325235246259', 'Alamat data keluarga baru', '004', '003', 3, 0x000000000101000000c185e1c8a8e71ac01d13735a81225b40, 6, '2025-08-22', 6, '2025-08-22', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -180,6 +228,16 @@ CREATE TABLE `laporan_masyarakat` (
   `deleted_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `laporan_masyarakat`
+--
+
+INSERT INTO `laporan_masyarakat` (`id`, `id_masyarakat`, `id_balita`, `id_status_laporan`, `tanggal_laporan`, `hubungan_dengan_balita`, `nomor_hp_pelapor`, `nomor_hp_keluarga_balita`, `created_id`, `created_date`, `updated_id`, `updated_date`, `deleted_id`, `deleted_date`) VALUES
+(1, 1, 1, 4, '2025-05-10', 'Sebagai tetangga', '081324220229', '081247229347', 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(2, NULL, 2, 6, '2025-05-10', 'Sebagai tetangga', '081324220229', '081247229347', 4, '2025-08-05', 6, '2025-08-21', NULL, NULL),
+(3, NULL, 3, 2, '2025-08-20', 'Tetangga', '081234567800', '081234567891', 6, '2025-08-21', 6, '2025-08-21', NULL, NULL),
+(4, NULL, 5, 1, '2025-08-22', 'Petugas Administrasi', '082123412311', '081234567891', 6, '2025-08-22', NULL, NULL, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -192,6 +250,13 @@ CREATE TABLE `masyarakat` (
   `nama` varchar(100) NOT NULL,
   `alamat` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `masyarakat`
+--
+
+INSERT INTO `masyarakat` (`id`, `id_pengguna`, `nama`, `alamat`) VALUES
+(1, 3, 'Wahyu Widiasmoro', 'Cirebon');
 
 -- --------------------------------------------------------
 
@@ -212,7 +277,12 @@ CREATE TABLE `pengguna` (
 
 INSERT INTO `pengguna` (`id`, `email`, `password_hash`, `role`) VALUES
 (1, 'rifqi@gmail.com', '1234', 'admin'),
-(2, 'dwiki@gmail.com', '1234', 'masyarakat');
+(3, 'wahyu@gmail.com', '$2a$10$a9iyG4yZXWAk2teyTu0yzOhIdp2GPiHU.hcnErhAgr9G/ImqWix.S', 'masyarakat'),
+(4, 'admin@gmail.com', '$2a$10$PPQOOSUVwflz0u1JREYHF.Ii7CU6p4i.ko7wGkNU68EUGSejxh6FC', 'admin'),
+(5, 'petugas1@gmail.com', '$2a$10$jOko.bIqwHrMa2dvQakTMOL8OyeKvoBwbZ0YXxOdQLe0CGvrLPDb6', 'petugas kesehatan'),
+(6, 'aiken@gmail.com', '$2a$10$8CkCo/IUmPDN7PyB47kjZO/cv1EMvz1dgWIklDbqA1D0VTARNqdTu', 'admin'),
+(7, 'dwiki@gmail.com', '$2a$10$5oZg/IVyserMt8Lnhjl2jOwVwoZp4e1ApQcXKOKmKOgBcsqZkiFgi', 'admin'),
+(8, 'petugas@gmail.com', '$2a$10$6WGKWf.4raKbofTOJ27mRuHkQtye68L42zy1/xcXu.kawlVbT/Yqe', 'petugas kesehatan');
 
 -- --------------------------------------------------------
 
@@ -232,6 +302,14 @@ CREATE TABLE `petugas_kesehatan` (
   `deleted_id` int(11) DEFAULT NULL,
   `deleted_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `petugas_kesehatan`
+--
+
+INSERT INTO `petugas_kesehatan` (`id`, `id_pengguna`, `id_skpd`, `nama`, `created_id`, `created_date`, `updated_id`, `updated_date`, `deleted_id`, `deleted_date`) VALUES
+(1, 5, 1, 'updated tes', 4, '2025-08-08', 4, '2025-08-08', NULL, NULL),
+(2, 8, 1, 'Nama Petugas Kesehatan Dua', 6, '2025-08-22', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -257,6 +335,13 @@ CREATE TABLE `riwayat_pemeriksaan` (
   `deleted_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `riwayat_pemeriksaan`
+--
+
+INSERT INTO `riwayat_pemeriksaan` (`id`, `id_balita`, `id_intervensi`, `id_laporan_masyarakat`, `tanggal`, `berat_badan`, `tinggi_badan`, `status_gizi`, `keterangan`, `created_id`, `created_date`, `updated_id`, `updated_date`, `deleted_id`, `deleted_date`) VALUES
+(4, 2, 1, 2, '2025-05-12', 5.00, 30.00, 'stunting', 'string', 4, '2025-08-11', 6, '2025-08-21', 6, '2025-08-21');
+
 -- --------------------------------------------------------
 
 --
@@ -274,6 +359,13 @@ CREATE TABLE `skpd` (
   `deleted_id` int(11) DEFAULT NULL,
   `deleted_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `skpd`
+--
+
+INSERT INTO `skpd` (`id`, `skpd`, `jenis`, `created_id`, `created_date`, `updated_id`, `updated_date`, `deleted_id`, `deleted_date`) VALUES
+(1, 'Puskesmas Cirebon', 'puskesmas', 4, '2025-08-06', 4, '2025-08-06', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -320,6 +412,14 @@ ALTER TABLE `intervensi`
   ADD KEY `created_id` (`created_id`,`updated_id`,`deleted_id`),
   ADD KEY `updated_id` (`updated_id`),
   ADD KEY `deleted_id` (`deleted_id`),
+  ADD KEY `id_balita` (`id_balita`);
+
+--
+-- Indexes for table `intervensi_petugas`
+--
+ALTER TABLE `intervensi_petugas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_intervensi` (`id_intervensi`,`id_petugas_kesehatan`),
   ADD KEY `id_petugas_kesehatan` (`id_petugas_kesehatan`);
 
 --
@@ -417,13 +517,19 @@ ALTER TABLE `status_laporan`
 -- AUTO_INCREMENT for table `balita`
 --
 ALTER TABLE `balita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `intervensi`
 --
 ALTER TABLE `intervensi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `intervensi_petugas`
+--
+ALTER TABLE `intervensi_petugas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `kecamatan`
@@ -435,7 +541,7 @@ ALTER TABLE `kecamatan`
 -- AUTO_INCREMENT for table `keluarga`
 --
 ALTER TABLE `keluarga`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `kelurahan`
@@ -447,37 +553,37 @@ ALTER TABLE `kelurahan`
 -- AUTO_INCREMENT for table `laporan_masyarakat`
 --
 ALTER TABLE `laporan_masyarakat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `masyarakat`
 --
 ALTER TABLE `masyarakat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pengguna`
 --
 ALTER TABLE `pengguna`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `petugas_kesehatan`
 --
 ALTER TABLE `petugas_kesehatan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `riwayat_pemeriksaan`
 --
 ALTER TABLE `riwayat_pemeriksaan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `skpd`
 --
 ALTER TABLE `skpd`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `status_laporan`
@@ -502,10 +608,16 @@ ALTER TABLE `balita`
 -- Constraints for table `intervensi`
 --
 ALTER TABLE `intervensi`
-  ADD CONSTRAINT `intervensi_ibfk_1` FOREIGN KEY (`id_petugas_kesehatan`) REFERENCES `petugas_kesehatan` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `intervensi_ibfk_2` FOREIGN KEY (`created_id`) REFERENCES `pengguna` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `intervensi_ibfk_3` FOREIGN KEY (`updated_id`) REFERENCES `pengguna` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `intervensi_ibfk_4` FOREIGN KEY (`deleted_id`) REFERENCES `pengguna` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `intervensi_petugas`
+--
+ALTER TABLE `intervensi_petugas`
+  ADD CONSTRAINT `intervensi_petugas_ibfk_1` FOREIGN KEY (`id_intervensi`) REFERENCES `intervensi` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `intervensi_petugas_ibfk_2` FOREIGN KEY (`id_petugas_kesehatan`) REFERENCES `petugas_kesehatan` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `keluarga`

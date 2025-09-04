@@ -35,7 +35,8 @@ const menuItems = [
       {
         title: "Data Pelapor (Masyarakat)",
         icon: FileText,
-        route: "/admin/pelapor"
+        route: "/admin/pelapor",
+        disable: true,
       },
       {
         title: "Laporan Masyarakat",
@@ -51,6 +52,7 @@ const menuItems = [
         title: "Riwayat Pemeriksaan",
         icon: FileText,
         route: "/admin/riwayat-pemeriksaan",
+        disable: true,
       },
     ],
   },
@@ -142,7 +144,18 @@ onMounted(() => {
                 v-for="item in menuGroup.items"
                 :key="item.route">
                 <SidebarMenuButton asChild>
+                  <!-- Disabled item -->
+                  <div
+                    v-if="item.disable"
+                    class="w-full justify-start gap-3 px-3 py-2 text-sm rounded-md flex items-center cursor-not-allowed opacity-50 text-muted-foreground">
+                    <component
+                      :is="item.icon"
+                      class="h-4 w-4 shrink-0" />
+                    <span class="truncate">{{ item.title }}</span>
+                  </div>
+                  <!-- Active item -->
                   <router-link
+                    v-else
                     :to="item.route"
                     class="w-full justify-start gap-3 px-3 py-2 text-sm transition-all hover:bg-accent hover:text-accent-foreground rounded-md flex items-center"
                     active-class="bg-accent text-accent-foreground font-medium"
